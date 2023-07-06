@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/calendar/calendar/calendar_item.dart';
+import 'package:drberry_app/provider/calendar_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:container_tab_indicator/container_tab_indicator.dart';
 import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class Day {
   int day;
@@ -41,7 +43,7 @@ class _CalendarPageState extends State<CalendarPage>
   ScrollController? _controller;
   Future<List<Month>>? _isCall;
   TabController? _tabController;
-  int _segment = 0;
+  final int _segment = 0;
 
   @override
   void initState() {
@@ -120,23 +122,38 @@ class _CalendarPageState extends State<CalendarPage>
             // context.read<CalendarPageProvider>().setCalendarData(snapshot.data!);
             return Stack(
               children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 115),
-                  child: CustomScrollView(
-                    controller: _controller,
-                    slivers: [
-                      SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                          return CalendarItem(
-                            index: index,
-                            month: snapshot.data![index],
-                          );
-                        },
-                        childCount: snapshot.data!.length,
-                      ))
-                    ],
-                  ),
+                ValueListenableBuilder(
+                  valueListenable: _segmentController,
+                  builder: (context, value, child) {
+                    if (value == 0) {
+                      return Container(
+                        padding: const EdgeInsets.only(top: 115),
+                        child: CustomScrollView(
+                          controller: _controller,
+                          slivers: [
+                            SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                                return CalendarItem(
+                                  index: index,
+                                  month: snapshot.data![index],
+                                  segment: _segment,
+                                );
+                              },
+                              childCount: snapshot.data!.length,
+                            ))
+                          ],
+                        ),
+                      );
+                    } else {
+                      return SizedBox.expand(
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
                 ),
                 Positioned(
                     top: 0,
@@ -192,42 +209,54 @@ class _CalendarPageState extends State<CalendarPage>
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: CustomColors.secondaryBlack,
-                                          fontWeight: _segment != 0 ? FontWeight.w400 : FontWeight.w600),
+                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 0
+                                              ? FontWeight.w400
+                                              : FontWeight.w600),
                                     ),
                                     Text(
                                       "수면패턴",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: CustomColors.secondaryBlack,
-                                          fontWeight: _segment != 1 ? FontWeight.w400 : FontWeight.w600),
+                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 1
+                                              ? FontWeight.w400
+                                              : FontWeight.w600),
                                     ),
                                     Text(
                                       "기상 품질",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: CustomColors.secondaryBlack,
-                                          fontWeight: _segment != 2 ? FontWeight.w400 : FontWeight.w600),
+                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 2
+                                              ? FontWeight.w400
+                                              : FontWeight.w600),
                                     ),
                                     Text(
                                       "심박수",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: CustomColors.secondaryBlack,
-                                          fontWeight: _segment != 3 ? FontWeight.w400 : FontWeight.w600),
+                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 3
+                                              ? FontWeight.w400
+                                              : FontWeight.w600),
                                     ),
                                     Text(
                                       "코골이",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: CustomColors.secondaryBlack,
-                                          fontWeight: _segment != 4 ? FontWeight.w400 : FontWeight.w600),
+                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 4
+                                              ? FontWeight.w400
+                                              : FontWeight.w600),
                                     ),
                                     Text(
                                       "뒤척임",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: CustomColors.secondaryBlack,
-                                          fontWeight: _segment != 5 ? FontWeight.w400 : FontWeight.w600),
+                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 5
+                                              ? FontWeight.w400
+                                              : FontWeight.w600),
                                     ),
                                   ],
                                   indicator: const ContainerTabIndicator(
@@ -237,9 +266,7 @@ class _CalendarPageState extends State<CalendarPage>
                                       padding: EdgeInsets.only(top: 16)),
                                   onTap: (value) {
                                     print(value);
-                                    setState(() {
-                                      _segment = value;
-                                    });
+                                    context.read<CalendarPageProvider>().setIndex(value);
                                   },
                                   controller: _tabController,
                                 ),

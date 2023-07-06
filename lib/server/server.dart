@@ -89,4 +89,14 @@ class Server {
     return await noneDio.get("/biometric/main",
         options: Options(headers: {"Authorization": accessToken}), queryParameters: {"today": today});
   }
+
+  Future<Response> getCalendar(int month) async {
+    String accessToken = "Bearer ${await getAccessToken()}";
+
+    return await noneDio.get("/biometric/calendar",
+        options: Options(
+          headers: {"Authorization": accessToken},
+        ),
+        queryParameters: {"month": month});
+  }
 }

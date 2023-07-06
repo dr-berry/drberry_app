@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 class CalendarItem extends StatefulWidget {
   final int index;
   final Month month;
+  final int segment;
 
-  const CalendarItem({super.key, required this.index, required this.month});
+  const CalendarItem({super.key, required this.index, required this.month, required this.segment});
 
   @override
   State<CalendarItem> createState() => _CalendarItemState();
@@ -51,7 +52,8 @@ class _CalendarItemState extends State<CalendarItem> {
                 const WeekMonthWidget(),
                 MonthDaysWidget(
                   index: widget.index,
-                  dayData: widget.month.days,
+                  month: widget.month,
+                  segment: widget.segment,
                 ),
                 const SizedBox(height: 9),
                 Container(
