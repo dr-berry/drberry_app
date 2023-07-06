@@ -1,5 +1,6 @@
 import 'package:drberry_app/components/main_page/calendar/calendar_page.dart';
 import 'package:drberry_app/components/main_page/home/home_page.dart';
+import 'package:drberry_app/components/main_page/sleep_pad/sleep_pad_page.dart';
 import 'package:drberry_app/provider/main_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,6 +74,9 @@ class _MainPageState extends State<MainPage> {
               case 1:
                 context.read<MainPageProvider>().setAppBarColor(const Color(0xFFFFFFFF));
                 break;
+              case 2:
+                context.read<MainPageProvider>().setAppBarColor(const Color(0xFFF9F9F9));
+                break;
               default:
                 context.read<MainPageProvider>().setAppBarColor(const Color(0xFFF9F9F9));
             }
@@ -82,7 +86,8 @@ class _MainPageState extends State<MainPage> {
             const HomePage(),
             CalendarPage(
               deviceWidth: MediaQuery.of(context).size.width,
-            )
+            ),
+            const SleepPadPage()
           ],
         )));
   }

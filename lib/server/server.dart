@@ -99,4 +99,10 @@ class Server {
         ),
         queryParameters: {"month": month});
   }
+
+  Future<Response> getUseDeviceData() async {
+    String accessToken = "Bearer ${await getAccessToken()}";
+
+    return await noneDio.get("/biometric/use_time", options: Options(headers: {"Authorization": accessToken}));
+  }
 }

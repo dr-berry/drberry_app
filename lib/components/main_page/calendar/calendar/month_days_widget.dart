@@ -13,8 +13,11 @@ class MonthDaysWidget extends StatefulWidget {
   final int index;
   final Month month;
   final int segment;
+  final ValueNotifier<int> controller;
 
-  const MonthDaysWidget({Key? key, required this.index, required this.month, required this.segment}) : super(key: key);
+  const MonthDaysWidget(
+      {Key? key, required this.index, required this.month, required this.segment, required this.controller})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MonthDaysWidgetState();
@@ -123,7 +126,11 @@ class _MonthDaysWidgetState extends State<MonthDaysWidget> {
                       color: CustomColors.systemWhite,
                       child: InkWell(
                           onTap: () {
-                            print("tap!");
+                            context
+                                .read<CalendarPageProvider>()
+                                .setSelectedDate(widget.month.year, widget.month.month, days[idx].day);
+
+                            widget.controller.value = 1;
                           },
                           child: Stack(
                             alignment: Alignment.topCenter,

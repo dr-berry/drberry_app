@@ -8,8 +8,10 @@ class CalendarItem extends StatefulWidget {
   final int index;
   final Month month;
   final int segment;
+  final ValueNotifier<int> controller;
 
-  const CalendarItem({super.key, required this.index, required this.month, required this.segment});
+  const CalendarItem(
+      {super.key, required this.index, required this.month, required this.segment, required this.controller});
 
   @override
   State<CalendarItem> createState() => _CalendarItemState();
@@ -51,10 +53,7 @@ class _CalendarItemState extends State<CalendarItem> {
                 ),
                 const WeekMonthWidget(),
                 MonthDaysWidget(
-                  index: widget.index,
-                  month: widget.month,
-                  segment: widget.segment,
-                ),
+                    index: widget.index, month: widget.month, segment: widget.segment, controller: widget.controller),
                 const SizedBox(height: 9),
                 Container(
                   height: 1,

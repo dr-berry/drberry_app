@@ -2,6 +2,11 @@ import 'dart:math';
 
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/calendar/calendar/calendar_item.dart';
+import 'package:drberry_app/components/main_page/calendar/history_graph/history_graph_page.dart';
+import 'package:drberry_app/custom/custom_chart/arc_chart.dart';
+import 'package:drberry_app/custom/custom_chart/history_wave_chart.dart';
+import 'package:drberry_app/custom/custom_chart/wave_line_chart.dart';
+import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/provider/calendar_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -43,6 +48,7 @@ class _CalendarPageState extends State<CalendarPage>
   ScrollController? _controller;
   Future<List<Month>>? _isCall;
   TabController? _tabController;
+  final ValueNotifier<int> _graphController = ValueNotifier(0);
   final int _segment = 0;
 
   @override
@@ -98,7 +104,6 @@ class _CalendarPageState extends State<CalendarPage>
   @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
-    print("rendering!");
 
     return FutureBuilder(
       future: _isCall,
@@ -135,6 +140,7 @@ class _CalendarPageState extends State<CalendarPage>
                                 delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
                                 return CalendarItem(
+                                  controller: _segmentController,
                                   index: index,
                                   month: snapshot.data![index],
                                   segment: _segment,
@@ -146,11 +152,29 @@ class _CalendarPageState extends State<CalendarPage>
                         ),
                       );
                     } else {
-                      return SizedBox.expand(
-                        child: Container(
-                          alignment: Alignment.center,
-                          child: const CircularProgressIndicator(),
-                        ),
+                      return TabBarView(
+                        controller: _tabController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          HistoryGraphPage(
+                            graphController: _graphController,
+                          ),
+                          HistoryGraphPage(
+                            graphController: _graphController,
+                          ),
+                          HistoryGraphPage(
+                            graphController: _graphController,
+                          ),
+                          HistoryGraphPage(
+                            graphController: _graphController,
+                          ),
+                          HistoryGraphPage(
+                            graphController: _graphController,
+                          ),
+                          HistoryGraphPage(
+                            graphController: _graphController,
+                          )
+                        ],
                       );
                     }
                   },
@@ -159,10 +183,9 @@ class _CalendarPageState extends State<CalendarPage>
                     top: 0,
                     left: 0,
                     right: 0,
-                    child: Container(
+                    child: SizedBox(
                       width: deviceWidth,
                       height: 115,
-                      color: CustomColors.blue,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

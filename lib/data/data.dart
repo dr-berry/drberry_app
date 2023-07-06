@@ -637,3 +637,14 @@ class CalendarData {
     return result;
   }
 }
+
+class UseTime {
+  String totalUseTime;
+  String totalDays;
+
+  UseTime({required this.totalDays, required this.totalUseTime});
+
+  factory UseTime.fromJson(dynamic json) {
+    return UseTime(totalDays: json["totalDays"], totalUseTime: json["totalUseTime"]);
+  }
+}

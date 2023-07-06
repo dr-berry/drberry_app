@@ -95,6 +95,11 @@ flutter:
     - assets/WelcomeIcon.png
     - assets/AppIcon.png
     - assets/NoData.png
+    - assets/Connect.svg
+    - assets/Disconnect.svg
+    - assets/OnPad.svg
+    - assets/SoundzSleep.svg
+    - assets/ArrowRight.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
