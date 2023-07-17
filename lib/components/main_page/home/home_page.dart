@@ -74,38 +74,34 @@ class _HomePageState extends State<HomePage> {
         pickerType: DateTimePickerType.date,
         options: BoardDateTimeOptions(backgroundColor: CustomColors.systemGrey6, activeColor: CustomColors.lightGreen2),
         builder: (context) {
-          return context.watch<HomePageProvider>().mainPageBiometricData != null
-              ? SingleChildScrollView(
-                  controller: _controller,
-                  child: Column(
-                    children: [
-                      MainPageHeader(
-                        controller: controller,
-                        today: _today,
-                      ),
-                      TodayShortData(defaultBoxDecoration: defaultBoxDecoration),
-                      SleepTimeData(defaultBoxDecoration: defaultBoxDecoration),
-                      SevenDaysData(defaultBoxDecoration: defaultBoxDecoration),
-                      WeeklyChangeData(defaultBoxDecoration: defaultBoxDecoration),
-                      SleepScoreRingData(defaultBoxDecoration: defaultBoxDecoration),
-                      context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                              context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null &&
-                              context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!.lastDayScore != null
-                          ? TodayEventData(defaultBoxDecoration: defaultBoxDecoration)
-                          : Container(),
-                      SleepPatternWidget(defaultBoxDecoration: defaultBoxDecoration),
-                      WakeupQualityWidget(defaultBoxDecoration: defaultBoxDecoration),
-                      HeartRateWidget(defaultBoxDecoration: defaultBoxDecoration),
-                      TossNTurnWidget(defaultBoxDecoration: defaultBoxDecoration),
-                      SnoringWidget(
-                        defaultBoxDecoration: defaultBoxDecoration,
-                        snoringKey: _snoringKey,
-                      ),
-                    ],
-                  ))
-              : const Column(
-                  children: [],
-                );
+          return SingleChildScrollView(
+              controller: _controller,
+              child: Column(
+                children: [
+                  MainPageHeader(
+                    controller: controller,
+                    today: _today,
+                  ),
+                  TodayShortData(defaultBoxDecoration: defaultBoxDecoration),
+                  SleepTimeData(defaultBoxDecoration: defaultBoxDecoration),
+                  SevenDaysData(defaultBoxDecoration: defaultBoxDecoration),
+                  WeeklyChangeData(defaultBoxDecoration: defaultBoxDecoration),
+                  SleepScoreRingData(defaultBoxDecoration: defaultBoxDecoration),
+                  context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                          context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null &&
+                          context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!.lastDayScore != null
+                      ? TodayEventData(defaultBoxDecoration: defaultBoxDecoration)
+                      : Container(),
+                  SleepPatternWidget(defaultBoxDecoration: defaultBoxDecoration),
+                  WakeupQualityWidget(defaultBoxDecoration: defaultBoxDecoration),
+                  HeartRateWidget(defaultBoxDecoration: defaultBoxDecoration),
+                  TossNTurnWidget(defaultBoxDecoration: defaultBoxDecoration),
+                  SnoringWidget(
+                    defaultBoxDecoration: defaultBoxDecoration,
+                    snoringKey: _snoringKey,
+                  ),
+                ],
+              ));
         },
         onChange: (val) async {
           setState(() {

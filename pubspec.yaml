@@ -36,20 +36,27 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_advanced_segment: ^3.0.2
+  flutter_advanced_switch: ^3.0.1
   flutter_custom_tab_bar: ^1.2.1
+  flutter_dialogs: ^3.0.0
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.1
   flutter_provider: ^2.1.0
+  flutter_screenutil: ^5.8.4
   flutter_secure_storage: ^8.0.0
   flutter_svg: ^2.0.6
   flutter_vibrate: ^1.3.0
   intl: ^0.18.1
   json_annotation: ^4.8.1
   json_serializable: ^6.7.0
+  loading_animation_widget: ^1.2.0+4
   paged_vertical_calendar: ^1.1.6
+  path_provider: ^2.0.15
   provider: ^6.0.5
   qr_code_scanner: ^1.0.1
+  responsive_framework: ^1.1.0
   scroll_snap_list: ^0.9.1
+  share: ^2.0.4
   sliver_tools: ^0.2.10
   syncfusion_flutter_datepicker: ^22.1.36
   table_calendar: ^3.0.9
@@ -100,6 +107,18 @@ flutter:
     - assets/OnPad.svg
     - assets/SoundzSleep.svg
     - assets/ArrowRight.svg
+    - assets/SettingIcon.svg
+    - assets/profile.svg
+    - assets/call.svg
+    - assets/data.svg
+    - assets/GradientData.svg
+    - assets/GradientBad.svg
+    - assets/GradientPad.svg
+    - assets/settingfill.svg
+    - assets/profill.svg
+    - assets/company.svg
+    - assets/textfill.svg
+    - assets/export_page.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

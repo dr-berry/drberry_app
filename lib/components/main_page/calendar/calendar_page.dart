@@ -1,13 +1,9 @@
-import 'dart:math';
-
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/calendar/calendar/calendar_item.dart';
 import 'package:drberry_app/components/main_page/calendar/history_graph/history_graph_page.dart';
-import 'package:drberry_app/custom/custom_chart/arc_chart.dart';
-import 'package:drberry_app/custom/custom_chart/history_wave_chart.dart';
-import 'package:drberry_app/custom/custom_chart/wave_line_chart.dart';
 import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/provider/calendar_page_provider.dart';
+import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:container_tab_indicator/container_tab_indicator.dart';
@@ -50,6 +46,19 @@ class _CalendarPageState extends State<CalendarPage>
   TabController? _tabController;
   final ValueNotifier<int> _graphController = ValueNotifier(0);
   final int _segment = 0;
+  Server server = Server();
+
+  Future<List<CalendarData>> getCalender(int month) async {
+    final data = server.getCalendar(month).then((res) {
+      // print(res.data);
+      return CalendarData.fromJsonList(res.data);
+    }).catchError((err) {
+      // print(err);
+      return <CalendarData>[];
+    });
+
+    return data;
+  }
 
   @override
   void initState() {
@@ -120,7 +129,11 @@ class _CalendarPageState extends State<CalendarPage>
             return const SizedBox.expand(
               child: Text(
                 "Cannot load Calendar",
-                style: TextStyle(fontFamily: "SF-Pro", fontWeight: FontWeight.w600, fontSize: 20),
+                style: TextStyle(
+                  fontFamily: "SF-Pro",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                ),
               ),
             );
           } else {
@@ -212,8 +225,16 @@ class _CalendarPageState extends State<CalendarPage>
                                 animationDuration: const Duration(milliseconds: 250),
                                 itemPadding: const EdgeInsets.only(left: 30, right: 30, top: 7, bottom: 7),
                                 shadow: const [
-                                  BoxShadow(blurRadius: 8, color: Color.fromRGBO(0, 0, 0, 0.12), offset: Offset(0, 3)),
-                                  BoxShadow(blurRadius: 1, color: Color.fromRGBO(0, 0, 0, 0.04), offset: Offset(0, 3))
+                                  BoxShadow(
+                                    blurRadius: 8,
+                                    color: Color.fromRGBO(0, 0, 0, 0.12),
+                                    offset: Offset(0, 3),
+                                  ),
+                                  BoxShadow(
+                                    blurRadius: 1,
+                                    color: Color.fromRGBO(0, 0, 0, 0.04),
+                                    offset: Offset(0, 3),
+                                  )
                                 ],
                               ))),
                           Expanded(
@@ -237,7 +258,7 @@ class _CalendarPageState extends State<CalendarPage>
                                               : FontWeight.w600),
                                     ),
                                     Text(
-                                      "수면패턴",
+                                      "수면 패턴",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: CustomColors.secondaryBlack,

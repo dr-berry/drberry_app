@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Server {
   Dio dio = Dio(BaseOptions(
+      // baseUrl: "http://localhost:3000",
       baseUrl: "http://localhost:3000",
       connectTimeout: const Duration(milliseconds: 10000),
       receiveTimeout: const Duration(milliseconds: 10000)));
@@ -104,5 +105,65 @@ class Server {
     String accessToken = "Bearer ${await getAccessToken()}";
 
     return await noneDio.get("/biometric/use_time", options: Options(headers: {"Authorization": accessToken}));
+  }
+
+  Future<Response> getProfileTabData() async {
+    return await noneDio.get("/user/profile_tab",
+        options: Options(headers: {"Authorization": "Bearer ${await getAccessToken()}"}));
+  }
+
+  Future<Response> getAccountInfo() async {
+    return await noneDio.get("/user/account",
+        options: Options(headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        }));
+  }
+
+  Future<Response> updateUser(String? name, String? birthday, String? gender) async {
+    return await noneDio.put("/user/account",
+        data: {"name": name, "birthday": birthday, 'gender': gender},
+        options: Options(headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        }));
+  }
+
+  Future<Response> getSettings() async {
+    return await noneDio.get("/user/env/settings",
+        options: Options(headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        }));
+  }
+
+  Future<Response> updateSettings(String type, bool setting) async {
+    return await noneDio.put(
+      '/user/env/settings',
+      data: {
+        'setting': setting,
+        'type': type,
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> exportSleepData(
+    dynamic downloadPath,
+    String startDate,
+    String endDate,
+  ) async {
+    return noneDio.download(
+      '/user/export/excel',
+      downloadPath,
+      options: Options(headers: {"Authorization": "Bearer ${await getAccessToken()}"}),
+      data: {
+        'rangeDate': [
+          startDate,
+          endDate,
+        ]
+      },
+    );
   }
 }

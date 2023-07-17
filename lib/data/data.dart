@@ -648,3 +648,72 @@ class UseTime {
     return UseTime(totalDays: json["totalDays"], totalUseTime: json["totalUseTime"]);
   }
 }
+
+class ProfileTabData {
+  String avgSleepTime;
+  String avgSleepScore;
+  String totalDays;
+  String userName;
+
+  ProfileTabData({
+    required this.avgSleepScore,
+    required this.avgSleepTime,
+    required this.totalDays,
+    required this.userName,
+  });
+
+  factory ProfileTabData.fromJson(Map<String, dynamic> json) {
+    return ProfileTabData(
+      avgSleepScore: json["avgSleepScore"],
+      avgSleepTime: json["avgSleepTime"],
+      totalDays: json["totalDays"],
+      userName: json["userName"],
+    );
+  }
+}
+
+class AccountSettingData {
+  String name;
+  String birthday;
+  String gender;
+  String signUpAt;
+
+  AccountSettingData({
+    required this.name,
+    required this.birthday,
+    required this.gender,
+    required this.signUpAt,
+  });
+
+  factory AccountSettingData.fromJson(Map<String, dynamic> json) {
+    return AccountSettingData(
+      name: json['name'],
+      birthday: json['birthday'],
+      gender: json['gender'],
+      signUpAt: json["signUpAt"],
+    );
+  }
+}
+
+class EnvSettings {
+  bool isAppPush;
+  bool isAlarmPush;
+  bool isData;
+  bool isActive;
+
+  EnvSettings({
+    required this.isAppPush,
+    required this.isAlarmPush,
+    required this.isData,
+    required this.isActive,
+  });
+
+  factory EnvSettings.fromJson(Map<String, dynamic> json) {
+    return EnvSettings(
+      isAppPush: json['isAppPush'],
+      isAlarmPush: json['isAlarmPush'],
+      isData: json['isData'],
+      isActive: json['isActive'],
+    );
+  }
+}

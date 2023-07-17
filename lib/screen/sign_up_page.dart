@@ -47,22 +47,14 @@ class _SignUpPageState extends State<SignUpPage> {
       frag++;
     });
     context.read<SignUpProvider>().setDisabled(false);
-    controller.nextPage(
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   void prevPage() {
     setState(() {
       frag--;
     });
-    controller.previousPage(
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-  }
-
-  @override
-  void didChangeDependencies() {
-    print(context.watch<SignUpProvider>().disabled);
-    super.didChangeDependencies();
+    controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
@@ -87,41 +79,35 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: 64,
                 padding: const EdgeInsets.only(left: 16.0, top: 16.0),
                 color: const Color(0xFFf9f9f9),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Material(
-                        child: InkWell(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10.0)),
-                          highlightColor: CustomColors.systemGrey6,
-                          child: Container(
-                              width: 50,
-                              height: 30,
-                              alignment: Alignment.centerLeft,
-                              decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: SvgPicture.asset("assets/ArrowToLeft.svg",
-                                  width: 10, height: 24)),
-                          onTap: () {
-                            setState(() {
-                              buttonText = "다음";
-                            });
-                            if (frag == 0) {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const SplashPage(),
-                                  ),
-                                  (route) => false);
-                            } else {
-                              prevPage();
-                            }
-                          },
-                        ),
-                      ),
-                    ]),
+                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Material(
+                    child: InkWell(
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      highlightColor: CustomColors.systemGrey6,
+                      child: Container(
+                          width: 50,
+                          height: 30,
+                          alignment: Alignment.centerLeft,
+                          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+                          child: SvgPicture.asset("assets/ArrowToLeft.svg", width: 10, height: 24)),
+                      onTap: () {
+                        setState(() {
+                          buttonText = "다음";
+                        });
+                        if (frag == 0) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SplashPage(),
+                              ),
+                              (route) => false);
+                        } else {
+                          prevPage();
+                        }
+                      },
+                    ),
+                  ),
+                ]),
               ),
               Center(
                   child: Container(
@@ -175,9 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       style: ElevatedButton.styleFrom(
                           foregroundColor: CustomColors.lightGreen,
                           elevation: 0,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
                           backgroundColor: CustomColors.lightGreen2,
                           padding: const EdgeInsets.symmetric(vertical: 19)),
                       onPressed: () async {
@@ -193,29 +177,14 @@ class _SignUpPageState extends State<SignUpPage> {
                               provider.weight > 0 &&
                               provider.birth.isNotEmpty) {
                             await server
-                                .signUp(
-                                    provider.name,
-                                    widget.deviceCode,
-                                    provider.gender,
-                                    provider.tall,
-                                    provider.weight,
-                                    provider.birth,
-                                    "deviceTokenTest",
-                                    false,
-                                    false)
+                                .signUp(provider.name, widget.deviceCode, provider.gender, provider.tall,
+                                    provider.weight, provider.birth, "deviceTokenTest", false, false)
                                 .then((res) async {
                               if (res.statusCode == 201) {
-                                final tokenResponse =
-                                    TokenResponse.fromJson(res.data);
-                                await storage.write(
-                                    key: "accessToken",
-                                    value: tokenResponse.accessToken);
-                                await storage.write(
-                                    key: "refreshToken",
-                                    value: tokenResponse.refreshToken);
-                                await storage.write(
-                                    key: "expiredAt",
-                                    value: tokenResponse.expiredAt.toString());
+                                final tokenResponse = TokenResponse.fromJson(res.data);
+                                await storage.write(key: "accessToken", value: tokenResponse.accessToken);
+                                await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
+                                await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
 
                                 final provider = context.read<SignUpProvider>();
 
@@ -229,10 +198,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                                 // ignore: use_build_context_synchronously
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const SuccessSignupPage()));
+                                    context, MaterialPageRoute(builder: (context) => const SuccessSignupPage()));
                               }
                             }).catchError((err) => print(err.toString()));
                           }
@@ -265,9 +231,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         padding: const EdgeInsets.symmetric(vertical: 19),
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: Color(0xFFe5e5ea),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
+                            color: Color(0xFFe5e5ea), borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: Text(
                           buttonText,
                           style: const TextStyle(

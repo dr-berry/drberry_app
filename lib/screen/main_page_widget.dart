@@ -1,5 +1,6 @@
 import 'package:drberry_app/components/main_page/calendar/calendar_page.dart';
 import 'package:drberry_app/components/main_page/home/home_page.dart';
+import 'package:drberry_app/components/main_page/profile/profile_page.dart';
 import 'package:drberry_app/components/main_page/sleep_pad/sleep_pad_page.dart';
 import 'package:drberry_app/provider/main_page_provider.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +88,8 @@ class _MainPageState extends State<MainPage> {
             CalendarPage(
               deviceWidth: MediaQuery.of(context).size.width,
             ),
-            const SleepPadPage()
+            const SleepPadPage(),
+            const ProfilePage()
           ],
         )));
   }

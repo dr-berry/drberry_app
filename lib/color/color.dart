@@ -25,7 +25,7 @@ class CustomColors {
   static const yellow = Color(0xFFFFBB0D);
   static const red = Color(0xFFFF5C37);
 
-  static Color hexaColor(String strcolor, {int opacity = 15}) {
+  static Color hexaColor(String strcolor, double d, {int opacity = 15}) {
     strcolor = strcolor.replaceAll("#", "");
     String stropacity = opacity.toRadixString(16);
     return Color(int.parse("$stropacity$stropacity$strcolor", radix: 16));

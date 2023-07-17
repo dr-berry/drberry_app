@@ -10,8 +10,13 @@ class CalendarItem extends StatefulWidget {
   final int segment;
   final ValueNotifier<int> controller;
 
-  const CalendarItem(
-      {super.key, required this.index, required this.month, required this.segment, required this.controller});
+  const CalendarItem({
+    super.key,
+    required this.index,
+    required this.month,
+    required this.segment,
+    required this.controller,
+  });
 
   @override
   State<CalendarItem> createState() => _CalendarItemState();
