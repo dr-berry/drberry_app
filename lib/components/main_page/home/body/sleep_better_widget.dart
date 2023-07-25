@@ -54,8 +54,8 @@ class _SleepBetterWidgetState extends State<SleepBetterWidget> {
             const SizedBox(height: 15),
             Center(
               child: RichText(
-                text: const TextSpan(children: [
-                  TextSpan(
+                text: TextSpan(children: [
+                  const TextSpan(
                     text: "내일 적정 목표 ",
                     style: TextStyle(
                       fontFamily: "Pretendard",
@@ -64,15 +64,16 @@ class _SleepBetterWidgetState extends State<SleepBetterWidget> {
                     ),
                   ),
                   TextSpan(
-                    text: "75",
-                    style: TextStyle(
+                    text:
+                        "${context.watch<HomePageProvider>().mainPageBiometricData != null && context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null ? context.watch<HomePageProvider>().mainPageBiometricData!.sleepSuming!.sumScore : 0}",
+                    style: const TextStyle(
                       fontFamily: "Pretendard",
                       fontSize: 20,
                       color: CustomColors.systemBlack,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: "점",
                     style: TextStyle(
                       fontFamily: "Pretendard",

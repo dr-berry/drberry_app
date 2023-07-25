@@ -442,6 +442,36 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 2),
+                      foregroundColor: CustomColors.systemGrey2),
+                  onPressed: () {},
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: CustomColors.secondaryBlack,
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      '로그아웃',
+                      style: TextStyle(
+                        fontFamily: "Pretendard",
+                        fontSize: 13,
+                        color: CustomColors.secondaryBlack,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),

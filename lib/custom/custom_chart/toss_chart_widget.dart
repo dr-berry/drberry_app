@@ -100,7 +100,7 @@ class TossChart extends CustomPainter {
       xtextPainter.layout();
       xtextPainter.layout();
 
-      if (tossNTurnGraph.length > 9) {
+      if (tossNTurnGraph.length > 6) {
         // text만 회전시키기 위해 canvas의 상태를 저장
         canvas.save();
 
