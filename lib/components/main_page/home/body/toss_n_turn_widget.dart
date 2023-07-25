@@ -24,8 +24,7 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      RenderBox box =
-          _tossNTurnKey.currentContext?.findRenderObject() as RenderBox;
+      RenderBox box = _tossNTurnKey.currentContext?.findRenderObject() as RenderBox;
       setState(() {
         height = box.size.height;
       });
@@ -50,10 +49,7 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
           child: Text(
             count[i],
             style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: CustomColors.systemGrey2,
-                fontFamily: 'Pretendard'),
+                fontSize: 15, fontWeight: FontWeight.w400, color: CustomColors.systemGrey2, fontFamily: 'Pretendard'),
           ),
         ));
 
@@ -63,10 +59,7 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
           child: Text(
             state[i],
             style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF8E8E93),
-                fontFamily: 'Pretendard'),
+                fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF8E8E93), fontFamily: 'Pretendard'),
           ),
         ));
       }
@@ -105,15 +98,16 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
               children: [
                 TextButton(
                     style: ButtonStyle(
-                        padding: MaterialStateProperty.resolveWith(
-                            (states) => EdgeInsets.zero),
-                        overlayColor:
-                            MaterialStateProperty.resolveWith((states) {
+                      padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+                      overlayColor: MaterialStateProperty.resolveWith(
+                        (states) {
                           if (states.contains(MaterialState.pressed)) {
                             return Colors.transparent;
                           }
                           return null;
-                        })),
+                        },
+                      ),
+                    ),
                     onPressed: () {},
                     child: const Text(
                       '더보기 >',
@@ -125,22 +119,20 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                     )),
                 const Text(
                   '뒤척임',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500),
+                  style: TextStyle(fontFamily: 'Pretendard', fontSize: 17, fontWeight: FontWeight.w500),
                 ),
                 TextButton(
                     style: ButtonStyle(
-                        padding: MaterialStateProperty.resolveWith(
-                            (states) => EdgeInsets.zero),
-                        overlayColor:
-                            MaterialStateProperty.resolveWith((states) {
+                      padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+                      overlayColor: MaterialStateProperty.resolveWith(
+                        (states) {
                           if (states.contains(MaterialState.pressed)) {
                             return CustomColors.systemGrey5;
                           }
                           return null;
-                        })),
+                        },
+                      ),
+                    ),
                     onPressed: () {},
                     child: const Text('더보기 >',
                         style: TextStyle(
@@ -153,36 +145,16 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
           ),
           RepaintBoundary(
             child: CustomPaint(
-                painter: TossChart(Size(deviceWidth - 26, 155),
-                    tossNTurnGraph: context
-                                    .watch<HomePageProvider>()
-                                    .mainPageBiometricData !=
-                                null &&
-                            context
-                                    .watch<HomePageProvider>()
-                                    .mainPageBiometricData!
-                                    .userBiometricData !=
-                                null
-                        ? context
-                            .read<HomePageProvider>()
-                            .mainPageBiometricData!
-                            .tossNTurnGraph!
+                painter: TossChart(Size(deviceWidth - 80, 155),
+                    tossNTurnGraph: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                            context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                        ? context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnGraph!
                         : [],
-                    tossNTurnGraphY: context
-                                    .watch<HomePageProvider>()
-                                    .mainPageBiometricData !=
-                                null &&
-                            context
-                                    .watch<HomePageProvider>()
-                                    .mainPageBiometricData!
-                                    .userBiometricData !=
-                                null
-                        ? context
-                            .read<HomePageProvider>()
-                            .mainPageBiometricData!
-                            .tossNTurnGraphY!
+                    tossNTurnGraphY: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                            context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                        ? context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnGraphY!
                         : TossNTurnGraphY(minToss: "0", maxToss: "0")),
-                size: Size(deviceWidth - 26, 155)),
+                size: Size(deviceWidth - 80, 155)),
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(0, 28, 0, 16),
@@ -201,10 +173,7 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                     margin: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                     child: const Text(
                       '뒤척임 점수',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400),
+                      style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Container(
@@ -212,14 +181,8 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                       child: RepaintBoundary(
                         child: CustomPaint(
                             painter: ArcChart(
-                                percentage: context
-                                                .watch<HomePageProvider>()
-                                                .mainPageBiometricData !=
-                                            null &&
-                                        context
-                                                .watch<HomePageProvider>()
-                                                .mainPageBiometricData!
-                                                .userBiometricData !=
+                                percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                        context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData !=
                                             null
                                     ? context
                                         .read<HomePageProvider>()
@@ -253,24 +216,14 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                             margin: const EdgeInsets.fromLTRB(0, 0, 0, 6),
                             child: const Text(
                               '뒤척임 횟수',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400),
+                              style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                             ),
                           ),
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 0, 0, 12),
                             child: Text(
-                              context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? '${context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnDetailData!.tossNTurnCnt}회'
                                   : "0회",
                               style: const TextStyle(
@@ -291,23 +244,14 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 6),
                                 child: const Text(
                                   '뒤척임 비율',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400),
+                                  style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                                 ),
                               ),
                               Container(
                                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 12),
                                 child: Text(
-                                  context
-                                                  .watch<HomePageProvider>()
-                                                  .mainPageBiometricData !=
-                                              null &&
-                                          context
-                                                  .watch<HomePageProvider>()
-                                                  .mainPageBiometricData!
-                                                  .userBiometricData !=
+                                  context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                          context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData !=
                                               null
                                       ? '${context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnDetailData!.tossNTurnPercent}%'
                                       : "0%",

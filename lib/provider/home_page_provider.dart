@@ -18,6 +18,12 @@ class HomePageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setMultiPageData(MainPageBiometricData mainPageBiometricData, BuildContext context) {
+    _mainPageBiometricData = mainPageBiometricData;
+    notifyListeners();
+    Navigator.pop(context);
+  }
+
   void setDateTime(DateTime value) {
     _today = value;
     notifyListeners();
@@ -27,11 +33,10 @@ class HomePageProvider extends ChangeNotifier {
     _serverDate = date;
     notifyListeners();
 
-    await Server().getMainPage(_serverDate).then((res) {
+    await Server().getMainPage(_serverDate, -1).then((res) {
       // print(res.data);
 
-      MainPageBiometricData mainPageBiometricData =
-          MainPageBiometricData.fromJson(res.data);
+      MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson(res.data);
 
       setMainPageData(mainPageBiometricData);
     }).catchError((err) => print(err));

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "638803687654",
+    "project_id": "drberry-1d767",
+    "storage_bucket": "drberry-1d767.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638803687654:android:af3c069367e2ece26ae327",
+        "android_client_info": {
+          "package_name": "com.example.drberry_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "638803687654-ls8ntbp8omn1euildt5a94c5t10t9si0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr56q3dmKOoks7VTIPvniO4KyoBDE8GRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "638803687654-ls8ntbp8omn1euildt5a94c5t10t9si0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "638803687654-i977lvs262cldcgnj56o98sp0ht5m8vd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.drberryApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

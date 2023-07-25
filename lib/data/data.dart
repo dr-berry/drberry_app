@@ -42,6 +42,7 @@ class MainPageBiometricData {
   NosingGraphX? nosingGraphX;
   NosingDetailData? nosingDetailData;
   List<NosingPartPercent>? nosingPartPercent;
+  bool? isMultipleData;
 
   MainPageBiometricData(
       {this.userBiometricData,
@@ -67,16 +68,17 @@ class MainPageBiometricData {
       this.nosingGraph,
       this.nosingGraphX,
       this.nosingDetailData,
-      this.nosingPartPercent});
+      this.nosingPartPercent,
+      this.isMultipleData});
 
   factory MainPageBiometricData.fromJson(Map<String, dynamic> json) {
     if (json["userBiometricData"] == null) {
       return MainPageBiometricData();
     }
-    print("-=-=-=-=-=-=-=-=-=-");
-    print(json['components'][6]['wakeupQualityDetailData']);
-    print(json['components'][5]['sleepPatternNeedDataNum']);
-    print("-=-=-=-=-=-=-=-=-=-");
+    // print("-=-=-=-=-=-=-=-=-=-");
+    // print(json['components'][6]['wakeupQualityDetailData']);
+    // print(json['components'][5]['sleepPatternNeedDataNum']);
+    // print("-=-=-=-=-=-=-=-=-=-");
 
     return MainPageBiometricData(
         userBiometricData: UserBiometricData.fromJson(
@@ -106,7 +108,8 @@ class MainPageBiometricData {
         nosingGraphX: NosingGraphX.fromJson(json['components'][9]['nosingGraphX']),
         nosingDetailData: NosingDetailData.fromJson(
             json['components'][9]['nosingDetailData'], json['components'][9]['nosingDetailPercent']),
-        nosingPartPercent: NosingPartPercent.fromJsonList(json['components'][9]['nosingPartPercent']));
+        nosingPartPercent: NosingPartPercent.fromJsonList(json['components'][9]['nosingPartPercent']),
+        isMultipleData: json['isMultipleData']);
   }
 
   @override
@@ -241,16 +244,18 @@ class SleepScoreRing {
 }
 
 class SleepSuming {
-  int date;
   int? lastScore;
   int thisScore;
   int sumScore;
 
-  SleepSuming({required this.date, this.lastScore, required this.sumScore, required this.thisScore});
+  SleepSuming({this.lastScore, required this.sumScore, required this.thisScore});
 
   factory SleepSuming.fromJson(Map<String, dynamic> json) {
     return SleepSuming(
-        date: json['date'], lastScore: json['lastScore'], thisScore: json['thisScore'], sumScore: json['sumScore']);
+      lastScore: json['lastScore'],
+      thisScore: json['thisScore'],
+      sumScore: json['sumScore'],
+    );
   }
 }
 
@@ -331,9 +336,9 @@ class SleepPatternNeedDataNum {
   static List<SleepPatternNeedDataNum> fromJsonList(List<dynamic> jsonList) {
     List<SleepPatternNeedDataNum> result = [];
 
-    print("-----");
-    print(jsonList);
-    print("-----");
+    // print("-----");
+    // print(jsonList);
+    // print("-----");
 
     for (Map<String, dynamic> element in jsonList) {
       result.add(SleepPatternNeedDataNum.fromJson(element));
@@ -395,7 +400,7 @@ class WakeupQualityDetailData {
 }
 
 class HeartRateGraph {
-  String heartRate;
+  int heartRate;
   String mesurementAt;
 
   HeartRateGraph({required this.heartRate, required this.mesurementAt});
@@ -449,7 +454,7 @@ class HeartRateGraphY {
 
 class HeartRateDetailData {
   int heartRateScore;
-  String avgHeartRate;
+  int avgHeartRate;
   String heartBeatRange;
 
   HeartRateDetailData({required this.heartBeatRange, required this.avgHeartRate, required this.heartRateScore});
@@ -716,4 +721,136 @@ class EnvSettings {
       isActive: json['isActive'],
     );
   }
+}
+
+class UserSleepDatas {
+  int ubdSeq;
+  String dateRange;
+  String date;
+
+  UserSleepDatas({
+    required this.ubdSeq,
+    required this.date,
+    required this.dateRange,
+  });
+
+  factory UserSleepDatas.fromJson(Map<String, dynamic> json) {
+    return UserSleepDatas(
+      ubdSeq: json['ubdSeq'],
+      date: json['date'],
+      dateRange: json['dateRange'],
+    );
+  }
+
+  static List<UserSleepDatas> fromJsonList(List<dynamic> jsonList) {
+    List<UserSleepDatas> result = [];
+
+    for (Map<String, dynamic> json in jsonList) {
+      result.add(UserSleepDatas.fromJson(json));
+    }
+
+    return result;
+  }
+}
+
+class HistoryGraph {
+  int avgScore;
+
+  HistoryGraph({required this.avgScore});
+
+  factory HistoryGraph.fromJson(Map<String, dynamic> json) {
+    return HistoryGraph(avgScore: json['avgScore']);
+  }
+
+  static List<HistoryGraph> fromJsonList(List<dynamic> jsonList) {
+    List<HistoryGraph> result = [];
+
+    for (var graph in jsonList) {
+      result.add(HistoryGraph.fromJson(graph));
+    }
+
+    return result;
+  }
+}
+
+class HistoryLabels {
+  String date;
+
+  HistoryLabels({required this.date});
+
+  factory HistoryLabels.fromJson(Map<String, dynamic> json) {
+    return HistoryLabels(date: json['date'].toString());
+  }
+
+  static List<HistoryLabels> fromJsonList(List<dynamic> jsonList) {
+    List<HistoryLabels> result = [];
+
+    for (var label in jsonList) {
+      result.add(HistoryLabels.fromJson(label));
+    }
+
+    return result;
+  }
+}
+
+class HistoryDetail {
+  int avgScore;
+  int maxScore;
+  String maxScoreDate;
+
+  HistoryDetail({
+    required this.avgScore,
+    required this.maxScore,
+    required this.maxScoreDate,
+  });
+
+  factory HistoryDetail.fromJson(Map<String, dynamic> json) {
+    return HistoryDetail(
+      avgScore: json['avgScore'],
+      maxScore: json['maxScore'],
+      maxScoreDate: json['maxScoreDate'],
+    );
+  }
+}
+
+class History {
+  List<HistoryGraph> graph;
+  List<HistoryLabels> labels;
+  HistoryDetail detail;
+
+  History({
+    required this.graph,
+    required this.labels,
+    required this.detail,
+  });
+
+  factory History.fromJson(Map<String, dynamic> json) {
+    return History(
+      graph: HistoryGraph.fromJsonList(json['graph']),
+      labels: HistoryLabels.fromJsonList(json['labels']),
+      detail: HistoryDetail.fromJson(json['detail']),
+    );
+  }
+
+  static List<History> fromJsonList(List<dynamic> jsonList) {
+    List<History> result = [];
+
+    for (var json in jsonList) {
+      result.add(History.fromJson(json));
+    }
+
+    return result;
+  }
+}
+
+class RequiredPermission {
+  final bool cameraPermission;
+  final bool bluetoothPermision;
+  final bool notificationPermission;
+
+  RequiredPermission({
+    required this.cameraPermission,
+    required this.bluetoothPermision,
+    required this.notificationPermission,
+  });
 }

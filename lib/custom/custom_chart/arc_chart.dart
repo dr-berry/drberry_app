@@ -53,22 +53,17 @@ class ArcChart extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     scoreState(percentage);
     Rect rect = Rect.fromCircle(
-        center: Offset(
-            max(size.width, size.height) / 2, max(size.width, size.height) / 2),
-        radius: size.width / 2);
+        center: Offset(max(size.width, size.height) / 2, max(size.width, size.height) / 2), radius: size.width / 2);
 
     Paint bgCircle = Paint()
       ..shader = LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: CustomColors.gradient(backgroundColor))
+              begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: CustomColors.gradient(backgroundColor))
           .createShader(rect)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    Offset center = Offset(
-        max(size.width, size.height) / 2, max(size.width, size.height) / 2);
+    Offset center = Offset(max(size.width, size.height) / 2, max(size.width, size.height) / 2);
     double radius = max(size.width / 2, size.height / 2);
 
     Paint fgCircle = Paint()
@@ -91,15 +86,14 @@ class ArcChart extends CustomPainter {
     double sweepAngle = 2 * pi * 0.6755;
     double startAngle = 2.58939;
 
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle,
-        sweepAngle, false, bgCircle);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, sweepAngle, false, bgCircle);
 
     if (percentage > 0) {
       double chartAngle = (2 * pi * 0.6755) * (percentage / 100);
-      print("=========");
-      print(percentage);
-      print(chartAngle);
-      print("=========");
+      // print("=========");
+      // print(percentage);
+      // print(chartAngle);
+      // print("=========");
 
       final path = Path()..arcTo(rect, startAngle, chartAngle, false);
 
@@ -118,16 +112,11 @@ class ArcChart extends CustomPainter {
     final scoreStateText = TextSpan(
         text: state,
         style: TextStyle(
-            fontSize: scoreStateTextSize,
-            color: scoreStateColor,
-            fontFamily: 'SF-Pro',
-            fontWeight: FontWeight.w600));
+            fontSize: scoreStateTextSize, color: scoreStateColor, fontFamily: 'SF-Pro', fontWeight: FontWeight.w600));
 
-    final percentagePainter =
-        TextPainter(text: percentageText, textDirection: TextDirection.ltr);
+    final percentagePainter = TextPainter(text: percentageText, textDirection: TextDirection.ltr);
 
-    final scoreStatePainter =
-        TextPainter(text: scoreStateText, textDirection: TextDirection.ltr);
+    final scoreStatePainter = TextPainter(text: scoreStateText, textDirection: TextDirection.ltr);
 
     percentagePainter.layout();
     scoreStatePainter.layout();
@@ -138,10 +127,8 @@ class ArcChart extends CustomPainter {
             max(size.width, size.height) / 2 - percentagePainter.height));
 
     if (percentage > 0) {
-      scoreStatePainter.paint(
-          canvas,
-          Offset(max(size.width, size.height) / 2 - scoreStatePainter.width / 2,
-              max(size.width, size.height) / 2 + 3));
+      scoreStatePainter.paint(canvas,
+          Offset(max(size.width, size.height) / 2 - scoreStatePainter.width / 2, max(size.width, size.height) / 2 + 3));
     }
 
     if (description != '') {
@@ -153,14 +140,11 @@ class ArcChart extends CustomPainter {
               color: CustomColors.systemBlack,
               fontWeight: FontWeight.w600));
 
-      final descriptionPainter =
-          TextPainter(text: descriptionText, textDirection: TextDirection.ltr);
+      final descriptionPainter = TextPainter(text: descriptionText, textDirection: TextDirection.ltr);
 
       descriptionPainter.layout();
       descriptionPainter.paint(
-          canvas,
-          Offset(size.width / 2 - descriptionPainter.width / 2,
-              size.height - descriptionPainter.height));
+          canvas, Offset(size.width / 2 - descriptionPainter.width / 2, size.height - descriptionPainter.height));
     }
   }
 

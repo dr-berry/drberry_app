@@ -12,21 +12,14 @@ class WaveLineChart extends CustomPainter {
   final List<HeartRateGraphX> labels;
   final HeartRateGraphY y;
 
-  WaveLineChart(
-      {required Size size,
-      required this.datas,
-      required this.labels,
-      required this.y}) {
+  WaveLineChart({required Size size, required this.datas, required this.labels, required this.y}) {
     _picture = _captureGraph(size);
   }
 
   Picture _captureGraph(Size size) {
     if (labels.isNotEmpty) {
       if (labels[labels.length - 1].number != "0") {
-        labels.insert(
-            labels.length,
-            HeartRateGraphX(
-                hour: labels[labels.length - 1].hour + 1, number: "0"));
+        labels.insert(labels.length, HeartRateGraphX(hour: labels[labels.length - 1].hour + 1, number: "0"));
       }
     }
 
@@ -64,17 +57,12 @@ class WaveLineChart extends CustomPainter {
         final stateSpan = TextSpan(
             text: maxY.toString(),
             style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Pretendard',
-                color: CustomColors.systemGrey2));
+                fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Pretendard', color: CustomColors.systemGrey2));
 
-        final statePainter =
-            TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
+        final statePainter = TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
 
         statePainter.layout(maxWidth: 48);
-        statePainter.paint(
-            canvas, Offset(0, (textStartY) - statePainter.height / 2));
+        statePainter.paint(canvas, Offset(0, (textStartY) - statePainter.height / 2));
       }
 
       textStartY += part;
@@ -99,13 +87,9 @@ class WaveLineChart extends CustomPainter {
     final stateSpan = TextSpan(
         text: minY.toString(),
         style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Pretendard',
-            color: CustomColors.systemGrey2));
+            fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Pretendard', color: CustomColors.systemGrey2));
 
-    final statePainter =
-        TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
+    final statePainter = TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
 
     statePainter.layout(maxWidth: 48);
     statePainter.paint(canvas, Offset(0, startY - statePainter.height / 2));
@@ -118,21 +102,17 @@ class WaveLineChart extends CustomPainter {
 
       for (var i = 0; i < labels.length; i++) {
         TextSpan xtexts = TextSpan(
-            text: labels[i].hour > 12
-                ? '오후${labels[i].hour - 12}'
-                : '오전${labels[i].hour}',
+            text: labels[i].hour > 12 ? '오후${labels[i].hour - 12}' : '오전${labels[i].hour}',
             style: const TextStyle(
                 color: CustomColors.secondaryBlack,
                 fontSize: 12,
                 fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w400));
 
-        final xtextPainter =
-            TextPainter(text: xtexts, textDirection: TextDirection.ltr);
+        final xtextPainter = TextPainter(text: xtexts, textDirection: TextDirection.ltr);
 
         xtextPainter.layout();
-        xtextPainter.paint(canvas,
-            Offset(startX - (xtextPainter.size.width / 2), xtextStartY));
+        xtextPainter.paint(canvas, Offset(startX - (xtextPainter.size.width / 2), xtextStartY));
 
         startX += p;
       }
@@ -141,10 +121,7 @@ class WaveLineChart extends CustomPainter {
         var diffEnd = 4 - int.parse(labels[labels.length - 2].number);
         for (var i = 0; i < diffEnd; i++) {
           datas.insert(
-              datas.length,
-              HeartRateGraph(
-                  heartRate: datas[datas.length - 1].heartRate,
-                  mesurementAt: "00:00"));
+              datas.length, HeartRateGraph(heartRate: datas[datas.length - 1].heartRate, mesurementAt: "00:00"));
         }
         labels[labels.length - 2].number = "4";
       }
@@ -152,21 +129,16 @@ class WaveLineChart extends CustomPainter {
       if (int.parse(labels[0].number) < 4) {
         var diffBegin = 4 - int.parse(labels[0].number);
         for (var i = 0; i < diffBegin; i++) {
-          datas.insert(
-              0,
-              HeartRateGraph(
-                  heartRate: datas[0].heartRate, mesurementAt: "00:00"));
+          datas.insert(0, HeartRateGraph(heartRate: datas[0].heartRate, mesurementAt: "00:00"));
         }
         labels[0].number = "4";
       }
 
-      var graphPart = (size.width - 38) / datas.length + 2;
+      var graphPart = (size.width - 38) / datas.length;
       var graphX = 38.0;
 
       for (var i = 0; i < datas.length; i++) {
-        var y = ((startY) *
-            (((maxY - minY) - (double.parse(datas[i].heartRate) - minY)) /
-                (maxY - minY)));
+        var y = ((startY) * (((maxY - minY) - (datas[i].heartRate - minY)) / (maxY - minY)));
 
         dataPoints.add(Offset(graphX, y));
 
@@ -178,8 +150,7 @@ class WaveLineChart extends CustomPainter {
                 colors: [CustomColors.lightGreen2, Color(0xFFEAF8E0)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter)
-            .createShader(Rect.fromPoints(
-                const Offset(0, 0), Offset(size.width, size.height)));
+            .createShader(Rect.fromPoints(const Offset(0, 0), Offset(size.width, size.height)));
 
       final path = Path();
       final fillPath = Path();

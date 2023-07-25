@@ -5,11 +5,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class Server {
   Dio dio = Dio(BaseOptions(
       // baseUrl: "http://localhost:3000",
-      baseUrl: "http://localhost:3000",
+      // baseUrl: "http://192.168.0.5:3000",
+      baseUrl: "http://api.greenberry.site:3000",
       connectTimeout: const Duration(milliseconds: 10000),
       receiveTimeout: const Duration(milliseconds: 10000)));
   Dio noneDio = Dio(BaseOptions(
-      baseUrl: "http://localhost:3000",
+      // baseUrl: "http://localhost:3000",
+      // baseUrl: "http://192.168.0.5:3000",
+      baseUrl: "http://api.greenberry.site:3000",
       connectTimeout: const Duration(milliseconds: 10000),
       receiveTimeout: const Duration(milliseconds: 10000)));
 
@@ -82,13 +85,19 @@ class Server {
         options: Options(headers: {"X-Refresh-Token": refreshToken, "X-Device-Token": deviceToken}));
   }
 
-  Future<Response> getMainPage(String today) async {
+  Future<Response> getMainPage(String today, int ubdSeq) async {
     String accessToken = "Bearer ${await getAccessToken()}";
 
     print(accessToken);
 
-    return await noneDio.get("/biometric/main",
-        options: Options(headers: {"Authorization": accessToken}), queryParameters: {"today": today});
+    return await noneDio.get(
+      "/biometric/main",
+      options: Options(headers: {"Authorization": accessToken}),
+      queryParameters: {
+        "today": today,
+        "ubdSeq": ubdSeq,
+      },
+    );
   }
 
   Future<Response> getCalendar(int month) async {
@@ -103,6 +112,7 @@ class Server {
 
   Future<Response> getUseDeviceData() async {
     String accessToken = "Bearer ${await getAccessToken()}";
+    print(accessToken);
 
     return await noneDio.get("/biometric/use_time", options: Options(headers: {"Authorization": accessToken}));
   }
@@ -154,7 +164,7 @@ class Server {
     String startDate,
     String endDate,
   ) async {
-    return noneDio.download(
+    return await noneDio.download(
       '/user/export/excel',
       downloadPath,
       options: Options(headers: {"Authorization": "Bearer ${await getAccessToken()}"}),
@@ -163,6 +173,32 @@ class Server {
           startDate,
           endDate,
         ]
+      },
+    );
+  }
+
+  Future<Response> getUserSleepList(String today) async {
+    return await noneDio.get('/biometric/main/multi',
+        options: Options(
+          headers: {
+            "Authorization": "Bearer ${await getAccessToken()}",
+          },
+        ),
+        queryParameters: {
+          "today": today,
+        });
+  }
+
+  Future<Response> getHistories(String today) async {
+    return await noneDio.get(
+      '/biometric/history',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        },
+      ),
+      queryParameters: {
+        "today": today,
       },
     );
   }

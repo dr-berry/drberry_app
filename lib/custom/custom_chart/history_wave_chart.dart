@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 class HistoryLineChart extends CustomPainter {
   final List<Offset> dataPoints = [];
 
-  final List<int> datas;
+  final List<HistoryGraph> datas;
   late Picture _picture;
-  final List<String> labels;
+  final List<HistoryLabels> labels;
 
   HistoryLineChart({required Size size, required this.datas, required this.labels}) {
     _picture = _captureGraph(size);
@@ -73,7 +73,7 @@ class HistoryLineChart extends CustomPainter {
 
       for (var i = 0; i < labels.length; i++) {
         TextSpan xtexts = TextSpan(
-            text: labels[i],
+            text: labels[i].date,
             style: const TextStyle(
                 color: CustomColors.secondaryBlack,
                 fontSize: 12,
@@ -98,7 +98,7 @@ class HistoryLineChart extends CustomPainter {
       var graphX = 44.0;
 
       for (var i = 0; i < datas.length; i++) {
-        var score = (100 - datas[i]) / 100;
+        var score = (100 - datas[i].avgScore) / 100;
         var y = (startY - 55) * score + 23;
 
         dataPoints.add(Offset(graphX, y));

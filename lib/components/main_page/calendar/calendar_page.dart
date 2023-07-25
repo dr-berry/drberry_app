@@ -60,6 +60,53 @@ class _CalendarPageState extends State<CalendarPage>
     return data;
   }
 
+  Future<void> getHistories() async {
+    final today = context.read<CalendarPageProvider>().selectedDate;
+
+    await server.getHistories(today).then((value) {
+      List<History> result = [];
+      List<History> weekResult = [];
+      List<History> monthResult = [];
+
+      result.add(History.fromJson(value.data['day']['sleepScore']));
+      result.add(History.fromJson(value.data['day']['sleepPattern']));
+      result.add(History.fromJson(value.data['day']['wake']));
+      result.add(History.fromJson(value.data['day']['heartBeat']));
+      result.add(History.fromJson(value.data['day']['snoring']));
+      result.add(History.fromJson(value.data['day']['toss']));
+
+      weekResult.add(History.fromJson(value.data['week']['sleepScore']));
+      weekResult.add(History.fromJson(value.data['week']['sleepPattern']));
+      weekResult.add(History.fromJson(value.data['week']['wake']));
+      weekResult.add(History.fromJson(value.data['week']['heartBeat']));
+      weekResult.add(History.fromJson(value.data['week']['snoring']));
+      weekResult.add(History.fromJson(value.data['week']['toss']));
+
+      monthResult.add(History.fromJson(value.data['month']['sleepScore']));
+      monthResult.add(History.fromJson(value.data['month']['sleepPattern']));
+      monthResult.add(History.fromJson(value.data['month']['wake']));
+      monthResult.add(History.fromJson(value.data['month']['heartBeat']));
+      monthResult.add(History.fromJson(value.data['month']['snoring']));
+      monthResult.add(History.fromJson(value.data['month']['toss']));
+
+      print("${result.toString()}, ${weekResult.toString()}, ${monthResult.toString()}");
+
+      if (result.isEmpty && weekResult.isEmpty && monthResult.isEmpty) {
+        context.read<CalendarPageProvider>().setHistoryList(null);
+        context.read<CalendarPageProvider>().setWeekHistoryList(null);
+        context.read<CalendarPageProvider>().setMonthHistoryList(null);
+      } else {
+        context.read<CalendarPageProvider>().setHistoryList(result);
+        context.read<CalendarPageProvider>().setWeekHistoryList(weekResult);
+        context.read<CalendarPageProvider>().setMonthHistoryList(monthResult);
+      }
+    }).catchError((err) {
+      context.read<CalendarPageProvider>().setHistoryList(null);
+      context.read<CalendarPageProvider>().setWeekHistoryList(null);
+      context.read<CalendarPageProvider>().setMonthHistoryList(null);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -72,6 +119,12 @@ class _CalendarPageState extends State<CalendarPage>
     _tabController = TabController(length: 6, vsync: this);
 
     _isCall = getCalendarData();
+
+    _segmentController.addListener(() {
+      if (_segmentController.value == 1) {
+        getHistories();
+      }
+    });
   }
 
   Future<List<Month>> getCalendarData() async {
@@ -165,30 +218,71 @@ class _CalendarPageState extends State<CalendarPage>
                         ),
                       );
                     } else {
-                      return TabBarView(
-                        controller: _tabController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          HistoryGraphPage(
-                            graphController: _graphController,
-                          ),
-                          HistoryGraphPage(
-                            graphController: _graphController,
-                          ),
-                          HistoryGraphPage(
-                            graphController: _graphController,
-                          ),
-                          HistoryGraphPage(
-                            graphController: _graphController,
-                          ),
-                          HistoryGraphPage(
-                            graphController: _graphController,
-                          ),
-                          HistoryGraphPage(
-                            graphController: _graphController,
-                          )
-                        ],
-                      );
+                      return context.watch<CalendarPageProvider>().historyList == null &&
+                              context.watch<CalendarPageProvider>().weekHistoryList == null &&
+                              context.watch<CalendarPageProvider>().monthHistoryList == null
+                          ? const Center(
+                              child: Text(
+                                '아직 데이터가 없습니다..',
+                                style: TextStyle(
+                                  fontFamily: "Pretendard",
+                                  fontSize: 15,
+                                  color: CustomColors.systemGrey2,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            )
+                          : context.watch<CalendarPageProvider>().historyList!.isEmpty &&
+                                  context.watch<CalendarPageProvider>().weekHistoryList!.isEmpty &&
+                                  context.watch<CalendarPageProvider>().monthHistoryList!.isEmpty
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: CustomColors.lightGreen2,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : TabBarView(
+                                  controller: _tabController,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  children: [
+                                    HistoryGraphPage(
+                                      weekHistory: context.watch<CalendarPageProvider>().weekHistoryList![0],
+                                      history: context.watch<CalendarPageProvider>().historyList![0],
+                                      monthHistory: context.watch<CalendarPageProvider>().monthHistoryList![0],
+                                      graphController: _graphController,
+                                    ),
+                                    HistoryGraphPage(
+                                      weekHistory: context.watch<CalendarPageProvider>().weekHistoryList![1],
+                                      history: context.watch<CalendarPageProvider>().historyList![1],
+                                      monthHistory: context.watch<CalendarPageProvider>().monthHistoryList![1],
+                                      graphController: _graphController,
+                                    ),
+                                    HistoryGraphPage(
+                                      weekHistory: context.watch<CalendarPageProvider>().weekHistoryList![2],
+                                      history: context.watch<CalendarPageProvider>().historyList![2],
+                                      monthHistory: context.watch<CalendarPageProvider>().monthHistoryList![2],
+                                      graphController: _graphController,
+                                    ),
+                                    HistoryGraphPage(
+                                      weekHistory: context.watch<CalendarPageProvider>().weekHistoryList![3],
+                                      history: context.watch<CalendarPageProvider>().historyList![3],
+                                      monthHistory: context.watch<CalendarPageProvider>().monthHistoryList![3],
+                                      graphController: _graphController,
+                                    ),
+                                    HistoryGraphPage(
+                                      weekHistory: context.watch<CalendarPageProvider>().weekHistoryList![4],
+                                      history: context.watch<CalendarPageProvider>().historyList![4],
+                                      monthHistory: context.watch<CalendarPageProvider>().monthHistoryList![4],
+                                      graphController: _graphController,
+                                    ),
+                                    HistoryGraphPage(
+                                      weekHistory: context.watch<CalendarPageProvider>().weekHistoryList![5],
+                                      history: context.watch<CalendarPageProvider>().historyList![5],
+                                      monthHistory: context.watch<CalendarPageProvider>().monthHistoryList![5],
+                                      graphController: _graphController,
+                                    )
+                                  ],
+                                );
                     }
                   },
                 ),

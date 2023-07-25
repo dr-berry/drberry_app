@@ -1,13 +1,25 @@
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/calendar/history_graph/graph_container.dart';
+import 'package:drberry_app/components/main_page/calendar/history_graph/weekly_graph_container.dart';
 import 'package:drberry_app/custom/custom_chart/arc_chart.dart';
 import 'package:drberry_app/custom/custom_chart/history_wave_chart.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../data/Data.dart';
+
 class HistoryGraphPage extends StatefulWidget {
   final ValueNotifier<int> graphController;
+  final History history;
+  final History weekHistory;
+  final History monthHistory;
 
-  const HistoryGraphPage({super.key, required this.graphController});
+  const HistoryGraphPage({
+    super.key,
+    required this.graphController,
+    required this.history,
+    required this.weekHistory,
+    required this.monthHistory,
+  });
 
   @override
   State<HistoryGraphPage> createState() => _HistoryGraphPageState();
@@ -97,13 +109,11 @@ class _HistoryGraphPageState extends State<HistoryGraphPage> {
                 builder: (context, value, child) {
                   switch (value) {
                     case 0:
-                      return const GraphContainer();
+                      return GraphContainer(history: widget.history);
                     case 1:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return WeeklyGraphContainer(weekHistory: widget.weekHistory);
                     case 2:
-                      return const GraphContainer();
+                      return GraphContainer(history: widget.monthHistory);
                     default:
                       return const SizedBox.expand(
                         child: Center(

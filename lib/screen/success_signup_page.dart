@@ -30,8 +30,7 @@ class _SuccessSignupPageState extends State<SuccessSignupPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(height: deviceHeight * 0.26),
-                      Image.asset("assets/WelcomeIcon.png",
-                          width: 135, height: 135),
+                      Image.asset("assets/WelcomeIcon.png", width: 135, height: 135),
                       const Text("반갑습니다!",
                           style: TextStyle(
                               fontFamily: "Pretendard",
@@ -60,25 +59,21 @@ class _SuccessSignupPageState extends State<SuccessSignupPage> {
                     style: ElevatedButton.styleFrom(
                         foregroundColor: CustomColors.lightGreen,
                         elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15))),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
                         backgroundColor: CustomColors.lightGreen2,
                         padding: const EdgeInsets.symmetric(vertical: 19)),
                     onPressed: () {
                       Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MainPage(),
-                          ),
-                          (route) => false);
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainPage(),
+                        ),
+                        (route) => false,
+                      );
                     },
                     child: const Text("홈으로",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: "Pretendard",
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500)),
+                            color: Colors.white, fontFamily: "Pretendard", fontSize: 17, fontWeight: FontWeight.w500)),
                   ))
             ],
           ),

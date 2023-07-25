@@ -23,22 +23,10 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
       List<Widget> widgets = [];
       List<String> sleepPattern = [];
       if (context.watch<HomePageProvider>().mainPageBiometricData != null &&
-          context
-                  .watch<HomePageProvider>()
-                  .mainPageBiometricData!
-                  .userBiometricData !=
-              null) {
-        final provider = context
-            .watch<HomePageProvider>()
-            .mainPageBiometricData!
-            .sleepPatternDetailData!;
+          context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null) {
+        final provider = context.watch<HomePageProvider>().mainPageBiometricData!.sleepPatternDetailData!;
 
-        sleepPattern = [
-          provider.wakeupPercent,
-          provider.remPercent,
-          provider.lightPercent,
-          provider.deepPercent
-        ];
+        sleepPattern = [provider.wakeupPercent, provider.remPercent, provider.lightPercent, provider.deepPercent];
       } else {
         sleepPattern = [
           "0",
@@ -50,7 +38,7 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
 
       var patterns = ["깸", "REM", "얕은", "깊은"];
 
-      print(sleepPattern);
+      // print(sleepPattern);s
 
       for (var i = 0; i < sleepPattern.length; i++) {
         var w = [];
@@ -59,10 +47,7 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
           w.add(
             Text(
               '${sleepPattern[i]}%',
-              style: const TextStyle(
-                  fontSize: 13,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w400),
+              style: const TextStyle(fontSize: 13, fontFamily: 'Pretendard', fontWeight: FontWeight.w400),
             ),
           );
           w.add(Container(
@@ -70,9 +55,7 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
             width: (deviceWidth - 219) / 4,
             height: 7,
             decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                 color: CustomColors.lightGreen),
           ));
         } else {
@@ -82,17 +65,12 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
                 width: (deviceWidth - 219) / 4,
                 height: 76 * (int.parse(sleepPattern[i]) / 35) + 7,
                 decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                     color: CustomColors.lightGreen),
                 child: Center(
                   child: Text(
                     '${sleepPattern[i]}%',
-                    style: const TextStyle(
-                        fontSize: 13,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w400),
+                    style: const TextStyle(fontSize: 13, fontFamily: 'Pretendard', fontWeight: FontWeight.w400),
                   ),
                 )),
           );
@@ -104,10 +82,7 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
             ...w,
             Text(
               patterns[i],
-              style: const TextStyle(
-                  fontSize: 13,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w400),
+              style: const TextStyle(fontSize: 13, fontFamily: 'Pretendard', fontWeight: FontWeight.w400),
             )
           ],
         ));
@@ -133,10 +108,8 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
                 children: [
                   TextButton(
                       style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith(
-                              (states) => EdgeInsets.zero),
-                          overlayColor:
-                              MaterialStateProperty.resolveWith((states) {
+                          padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+                          overlayColor: MaterialStateProperty.resolveWith((states) {
                             if (states.contains(MaterialState.pressed)) {
                               return Colors.transparent;
                             }
@@ -153,17 +126,12 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
                       )),
                   const Text(
                     '수면패턴',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500),
+                    style: TextStyle(fontFamily: 'Pretendard', fontSize: 17, fontWeight: FontWeight.w500),
                   ),
                   TextButton(
                       style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith(
-                              (states) => EdgeInsets.zero),
-                          overlayColor:
-                              MaterialStateProperty.resolveWith((states) {
+                          padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+                          overlayColor: MaterialStateProperty.resolveWith((states) {
                             if (states.contains(MaterialState.pressed)) {
                               return CustomColors.systemGrey5;
                             }
@@ -184,42 +152,19 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
               child: RepaintBoundary(
                 child: CustomPaint(
                     painter: PatternChart(
-                        serverData:
-                            context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                                    context
-                                            .watch<HomePageProvider>()
-                                            .mainPageBiometricData!
-                                            .userBiometricData !=
-                                        null
-                                ? context
-                                    .watch<HomePageProvider>()
-                                    .mainPageBiometricData!
-                                    .sleepPatternGraphData!
-                                : [],
+                        serverData: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                            ? context.watch<HomePageProvider>().mainPageBiometricData!.sleepPatternGraphData!
+                            : [],
                         size: Size(deviceWidth - 63, 220),
                         labels: context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                                context
-                                        .watch<HomePageProvider>()
-                                        .mainPageBiometricData!
-                                        .userBiometricData !=
-                                    null
-                            ? context
-                                .watch<HomePageProvider>()
-                                .mainPageBiometricData!
-                                .sleepPatternGraphX!
+                                context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                            ? context.watch<HomePageProvider>().mainPageBiometricData!.sleepPatternGraphX!
                             : [],
-                        sleepPatternNeedDataNum:
-                            context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                                    context
-                                            .watch<HomePageProvider>()
-                                            .mainPageBiometricData!
-                                            .userBiometricData !=
-                                        null
-                                ? context
-                                    .watch<HomePageProvider>()
-                                    .mainPageBiometricData!
-                                    .sleepPatternNeedDataNum!
-                                : []),
+                        sleepPatternNeedDataNum: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                            ? context.watch<HomePageProvider>().mainPageBiometricData!.sleepPatternNeedDataNum!
+                            : []),
                     size: Size(deviceWidth - 63, 220)),
               ),
             ),
@@ -236,10 +181,7 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
                   margin: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                   child: const Text(
                     '수면 패턴 점수',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400),
+                    style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                 )
               ],
@@ -253,15 +195,8 @@ class _SleepPatternWidgetState extends State<SleepPatternWidget> {
                     child: RepaintBoundary(
                       child: CustomPaint(
                           painter: ArcChart(
-                              percentage: context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? context
                                       .watch<HomePageProvider>()
                                       .mainPageBiometricData!

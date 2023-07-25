@@ -24,8 +24,7 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final RenderBox box =
-          _heartRateKey.currentContext?.findRenderObject() as RenderBox;
+      final RenderBox box = _heartRateKey.currentContext?.findRenderObject() as RenderBox;
       setState(() {
         height = box.size.height;
       });
@@ -52,10 +51,8 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                 children: [
                   TextButton(
                       style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith(
-                              (states) => EdgeInsets.zero),
-                          overlayColor:
-                              MaterialStateProperty.resolveWith((states) {
+                          padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+                          overlayColor: MaterialStateProperty.resolveWith((states) {
                             if (states.contains(MaterialState.pressed)) {
                               return Colors.transparent;
                             }
@@ -72,17 +69,12 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                       )),
                   const Text(
                     '심박수',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500),
+                    style: TextStyle(fontFamily: 'Pretendard', fontSize: 17, fontWeight: FontWeight.w500),
                   ),
                   TextButton(
                       style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith(
-                              (states) => EdgeInsets.zero),
-                          overlayColor:
-                              MaterialStateProperty.resolveWith((states) {
+                          padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+                          overlayColor: MaterialStateProperty.resolveWith((states) {
                             if (states.contains(MaterialState.pressed)) {
                               return CustomColors.systemGrey5;
                             }
@@ -104,48 +96,17 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                     child: CustomPaint(
                   painter: WaveLineChart(
                       size: Size(deviceWidth - 32 - (12 + 19), 180),
-                      datas: context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData !=
-                                  null &&
-                              context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData!
-                                      .userBiometricData !=
-                                  null
-                          ? context
-                              .read<HomePageProvider>()
-                              .mainPageBiometricData!
-                              .heartRateGraph!
+                      datas: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                              context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                          ? context.read<HomePageProvider>().mainPageBiometricData!.heartRateGraph!
                           : [],
-                      y: context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData !=
-                                  null &&
-                              context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData!
-                                      .userBiometricData !=
-                                  null
-                          ? context
-                              .read<HomePageProvider>()
-                              .mainPageBiometricData!
-                              .heartRateGraphY!
-                          : HeartRateGraphY(
-                              maxHeartRate: "0", minHeartRate: "0"),
-                      labels: context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData !=
-                                  null &&
-                              context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData!
-                                      .userBiometricData !=
-                                  null
-                          ? context
-                              .read<HomePageProvider>()
-                              .mainPageBiometricData!
-                              .heartRateGraphX!
+                      y: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                              context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                          ? context.read<HomePageProvider>().mainPageBiometricData!.heartRateGraphY!
+                          : HeartRateGraphY(maxHeartRate: "0", minHeartRate: "0"),
+                      labels: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                              context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                          ? context.read<HomePageProvider>().mainPageBiometricData!.heartRateGraphX!
                           : []),
                   size: Size(deviceWidth - 32 - (12 + 19), 180),
                 ))),
@@ -166,10 +127,7 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                       margin: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                       child: const Text(
                         '심박수 점수',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400),
+                        style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                       ),
                     ),
                     Container(
@@ -177,14 +135,8 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                         child: RepaintBoundary(
                           child: CustomPaint(
                               painter: ArcChart(
-                                  percentage: context
-                                                  .watch<HomePageProvider>()
-                                                  .mainPageBiometricData !=
-                                              null &&
-                                          context
-                                                  .watch<HomePageProvider>()
-                                                  .mainPageBiometricData!
-                                                  .userBiometricData !=
+                                  percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                          context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData !=
                                               null
                                       ? context
                                           .read<HomePageProvider>()
@@ -194,8 +146,7 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                                           .toDouble()
                                       : 0,
                                   strokeWidth: deviceWidth * 0.035),
-                              size:
-                                  Size(deviceWidth * 0.28, deviceWidth * 0.18)),
+                              size: Size(deviceWidth * 0.28, deviceWidth * 0.18)),
                         )),
                   ],
                 ),
@@ -213,10 +164,7 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                       margin: const EdgeInsets.fromLTRB(0, 0, 0, 6),
                       child: const Text(
                         '평균 심박수',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400),
+                        style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                       ),
                     ),
                     SizedBox(
@@ -228,16 +176,9 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 0, 0, 12),
                             child: Text(
-                              context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
-                                  ? "${double.parse(context.read<HomePageProvider>().mainPageBiometricData!.heartRateDetailData!.avgHeartRate).round()}bpm"
+                              context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                                  ? "${context.read<HomePageProvider>().mainPageBiometricData!.heartRateDetailData!.avgHeartRate}bpm"
                                   : "0bpm",
                               style: const TextStyle(
                                   fontFamily: 'Pretendard',
@@ -283,15 +224,8 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                     Container(
                       margin: const EdgeInsets.fromLTRB(0, 6, 0, 0),
                       child: Text(
-                          context
-                                          .watch<HomePageProvider>()
-                                          .mainPageBiometricData !=
-                                      null &&
-                                  context
-                                          .watch<HomePageProvider>()
-                                          .mainPageBiometricData!
-                                          .userBiometricData !=
-                                      null
+                          context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                  context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                               ? context
                                   .read<HomePageProvider>()
                                   .mainPageBiometricData!

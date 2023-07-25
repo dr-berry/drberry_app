@@ -54,13 +54,13 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _controller.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      server.getMainPage(DateFormat("yyyy-MM-dd").format(DateTime.now())).then((res) {
+      server.getMainPage(DateFormat("yyyy-MM-dd").format(DateTime.now()), -1).then((res) {
         // print(res.data);
 
         MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson(res.data);
 
         context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
-      }).catchError((err) => print(err));
+      });
     });
   }
 
@@ -82,7 +82,10 @@ class _HomePageState extends State<HomePage> {
                     controller: controller,
                     today: _today,
                   ),
-                  TodayShortData(defaultBoxDecoration: defaultBoxDecoration),
+                  TodayShortData(
+                    defaultBoxDecoration: defaultBoxDecoration,
+                    today: DateFormat('yyyy-MM-dd').format(_today),
+                  ),
                   SleepTimeData(defaultBoxDecoration: defaultBoxDecoration),
                   SevenDaysData(defaultBoxDecoration: defaultBoxDecoration),
                   WeeklyChangeData(defaultBoxDecoration: defaultBoxDecoration),
@@ -107,13 +110,32 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _today = val;
           });
-          await server.getMainPage(DateFormat("yyyy-MM-dd").format(val)).then((res) {
-            print(res.data);
+          await server.getMainPage(DateFormat("yyyy-MM-dd").format(val), -1).then((res) {
+            // print(res.data);
+            try {
+              MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson(res.data);
 
-            MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson(res.data);
+              context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
+            } catch (e) {
+              MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson({
+                "userBiometricData": null,
+                "components": [],
+                "isMultipleData": false,
+              });
+
+              context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
+              print(e);
+            }
+          }).catchError((err) {
+            MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson({
+              "userBiometricData": null,
+              "components": [],
+              "isMultipleData": false,
+            });
 
             context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
-          }).catchError((err) => print(err));
+            print(err);
+          });
         });
   }
 }

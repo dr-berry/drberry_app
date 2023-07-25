@@ -2,6 +2,8 @@ import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/provider/home_page_provider.dart';
+import 'package:drberry_app/screen/permission_page.dart';
+import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +16,7 @@ class MainPageHeader extends StatefulWidget {
   final BoardDateTimeController controller;
   final DateTime today;
 
-  const MainPageHeader(
-      {super.key, required this.controller, required this.today});
+  const MainPageHeader({super.key, required this.controller, required this.today});
 
   @override
   State<MainPageHeader> createState() => _MainPageHeaderState();
@@ -47,10 +48,7 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                 width: 50,
                 height: 50,
                 decoration: const BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.05),
-                      blurRadius: 11.9,
-                      offset: Offset(0, 0))
+                  BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 11.9, offset: Offset(0, 0))
                 ]),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -59,21 +57,14 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                       foregroundColor: CustomColors.systemWhite,
                       surfaceTintColor: CustomColors.systemWhite,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25))),
-                  onPressed: () async {
-                    await server.getMainPage("2023-05-30").then((res) {
-                      // print(res.data);
-
-                      MainPageBiometricData mainPageBiometricData =
-                          MainPageBiometricData.fromJson(res.data);
-
-                      print(mainPageBiometricData.toString());
-
-                      context
-                          .read<HomePageProvider>()
-                          .setMainPageData(mainPageBiometricData);
-                    });
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PermissionPage(),
+                      ),
+                    );
                   },
                   child: SvgPicture.asset(
                     'assets/moon.svg',
@@ -87,10 +78,7 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                 width: 50,
                 height: 50,
                 decoration: const BoxDecoration(boxShadow: [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.05),
-                      blurRadius: 11.9,
-                      offset: Offset(0, 0))
+                  BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 11.9, offset: Offset(0, 0))
                 ]),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -99,9 +87,15 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                       foregroundColor: CustomColors.systemWhite,
                       surfaceTintColor: CustomColors.systemWhite,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25))),
-                  onPressed: () {},
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WakeAlarmSettingPage(),
+                      ),
+                    );
+                  },
                   child: SvgPicture.asset(
                     'assets/sun.svg',
                     width: 29,
@@ -119,21 +113,17 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                 height: 28,
                 child: TextButton.icon(
                     style: ButtonStyle(
-                        padding: MaterialStateProperty.resolveWith(
-                            (states) => EdgeInsets.zero),
-                        overlayColor:
-                            MaterialStateProperty.resolveWith((states) {
+                        padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+                        overlayColor: MaterialStateProperty.resolveWith((states) {
                           if (states.contains(MaterialState.pressed)) {
                             return CustomColors.systemGrey5;
                           }
                           return null;
                         })),
                     onPressed: () async {
-                      widget.controller
-                          .open(DateTimePickerType.date, widget.today);
+                      widget.controller.open(DateTimePickerType.date, widget.today);
                     },
-                    icon: SvgPicture.asset('assets/calendar.svg',
-                        width: 19, height: 19),
+                    icon: SvgPicture.asset('assets/calendar.svg', width: 19, height: 19),
                     label: Text(
                       DateFormat("MM월 dd일 E요일", "ko_KR").format(widget.today),
                       style: const TextStyle(

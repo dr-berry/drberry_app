@@ -18,6 +18,7 @@ class _SleepPadPageState extends State<SleepPadPage> {
 
   Future<UseTime> getUseTime() async {
     final useTime = server.getUseDeviceData().then((value) {
+      print(value.data);
       return UseTime.fromJson(value.data);
     }).catchError((err) {
       return UseTime(totalDays: "", totalUseTime: "");
@@ -72,7 +73,10 @@ class _SleepPadPageState extends State<SleepPadPage> {
                               Text(
                                 "총 사용 일수",
                                 style: TextStyle(
-                                    fontSize: 15.sp, color: CustomColors.secondaryBlack, fontWeight: FontWeight.w400),
+                                  fontSize: 15.sp,
+                                  color: CustomColors.secondaryBlack,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                               SizedBox(
                                 height: 6.h,
@@ -120,7 +124,10 @@ class _SleepPadPageState extends State<SleepPadPage> {
                               Text(
                                 "총 사용 일수",
                                 style: TextStyle(
-                                    fontSize: 15.sp, color: CustomColors.secondaryBlack, fontWeight: FontWeight.w400),
+                                  fontSize: 15.sp,
+                                  color: CustomColors.secondaryBlack,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                               SizedBox(
                                 height: 6.h,
@@ -128,10 +135,11 @@ class _SleepPadPageState extends State<SleepPadPage> {
                               Text(
                                 snapshot.data!.totalDays,
                                 style: TextStyle(
-                                    fontSize: 24.sp,
-                                    fontFamily: "SF-Pro",
-                                    color: const Color(0xFFFC2E2E),
-                                    fontWeight: FontWeight.w600),
+                                  fontSize: 24.sp,
+                                  fontFamily: "SF-Pro",
+                                  color: const Color(0xFFFC2E2E),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               )
                             ],
                           ),

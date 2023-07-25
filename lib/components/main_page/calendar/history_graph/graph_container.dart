@@ -1,11 +1,14 @@
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/custom/custom_chart/arc_chart.dart';
 import 'package:drberry_app/custom/custom_chart/history_wave_chart.dart';
+import 'package:drberry_app/data/Data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GraphContainer extends StatefulWidget {
-  const GraphContainer({super.key});
+  final History history;
+
+  const GraphContainer({super.key, required this.history});
 
   @override
   State<GraphContainer> createState() => _GraphContainerState();
@@ -50,16 +53,8 @@ class _GraphContainerState extends State<GraphContainer> {
                       child: CustomPaint(
                         painter: HistoryLineChart(
                           size: Size((deviceWidth - 63), ((deviceWidth - 63) * 0.6606060606060606).h),
-                          datas: [60, 75, 82, 72, 80, 55, 90],
-                          labels: [
-                            "5/1",
-                            "5/2",
-                            "5/3",
-                            "5/4",
-                            "5/5",
-                            "5/6",
-                            "5/7",
-                          ],
+                          datas: widget.history.graph,
+                          labels: widget.history.labels,
                         ),
                         size: Size((deviceWidth - 63).w, ((deviceWidth - 63) * 0.6606060606060606).h),
                       ),
@@ -99,7 +94,9 @@ class _GraphContainerState extends State<GraphContainer> {
                                     margin: EdgeInsets.fromLTRB(10, 30.h, 0, 10.h),
                                     child: RepaintBoundary(
                                       child: CustomPaint(
-                                          painter: ArcChart(percentage: 83, strokeWidth: deviceWidth * 0.035),
+                                          painter: ArcChart(
+                                              percentage: widget.history.detail.avgScore.toDouble(),
+                                              strokeWidth: deviceWidth * 0.035),
                                           size: Size((deviceWidth * 0.28).w, (deviceWidth * 0.18).h)),
                                     )),
                               ],
@@ -134,7 +131,7 @@ class _GraphContainerState extends State<GraphContainer> {
                                       Container(
                                         margin: EdgeInsets.fromLTRB(0, 0, 0, 12.h),
                                         child: Text(
-                                          "82",
+                                          widget.history.detail.maxScore.toString(),
                                           style: TextStyle(
                                               fontFamily: 'Pretendard',
                                               fontSize: 28.sp,
@@ -158,7 +155,7 @@ class _GraphContainerState extends State<GraphContainer> {
                                         fontFamily: 'Pretendard')),
                                 Container(
                                   margin: EdgeInsets.fromLTRB(0, 6.h, 0, 0),
-                                  child: Text("5월 5일",
+                                  child: Text(widget.history.detail.maxScoreDate,
                                       style: TextStyle(
                                           color: CustomColors.secondaryBlack,
                                           fontSize: 15.sp,
