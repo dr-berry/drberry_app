@@ -74,9 +74,7 @@ class CircularChart extends CustomPainter {
     Offset center = Offset(size.width / 2, size.height / 2);
     double radius = min(size.width / 2, size.height / 2);
 
-    Rect rect = Rect.fromCircle(
-        center: Offset(size.width / 2, size.height / 2),
-        radius: size.width / 2);
+    Rect rect = Rect.fromCircle(center: Offset(size.width / 2, size.height / 2), radius: size.width / 2);
 
     double sweepAngle = 2 * pi * (percentage / 100);
 
@@ -93,39 +91,27 @@ class CircularChart extends CustomPainter {
     final percentageSpan = TextSpan(
         text: '${percentage.floor()}',
         style: TextStyle(
-            color: percentageColor,
-            fontSize: percentageTextSize,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'SF-Pro'));
+            color: percentageColor, fontSize: percentageTextSize, fontWeight: FontWeight.w700, fontFamily: 'SF-Pro'));
 
-    final percentagePainter =
-        TextPainter(text: percentageSpan, textDirection: TextDirection.ltr);
+    final percentagePainter = TextPainter(text: percentageSpan, textDirection: TextDirection.ltr);
 
     final scoreStateSpan = TextSpan(
         text: state,
         style: TextStyle(
-            color: scoreStateColor,
-            fontSize: scoreStateTextSize,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'SF-Pro'));
+            color: scoreStateColor, fontSize: scoreStateTextSize, fontWeight: FontWeight.w700, fontFamily: 'SF-Pro'));
 
-    final scoreStatePainter =
-        TextPainter(text: scoreStateSpan, textDirection: TextDirection.ltr);
+    final scoreStatePainter = TextPainter(text: scoreStateSpan, textDirection: TextDirection.ltr);
 
     percentagePainter.layout();
     scoreStatePainter.layout();
-    Offset textCenter = Offset((size.width / 2 - percentagePainter.width / 2),
-        (size.height / 2 - percentagePainter.height / 2 - 10));
-    Offset textCenterBottom = Offset(
-        (size.width / 2 - scoreStatePainter.width / 2),
-        size.height / 2 -
-            scoreStatePainter.height / 2 +
-            percentagePainter.height / 2);
+    Offset textCenter =
+        Offset((size.width / 2 - percentagePainter.width / 2), (size.height / 2 - percentagePainter.height / 2 - 10));
+    Offset textCenterBottom = Offset((size.width / 2 - scoreStatePainter.width / 2),
+        size.height / 2 - scoreStatePainter.height / 2 + percentagePainter.height / 2);
 
     canvas.drawCircle(center, radius, bgCircle);
 
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2,
-        sweepAngle, false, fgCircle);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2, sweepAngle, false, fgCircle);
 
     if (isScoreState) {
       percentagePainter.paint(canvas, textCenter);

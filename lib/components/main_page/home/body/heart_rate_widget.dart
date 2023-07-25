@@ -69,7 +69,11 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                       )),
                   const Text(
                     '심박수',
-                    style: TextStyle(fontFamily: 'Pretendard', fontSize: 17, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   TextButton(
                       style: ButtonStyle(

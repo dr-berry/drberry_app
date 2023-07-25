@@ -60,9 +60,14 @@ class TossChart extends CustomPainter {
         Offset(topicPainter.width / 2 - minTossPainter.width / 2, (size.height - 23) - minTossPainter.height / 2));
 
     final maxToss = TextSpan(
-        text: ((int.parse(tossNTurnGraphY.maxToss) / 10).ceil() * 10).toString(),
-        style: const TextStyle(
-            fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Pretendard', color: CustomColors.systemGrey2));
+      text: ((int.parse(tossNTurnGraphY.maxToss) / 10).ceil() * 10).toString(),
+      style: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        fontFamily: 'Pretendard',
+        color: CustomColors.systemGrey2,
+      ),
+    );
 
     final maxTossPainter = TextPainter(text: maxToss, textDirection: TextDirection.ltr);
 
@@ -78,14 +83,45 @@ class TossChart extends CustomPainter {
 
     for (var i = 0; i < tossNTurnGraph.length; i++) {
       TextSpan xtexts = TextSpan(
-          text: tossNTurnGraph[i].hour,
-          style: const TextStyle(
-              color: CustomColors.secondaryBlack, fontSize: 12, fontFamily: 'Pretendard', fontWeight: FontWeight.w400));
+        text: tossNTurnGraph[i].hour,
+        style: TextStyle(
+          color: CustomColors.secondaryBlack,
+          fontSize: (100 / tossNTurnGraph.length) > 12 ? 12 : (100 / tossNTurnGraph.length),
+          fontFamily: 'Pretendard',
+          fontWeight: FontWeight.w400,
+        ),
+      );
 
-      final xtextPainter = TextPainter(text: xtexts, textDirection: TextDirection.ltr);
+      final xtextPainter = TextPainter(
+        text: xtexts,
+        textDirection: TextDirection.ltr,
+      );
 
       xtextPainter.layout();
-      xtextPainter.paint(canvas, Offset(startX + p / 2 - (xtextPainter.width / 2), xtextStartY));
+      xtextPainter.layout();
+
+      if (tossNTurnGraph.length > 9) {
+        // text만 회전시키기 위해 canvas의 상태를 저장
+        canvas.save();
+
+        // text의 중심을 이동
+        canvas.translate(startX + p / 2, xtextStartY + xtextPainter.height / 2);
+
+        // text만 회전
+        canvas.rotate(-0.45);
+
+        // 이동한 text의 중심을 원래대로 복구
+        canvas.translate(-(startX + p / 2), -(xtextStartY + xtextPainter.height / 2));
+
+        xtextPainter.paint(
+            canvas, Offset(startX + p / 2 - (xtextPainter.width), xtextStartY - xtextPainter.height / 2));
+
+        // canvas의 상태를 복구하여 회전이 다른 요소에 영향을 주지 않게 함
+        canvas.restore();
+      } else {
+        xtextPainter.paint(
+            canvas, Offset(startX + p / 2 - (xtextPainter.width), xtextStartY - xtextPainter.height / 2));
+      }
 
       startX += p;
     }

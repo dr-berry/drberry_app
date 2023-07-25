@@ -101,6 +101,7 @@ class _CalendarPageState extends State<CalendarPage>
         context.read<CalendarPageProvider>().setMonthHistoryList(monthResult);
       }
     }).catchError((err) {
+      print(err);
       context.read<CalendarPageProvider>().setHistoryList(null);
       context.read<CalendarPageProvider>().setWeekHistoryList(null);
       context.read<CalendarPageProvider>().setMonthHistoryList(null);

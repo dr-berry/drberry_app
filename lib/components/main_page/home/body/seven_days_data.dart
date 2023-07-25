@@ -30,7 +30,11 @@ class _SevenDaysDataState extends State<SevenDaysData> {
                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 32),
                 child: const Text(
                   '최근 7일 수면 호전도',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "Pretendard",
+                  ),
                 ),
               ),
             ),
@@ -38,19 +42,9 @@ class _SevenDaysDataState extends State<SevenDaysData> {
                 child: RepaintBoundary(
               child: CustomPaint(
                   painter: DayLineChart(
-                      data: context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData !=
-                                  null &&
-                              context
-                                      .watch<HomePageProvider>()
-                                      .mainPageBiometricData!
-                                      .userBiometricData !=
-                                  null
-                          ? context
-                              .watch<HomePageProvider>()
-                              .mainPageBiometricData!
-                              .sevenWeekData!
+                      data: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                              context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                          ? context.watch<HomePageProvider>().mainPageBiometricData!.sevenWeekData!
                           : [
                               SevenWeekData(
                                   sleepScore: -1,
@@ -76,10 +70,7 @@ class _SevenDaysDataState extends State<SevenDaysData> {
                                   sleepScore: -1,
                                   date:
                                       "${DateTime.now().subtract(const Duration(days: 1)).month}/${DateTime.now().subtract(const Duration(days: 1)).day}"),
-                              SevenWeekData(
-                                  sleepScore: -1,
-                                  date:
-                                      "${DateTime.now().month}/${DateTime.now().day}")
+                              SevenWeekData(sleepScore: -1, date: "${DateTime.now().month}/${DateTime.now().day}")
                             ]),
                   size: Size(deviceWidth - 56, 215)),
             ))

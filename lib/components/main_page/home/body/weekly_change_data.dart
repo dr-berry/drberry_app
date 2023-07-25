@@ -156,53 +156,6 @@ class _WeeklyChangeDataState extends State<WeeklyChangeData> {
                 decoration: BoxDecoration(color: CustomColors.systemGrey7, borderRadius: BorderRadius.circular(10)),
                 padding: const EdgeInsets.fromLTRB(23, 22.5, 23, 22.5),
                 child: getMessage()),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    margin: const EdgeInsets.fromLTRB(0, 26, 0, 10),
-                    child: const Text('수면 호전 목표치',
-                        style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400))),
-                RichText(
-                    text: TextSpan(style: DefaultTextStyle.of(context).style, children: [
-                  TextSpan(
-                      text: context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                              context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
-                          ? '3'
-                          : "0",
-                      style: const TextStyle(
-                        fontFamily: 'SF-Pro',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 42,
-                      )),
-                  const TextSpan(
-                      text: '개월 ',
-                      style: TextStyle(
-                        fontFamily: 'SF-Pro',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                      )),
-                  TextSpan(
-                    text: context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                            context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
-                        ? context.watch<HomePageProvider>().mainPageBiometricData!.sleepSuming!.sumScore.toString()
-                        : "0",
-                    style: const TextStyle(
-                      fontFamily: 'SF-Pro',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 42,
-                    ),
-                  ),
-                  const TextSpan(
-                      text: '점',
-                      style: TextStyle(
-                        fontFamily: 'SF-Pro',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                      )),
-                ]))
-              ],
-            ),
           ],
         ),
       ),

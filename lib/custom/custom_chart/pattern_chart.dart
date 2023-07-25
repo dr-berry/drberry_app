@@ -13,10 +13,7 @@ class PatternChart extends CustomPainter {
   late Picture picture;
 
   PatternChart(
-      {required this.serverData,
-      required this.size,
-      required this.labels,
-      required this.sleepPatternNeedDataNum}) {
+      {required this.serverData, required this.size, required this.labels, required this.sleepPatternNeedDataNum}) {
     picture = _captureChart(size);
   }
 
@@ -36,13 +33,11 @@ class PatternChart extends CustomPainter {
         List<SleepPatternGraphData> list = List.from(serverData);
 
         for (var i = 0; i < sleepPatternNeedDataNum[0].cnt; i++) {
-          list.insert(
-              0, SleepPatternGraphData(sleepPattern: 0, measurementAt: ""));
+          list.insert(0, SleepPatternGraphData(sleepPattern: 0, measurementAt: ""));
         }
 
         for (var i = 0; i < sleepPatternNeedDataNum[1].cnt; i++) {
-          list.insert(list.length - 1,
-              SleepPatternGraphData(sleepPattern: 0, measurementAt: ""));
+          list.insert(list.length - 1, SleepPatternGraphData(sleepPattern: 0, measurementAt: ""));
         }
 
         // print(list.sublist(54, 60).length);
@@ -81,17 +76,12 @@ class PatternChart extends CustomPainter {
       final stateSpan = TextSpan(
           text: scoreState[i],
           style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Pretendard',
-              color: CustomColors.systemGrey2));
+              fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Pretendard', color: CustomColors.systemGrey2));
 
-      final statePainter =
-          TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
+      final statePainter = TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
 
       statePainter.layout(maxWidth: 48);
-      statePainter.paint(
-          canvas, Offset(0, (textStartY + part / 2) - statePainter.height / 2));
+      statePainter.paint(canvas, Offset(0, (textStartY + part / 2) - statePainter.height / 2));
 
       textStartY += part;
     }
@@ -134,26 +124,21 @@ class PatternChart extends CustomPainter {
           xtexts = TextSpan(
               text: '${labels[i].times} min',
               style: const TextStyle(
-                  color: CustomColors.secondaryBlack,
-                  fontSize: 12,
-                  fontFamily: 'SF-Pro',
-                  fontWeight: FontWeight.w400));
+                  color: CustomColors.secondaryBlack, fontSize: 12, fontFamily: 'SF-Pro', fontWeight: FontWeight.w400));
         } else {
           xtexts = TextSpan(
               text: labels[i].times,
-              style: const TextStyle(
+              style: TextStyle(
                   color: CustomColors.secondaryBlack,
-                  fontSize: 12,
+                  fontSize: (100 / labels.length) > 12 ? 12 : (100 / labels.length),
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w400));
         }
 
-        final xtextPainter =
-            TextPainter(text: xtexts, textDirection: TextDirection.ltr);
+        final xtextPainter = TextPainter(text: xtexts, textDirection: TextDirection.ltr);
 
         xtextPainter.layout();
-        xtextPainter.paint(canvas,
-            Offset(startX - (xtextPainter.size.width / 2), xtextStartY));
+        xtextPainter.paint(canvas, Offset(startX - (xtextPainter.size.width / 2), xtextStartY));
 
         // print(labels[i]);
         // print(startX - (xtextPainter.size.width / 2));
@@ -171,9 +156,8 @@ class PatternChart extends CustomPainter {
 
       for (var i = 0; i < data.length; i++) {
         for (var j = 0; j < data[i].length; j++) {
-          final barTop = data[i][j].sleepPattern * barHeight +
-              ((part - barHeight) / 2) +
-              (13 * data[i][j].sleepPattern);
+          final barTop =
+              data[i][j].sleepPattern * barHeight + ((part - barHeight) / 2) + (13 * data[i][j].sleepPattern);
           final barBottom = barTop + barHeight;
 
           // print("barTop : $barTop, barBottom: $barBottom");
@@ -193,8 +177,7 @@ class PatternChart extends CustomPainter {
               topLeft = const Radius.circular(5);
               bottomLeft = const Radius.circular(5);
             } else {
-              if (data[i - 1][data[i - 1].length - 1].sleepPattern ==
-                  data[i][j].sleepPattern) {
+              if (data[i - 1][data[i - 1].length - 1].sleepPattern == data[i][j].sleepPattern) {
                 topLeft = const Radius.circular(0);
                 bottomLeft = const Radius.circular(0);
               } else {
@@ -241,59 +224,36 @@ class PatternChart extends CustomPainter {
           }
 
           RRect rRect = RRect.fromRectAndCorners(rect,
-              topLeft: topLeft,
-              topRight: topRight,
-              bottomLeft: bottomLeft,
-              bottomRight: bottomRight);
+              topLeft: topLeft, topRight: topRight, bottomLeft: bottomLeft, bottomRight: bottomRight);
 
           barPath.addRRect(rRect);
 
           if (rightNumber != -1) {
-            double lineTop = (rightNumber * barHeight +
-                    ((part - barHeight) / 2) +
-                    (13 * rightNumber) +
-                    4)
-                .toDouble();
-            double lineBottom = ((rightNumber * barHeight +
-                        ((part - barHeight) / 2) +
-                        (13 * rightNumber)) +
-                    barHeight -
-                    4)
-                .toDouble();
+            double lineTop = (rightNumber * barHeight + ((part - barHeight) / 2) + (13 * rightNumber) + 4).toDouble();
+            double lineBottom =
+                ((rightNumber * barHeight + ((part - barHeight) / 2) + (13 * rightNumber)) + barHeight - 4).toDouble();
 
             Rect lineRect = Rect.fromPoints(
-                Offset(
-                    runningTotal + barWidth,
-                    rightNumber > data[i][j].sleepPattern
-                        ? barTop + 3.toDouble()
-                        : barBottom - 3.toDouble()),
-                Offset(
-                    (runningTotal + barWidth),
-                    rightNumber > data[i][j].sleepPattern
-                        ? lineBottom
-                        : lineTop));
+                Offset(runningTotal + barWidth,
+                    rightNumber > data[i][j].sleepPattern ? barTop + 3.toDouble() : barBottom - 3.toDouble()),
+                Offset((runningTotal + barWidth), rightNumber > data[i][j].sleepPattern ? lineBottom : lineTop));
 
             linePath.addRect(lineRect);
           }
           // 이 항목의 값을 누적 값에 더합니다.
           runningTotal += barWidth;
         }
-        Rect rect = Rect.fromPoints(
-            const Offset(0.0, 0.0), Offset(size.width, size.height));
+        Rect rect = Rect.fromPoints(const Offset(0.0, 0.0), Offset(size.width, size.height));
 
         final Paint barPaint = Paint()
           ..shader = LinearGradient(
-                  colors: CustomColors.gradient('GREEN'),
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter)
+                  colors: CustomColors.gradient('GREEN'), begin: Alignment.bottomCenter, end: Alignment.topCenter)
               .createShader(rect)
           ..strokeWidth = 2.0;
 
         final Paint linePaint = Paint()
           ..shader = LinearGradient(
-                  colors: CustomColors.gradient('GREEN'),
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter)
+                  colors: CustomColors.gradient('GREEN'), begin: Alignment.bottomCenter, end: Alignment.topCenter)
               .createShader(rect)
           ..strokeWidth = 2.0
           ..strokeCap = StrokeCap.round

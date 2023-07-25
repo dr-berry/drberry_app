@@ -55,9 +55,14 @@ class WaveLineChart extends CustomPainter {
     for (var i = 0; i < 4; i++) {
       if (i == 0) {
         final stateSpan = TextSpan(
-            text: maxY.toString(),
-            style: const TextStyle(
-                fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Pretendard', color: CustomColors.systemGrey2));
+          text: maxY.toString(),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            fontFamily: 'Pretendard',
+            color: CustomColors.systemGrey2,
+          ),
+        );
 
         final statePainter = TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
 
@@ -85,9 +90,14 @@ class WaveLineChart extends CustomPainter {
     }
 
     final stateSpan = TextSpan(
-        text: minY.toString(),
-        style: const TextStyle(
-            fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Pretendard', color: CustomColors.systemGrey2));
+      text: minY.toString(),
+      style: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        fontFamily: 'Pretendard',
+        color: CustomColors.systemGrey2,
+      ),
+    );
 
     final statePainter = TextPainter(text: stateSpan, textDirection: TextDirection.ltr);
 
@@ -103,9 +113,9 @@ class WaveLineChart extends CustomPainter {
       for (var i = 0; i < labels.length; i++) {
         TextSpan xtexts = TextSpan(
             text: labels[i].hour > 12 ? '오후${labels[i].hour - 12}' : '오전${labels[i].hour}',
-            style: const TextStyle(
+            style: TextStyle(
                 color: CustomColors.secondaryBlack,
-                fontSize: 12,
+                fontSize: (100 / labels.length) > 12 ? 12 : (100 / labels.length),
                 fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w400));
 

@@ -7,6 +7,7 @@ import 'package:drberry_app/screen/service_usage_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppSettingPage extends StatefulWidget {
   const AppSettingPage({super.key});
@@ -213,7 +214,12 @@ class _AppSettingPageState extends State<AppSettingPage> {
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
-                        onTap: () {},
+                        onTap: () async {
+                          const url = 'http://greenberry.kr';
+                          if (await canLaunchUrl(Uri.parse(url))) {
+                            await launchUrl(Uri.parse(url));
+                          }
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           width: deviceWidth - 32,

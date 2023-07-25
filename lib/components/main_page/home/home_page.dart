@@ -2,6 +2,7 @@ import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/home/body/heart_rate_widget.dart';
 import 'package:drberry_app/components/main_page/home/body/seven_days_data.dart';
+import 'package:drberry_app/components/main_page/home/body/sleep_better_widget.dart';
 import 'package:drberry_app/components/main_page/home/body/sleep_pattern_widget.dart';
 import 'package:drberry_app/components/main_page/home/body/sleep_score_ring_data.dart';
 import 'package:drberry_app/components/main_page/home/body/sleep_time_data.dart';
@@ -89,6 +90,7 @@ class _HomePageState extends State<HomePage> {
                   SleepTimeData(defaultBoxDecoration: defaultBoxDecoration),
                   SevenDaysData(defaultBoxDecoration: defaultBoxDecoration),
                   WeeklyChangeData(defaultBoxDecoration: defaultBoxDecoration),
+                  SleepBetterWidget(defaultBoxDecoration: defaultBoxDecoration),
                   SleepScoreRingData(defaultBoxDecoration: defaultBoxDecoration),
                   context.watch<HomePageProvider>().mainPageBiometricData != null &&
                           context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null &&

@@ -1,8 +1,6 @@
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/calendar/history_graph/graph_container.dart';
 import 'package:drberry_app/components/main_page/calendar/history_graph/weekly_graph_container.dart';
-import 'package:drberry_app/custom/custom_chart/arc_chart.dart';
-import 'package:drberry_app/custom/custom_chart/history_wave_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../data/Data.dart';
