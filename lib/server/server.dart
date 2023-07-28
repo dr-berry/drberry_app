@@ -202,4 +202,15 @@ class Server {
       },
     );
   }
+
+  Future<Response> signOut() async {
+    return await noneDio.delete(
+      '/auth/signout',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
 }

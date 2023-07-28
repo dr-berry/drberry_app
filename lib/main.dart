@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:alarm/alarm.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:drberry_app/screen/splash_page.dart';
+import 'package:drberry_app/screen/weke_alarm_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,13 +23,28 @@ import 'package:drberry_app/provider/sign_up_provider.dart';
 import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:drberry_app/screen/permission_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // await Firebase.initializeApp();
-  // await setupFlutterNotifications();
+  await Firebase.initializeApp();
+  await setupFlutterNotifications();
   print('Handling a background message: ${message.messageId}');
-  print("${message.notification?.title}");
+  VolumeController().setVolume(1);
+  var now = DateTime.now();
+  final alarmSettings = AlarmSettings(
+      id: 42,
+      dateTime: now,
+      assetAudioPath: 'assets/alarm-clock-going-off.mp3',
+      loopAudio: true,
+      fadeDuration: 5,
+      vibrate: true,
+      notificationTitle: 'This time to sleep',
+      notificationBody: '지금 잘시간이에요! 수면음원을 재생합니다!',
+      enableNotificationOnKill: true,
+      stopOnNotificationOpen: false);
+
+  await Alarm.set(alarmSettings: alarmSettings);
 
   // final file = await getAssetFile('assets/ocean waves.mp3');
   // final track = Track(trackPath: file.path);
@@ -52,51 +66,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // });
 }
 
-Future<File> getAssetFile(String assetPath) async {
-  // Load the asset as a byte array.
-  ByteData byteData = await rootBundle.load(assetPath);
-
-  // Get a temporary directory to store the file.
-  Directory tempDir = await getTemporaryDirectory();
-
-  // Generate a file path in the temporary directory.
-  String filePath = '${tempDir.path}/temp_asset.mp3';
-
-  // Write the byte data to the file.
-  await File(filePath).writeAsBytes(byteData.buffer.asUint8List());
-
-  // Return a File object for the file.
-  return File(filePath);
-}
-
-Future<void> playBackgroundAudio() async {
-  // print("실행은 함 ㅇㅇ");
-  print('실행함 ㅇㅅㅇ');
-  final file = await getAssetFile('assets/ocean waves.mp3');
-
-  await audioPlayer.startPlayer(fromURI: file.path);
-
-  double volume = 0.0;
-  Timer.periodic(const Duration(milliseconds: 500), (timer) {
-    volume += 0.1;
-    audioPlayer.setVolume(volume);
-
-    if (volume >= 0.3) {
-      timer.cancel();
-    }
-  });
-
-  Future.delayed(const Duration(minutes: 1), () {
-    stopBackgroundAudio();
-  });
-}
-
-void stopBackgroundAudio() async {
-  await audioPlayer.stopPlayer();
-  // await audioPlayer.closeAudioSession();
-}
-
-final audioPlayer = FlutterSoundPlayer(logLevel: Level.nothing);
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 bool isFlutterLocalNotificationsInitialized = false;
 AndroidNotificationChannel? channel;
@@ -171,6 +140,8 @@ void showFlutterNotification(RemoteMessage message) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Alarm.init(showDebugLogs: true);
+  await Alarm.setNotificationOnAppKillContent("앱을 끄면 수면 음원 재생이 안되요! ㅠㅠ", "수면/기상 음원을 듣고싶다면 앱을 켜주세요!");
   final prefs = await SharedPreferences.getInstance();
   await Firebase.initializeApp();
   // await setupFlutterNotifications();
@@ -196,6 +167,14 @@ void main() async {
   final cameraStatus = await Permission.camera.status;
   final bluetoothStatus = await Permission.bluetooth.status;
 
+  var isRinging = false;
+
+  Alarm.getAlarms().forEach((element) async {
+    isRinging = await Alarm.isRinging(element.id);
+  });
+
+  print(isRinging);
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => SignUpProvider()),
@@ -204,11 +183,13 @@ void main() async {
       ChangeNotifierProvider(create: (_) => CalendarPageProvider())
     ],
     child: MyApp(
-      initialRoute: accessToken != null && refreshToken != null && expiredAt != null
-          ? "/home"
-          : cameraStatus.isGranted && bluetoothStatus.isGranted
-              ? "/login"
-              : "/permission",
+      initialRoute: isRinging
+          ? "/wake_alarm_page"
+          : accessToken != null && refreshToken != null && expiredAt != null
+              ? "/home"
+              : cameraStatus.isGranted && bluetoothStatus.isGranted
+                  ? "/login"
+                  : "/permission",
     ),
   ));
 }
@@ -222,16 +203,53 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  late List<AlarmSettings> alarms;
+
+  static StreamSubscription? streamSubscription;
+  var logger = Logger(printer: PrettyPrinter());
+
+  void loadAlarms() {
+    setState(() {
+      alarms = Alarm.getAlarms();
+      alarms.sort((a, b) => a.dateTime.isBefore(b.dateTime) ? 0 : 1);
+    });
+  }
+
+  Future<void> navigateToRingScreen(AlarmSettings alarmSettings) async {
+    print('알람이 울렸다!');
+    final pref = await SharedPreferences.getInstance();
+    // VolumeController().setVolume(1);
+    if (navigatorKey.currentState != null) {
+      await navigatorKey.currentState!.pushNamed("/wake_alarm_page", arguments: alarmSettings);
+    }
+    loadAlarms();
+  }
+
   @override
   void initState() {
     super.initState();
     print("init state");
+    WidgetsBinding.instance.addObserver(this);
+    loadAlarms();
+    print('알람설정중');
+    streamSubscription ??= Alarm.ringStream.stream.listen((alarmSettings) => navigateToRingScreen(alarmSettings));
     FirebaseMessaging.onMessage.listen((message) async {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
+      var now = DateTime.now();
+      final alarmSettings = AlarmSettings(
+          id: 42,
+          dateTime: now,
+          assetAudioPath: 'assets/alarm-clock-going-off.mp3',
+          loopAudio: true,
+          fadeDuration: 5,
+          vibrate: true,
+          notificationTitle: 'This time to sleep',
+          notificationBody: '지금 잘시간이에요! 수면음원을 재생합니다!',
+          enableNotificationOnKill: true,
+          stopOnNotificationOpen: false);
 
-      await playBackgroundAudio();
+      await Alarm.set(alarmSettings: alarmSettings);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
@@ -243,17 +261,33 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       initialRoute: widget.initialRoute,
-      routes: {
-        "/login": (context) => const SplashPage(),
-        "/home": (context) => const MainPage(),
-        "/permission": (context) => const PermissionPage(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/login':
+            return MaterialPageRoute(builder: (context) => const SplashPage());
+          case '/home':
+            return MaterialPageRoute(builder: (context) => const MainPage());
+          case '/permission':
+            return MaterialPageRoute(builder: (context) => const PermissionPage());
+          case "/wake_alarm_page":
+            return MaterialPageRoute(
+                builder: (context) => WakeAlarmPage(alarmSettings: settings.arguments! as AlarmSettings));
+        }
+        return MaterialPageRoute(builder: (context) => const SplashPage());
       },
+      // routes: {
+      //   "/login": (context) => const SplashPage(),
+      //   "/home": (context) => const MainPage(),
+      //   "/permission": (context) => const PermissionPage(),
+      //   "/wake_alarm_page":
+      // },
     );
   }
 }

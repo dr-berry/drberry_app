@@ -1,16 +1,12 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/permission_again_request.dart';
 import 'package:drberry_app/screen/splash_page.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class PermissionPage extends StatefulWidget {
   const PermissionPage({super.key});
@@ -24,7 +20,7 @@ class _PermissionPageState extends State<PermissionPage> {
     final cameraState = await Permission.camera.request();
     final bluetoothState = await Permission.bluetooth.request();
     // final setting = await FirebaseMessaging.instance.requestPermission();
-    setupFlutterNotifications();
+    await setupFlutterNotifications();
     if (cameraState.isDenied ||
         bluetoothState.isDenied ||
         bluetoothState.isPermanentlyDenied ||

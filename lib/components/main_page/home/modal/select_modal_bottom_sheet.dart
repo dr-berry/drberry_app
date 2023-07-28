@@ -23,8 +23,9 @@ class _SelectModalBottomSheetState extends State<SelectModalBottomSheet> {
 
   Future<List<UserSleepDatas>> getSleepDatas() async {
     return server.getUserSleepList(widget.selectDate).then((res) {
+      print(res);
       return UserSleepDatas.fromJsonList(res.data);
-    });
+    }).catchError((err) => print(err));
   }
 
   @override

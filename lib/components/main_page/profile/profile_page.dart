@@ -1,10 +1,12 @@
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/data.dart';
+import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/account_management_page.dart';
 import 'package:drberry_app/screen/app_setting_page.dart';
 import 'package:drberry_app/screen/sleep_data_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -17,6 +19,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Server server = Server();
   Future<ProfileTabData>? _userData;
+  final storage = const FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock));
 
   Future<ProfileTabData> getUserData() async {
     final result = server.getProfileTabData().then((value) => ProfileTabData.fromJson(value.data));
@@ -450,7 +455,30 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 2),
                       foregroundColor: CustomColors.systemGrey2),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await server.signOut().then((value) async {
+                      await storage.deleteAll();
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyApp(initialRoute: '/login'),
+                        ),
+                        (route) => false,
+                      );
+                    }).catchError((err) async {
+                      print(err);
+                      // await storage.deleteAll();
+                      // // ignore: use_build_context_synchronously
+                      // Navigator.pushAndRemoveUntil(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const MyApp(initialRoute: '/login'),
+                      //   ),
+                      //   (route) => false,
+                      // );
+                    });
+                  },
                   child: Container(
                     decoration: const BoxDecoration(
                       border: Border(

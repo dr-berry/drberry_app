@@ -15,6 +15,7 @@ import 'package:drberry_app/components/main_page/home/body/weekly_change_data.da
 import 'package:drberry_app/components/main_page/home/header/main_page_header.dart';
 import 'package:drberry_app/custom/custom_chart/categority/categority_widget.dart';
 import 'package:drberry_app/provider/home_page_provider.dart';
+import 'package:drberry_app/provider/main_page_provider.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _controller.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      server.getMainPage(DateFormat("yyyy-MM-dd").format(DateTime.now()), -1).then((res) {
+      server.getMainPage(DateFormat("yyyy-MM-dd").format(context.read<MainPageProvider>().savedToday), -1).then((res) {
         // print(res.data);
 
         MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson(res.data);
@@ -70,74 +71,41 @@ class _HomePageState extends State<HomePage> {
     final defaultBoxDecoration =
         BoxDecoration(color: CustomColors.systemWhite, borderRadius: BorderRadius.circular(15));
 
-    return BoardDateTimeBuilder(
-        controller: controller,
-        pickerType: DateTimePickerType.date,
-        options: BoardDateTimeOptions(backgroundColor: CustomColors.systemGrey6, activeColor: CustomColors.lightGreen2),
-        builder: (context) {
-          return SingleChildScrollView(
-              controller: _controller,
-              child: Column(
-                children: [
-                  MainPageHeader(
-                    controller: controller,
-                    today: _today,
-                  ),
-                  TodayShortData(
-                    defaultBoxDecoration: defaultBoxDecoration,
-                    today: DateFormat('yyyy-MM-dd').format(_today),
-                  ),
-                  SleepTimeData(defaultBoxDecoration: defaultBoxDecoration),
-                  SevenDaysData(defaultBoxDecoration: defaultBoxDecoration),
-                  WeeklyChangeData(defaultBoxDecoration: defaultBoxDecoration),
-                  SleepBetterWidget(defaultBoxDecoration: defaultBoxDecoration),
-                  SleepScoreRingData(defaultBoxDecoration: defaultBoxDecoration),
-                  context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                          context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null &&
-                          context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!.lastDayScore != null
-                      ? TodayEventData(defaultBoxDecoration: defaultBoxDecoration)
-                      : Container(),
-                  SleepPatternWidget(defaultBoxDecoration: defaultBoxDecoration),
-                  WakeupQualityWidget(defaultBoxDecoration: defaultBoxDecoration),
-                  HeartRateWidget(defaultBoxDecoration: defaultBoxDecoration),
-                  TossNTurnWidget(defaultBoxDecoration: defaultBoxDecoration),
-                  SnoringWidget(
-                    defaultBoxDecoration: defaultBoxDecoration,
-                    snoringKey: _snoringKey,
-                  ),
-                ],
-              ));
-        },
-        onChange: (val) async {
-          setState(() {
-            _today = val;
-          });
-          await server.getMainPage(DateFormat("yyyy-MM-dd").format(val), -1).then((res) {
-            // print(res.data);
-            try {
-              MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson(res.data);
-
-              context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
-            } catch (e) {
-              MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson({
-                "userBiometricData": null,
-                "components": [],
-                "isMultipleData": false,
-              });
-
-              context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
-              print(e);
-            }
-          }).catchError((err) {
-            MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson({
-              "userBiometricData": null,
-              "components": [],
-              "isMultipleData": false,
-            });
-
-            context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
-            print(err);
-          });
-        });
+    return SingleChildScrollView(
+      controller: _controller,
+      child: Column(
+        children: [
+          MainPageHeader(
+            controller: controller,
+            today: context.watch<HomePageProvider>().today,
+            setToday: (val) => setState(() {
+              _today = val;
+            }),
+          ),
+          TodayShortData(
+            defaultBoxDecoration: defaultBoxDecoration,
+            today: DateFormat('yyyy-MM-dd').format(_today),
+          ),
+          SleepTimeData(defaultBoxDecoration: defaultBoxDecoration),
+          SevenDaysData(defaultBoxDecoration: defaultBoxDecoration),
+          WeeklyChangeData(defaultBoxDecoration: defaultBoxDecoration),
+          SleepBetterWidget(defaultBoxDecoration: defaultBoxDecoration),
+          SleepScoreRingData(defaultBoxDecoration: defaultBoxDecoration),
+          context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                  context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null &&
+                  context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!.lastDayScore != null
+              ? TodayEventData(defaultBoxDecoration: defaultBoxDecoration)
+              : Container(),
+          SleepPatternWidget(defaultBoxDecoration: defaultBoxDecoration),
+          WakeupQualityWidget(defaultBoxDecoration: defaultBoxDecoration),
+          HeartRateWidget(defaultBoxDecoration: defaultBoxDecoration),
+          TossNTurnWidget(defaultBoxDecoration: defaultBoxDecoration),
+          SnoringWidget(
+            defaultBoxDecoration: defaultBoxDecoration,
+            snoringKey: _snoringKey,
+          ),
+        ],
+      ),
+    );
   }
 }

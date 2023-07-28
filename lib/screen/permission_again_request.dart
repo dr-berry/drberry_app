@@ -44,19 +44,59 @@ class _PermissionAgainRequestPageState extends State<PermissionAgainRequestPage>
                 ),
               ),
               onPressed: () async {
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
                 await openAppSettings();
-                if (Platform.isAndroid) {
+                if (widget.permission.notificationPermission) {
+                  final notificationGrant = await Permission.notification.isGranted;
+                  print(notificationGrant);
+
+                  if (notificationGrant) {
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    showPlatformDialog(
+                      context: context,
+                      builder: (context) => BasicDialogAlert(
+                        title: const Text(
+                          '권한 설정 미완료',
+                          style: TextStyle(fontFamily: "Pretendard"),
+                        ),
+                        content: const Text(
+                          '앱의 권한설정이 완료되지 않았어요. 다시 시도해주세요',
+                          style: TextStyle(fontFamily: "Pretnedard"),
+                        ),
+                        actions: [
+                          BasicDialogAction(
+                            title: const Text(
+                              '확인',
+                              style: TextStyle(
+                                fontFamily: "Pretendard",
+                                color: CustomColors.blue,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                } else {
                   final cameraGrant = await Permission.camera.isGranted;
                   final bleGrant = await Permission.bluetooth.isGranted;
 
                   if (cameraGrant && bleGrant) {
                     // ignore: use_build_context_synchronously
                     Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SplashPage(),
-                        ),
-                        (route) => false);
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SplashPage(),
+                      ),
+                      (route) => false,
+                    );
                   } else {
                     // ignore: use_build_context_synchronously
                     showPlatformDialog(
@@ -88,8 +128,6 @@ class _PermissionAgainRequestPageState extends State<PermissionAgainRequestPage>
                     );
                   }
                 }
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
               },
             )
           ],
@@ -102,15 +140,11 @@ class _PermissionAgainRequestPageState extends State<PermissionAgainRequestPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.systemWhite,
-      appBar: AppBar(
-        toolbarHeight: 0,
-        backgroundColor: CustomColors.systemWhite,
-      ),
-      body: SafeArea(
-        child: ScreenUtilInit(
-          designSize: const Size(393, 852),
-          builder: (context, child) {
-            return Stack(
+      body: ScreenUtilInit(
+        designSize: const Size(393, 852),
+        builder: (context, child) {
+          return SafeArea(
+            child: Stack(
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -222,12 +256,16 @@ class _PermissionAgainRequestPageState extends State<PermissionAgainRequestPage>
                                       ),
                                     ),
                                   ),
-                                  SvgPicture.asset('assets/bell.fill.svg'),
+                                  SvgPicture.asset(
+                                    'assets/bell.fill.svg',
+                                    width: 45.w,
+                                    height: 45.w,
+                                  ),
                                 ],
                               ),
                               SizedBox(height: 36.h),
                               Text(
-                                '알림을 허용하지 않으면 알람을\n받으실 수 없어요\n앱 설정에서 광고성 알림은 차단할 수 있어요',
+                                '알림을 허용하지 않으면 알람을\n받으실 수 없어요',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: "Pretendard",
@@ -281,23 +319,29 @@ class _PermissionAgainRequestPageState extends State<PermissionAgainRequestPage>
                         right: 20,
                         child: SafeArea(
                           child: Material(
-                            color: CustomColors.lightGreen2,
+                            color: CustomColors.systemWhite,
                             borderRadius: BorderRadius.circular(13),
                             child: InkWell(
                               borderRadius: BorderRadius.circular(13),
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
                               child: Container(
                                 height: 60,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(13),
+                                  border: Border.all(
+                                    color: CustomColors.lightGreen2,
+                                    width: 1.5,
+                                  ),
                                 ),
                                 child: const Text(
                                   '나중에',
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 17,
-                                    color: CustomColors.systemWhite,
+                                    color: CustomColors.lightGreen2,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -308,9 +352,9 @@ class _PermissionAgainRequestPageState extends State<PermissionAgainRequestPage>
                       )
                     : Container(),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
