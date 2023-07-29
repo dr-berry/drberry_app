@@ -7,6 +7,7 @@ import 'package:drberry_app/screen/service_usage_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppSettingPage extends StatefulWidget {
@@ -18,10 +19,21 @@ class AppSettingPage extends StatefulWidget {
 
 class _AppSettingPageState extends State<AppSettingPage> {
   final server = Server();
+  String _appVersion = "0.0.0";
+
+  void getVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    setState(() {
+      _appVersion = packageInfo.version;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+
+    getVersion();
   }
 
   @override
@@ -256,12 +268,12 @@ class _AppSettingPageState extends State<AppSettingPage> {
             ),
             Container(
               padding: const EdgeInsets.only(right: 20, top: 9),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    '앱 버전 1.0',
-                    style: TextStyle(
+                    '앱 버전 $_appVersion',
+                    style: const TextStyle(
                       fontFamily: "Pretendard",
                       fontSize: 13,
                       color: Color(0xFF8E8E93),
