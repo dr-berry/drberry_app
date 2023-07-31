@@ -31,6 +31,21 @@ class BetterScoreChart extends CustomPainter {
         ).createShader(fg);
       RRect forground = RRect.fromRectAndRadius(fg, const Radius.circular(6));
 
+      final paint = Paint()..color = Colors.black;
+
+      canvas.save();
+      canvas.translate(size.width * (score / maxScore) - (11 / 2), size.height / 2 + 8);
+
+      final path = Path();
+      path.moveTo(11 / 2, 0);
+      path.lineTo(0, 6);
+      path.lineTo(11, 6);
+      path.close();
+
+      canvas.drawPath(path, paint);
+
+      canvas.restore();
+
       canvas.drawRRect(forground, forgroundPaint);
       TextSpan thisScoreText = TextSpan(
         text: '$score점',
@@ -49,8 +64,8 @@ class BetterScoreChart extends CustomPainter {
 
       thisScorePainter.layout();
 
-      final thisScoreOffset =
-          Offset(size.width * (score / maxScore) - (thisScorePainter.width / 2), size.height - thisScorePainter.height);
+      final thisScoreOffset = Offset(
+          size.width * (score / maxScore) - (thisScorePainter.width / 2), size.height - thisScorePainter.height / 2);
       thisScorePainter.paint(canvas, thisScoreOffset);
 
       TextSpan maxScoreText = TextSpan(

@@ -173,48 +173,18 @@ class _SnoringWidgetState extends State<SnoringWidget> {
               children: [
                 Container(
                   margin: const EdgeInsets.fromLTRB(0, 0, 0, 39),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: const Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
-                              overlayColor: MaterialStateProperty.resolveWith((states) {
-                                if (states.contains(MaterialState.pressed)) {
-                                  return Colors.transparent;
-                                }
-                                return null;
-                              })),
-                          onPressed: () {},
-                          child: const Text(
-                            '더보기 >',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.transparent),
-                          )),
-                      const Text(
+                      Text(
                         '코골이',
-                        style: TextStyle(fontFamily: 'Pretendard', fontSize: 17, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      TextButton(
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
-                              overlayColor: MaterialStateProperty.resolveWith((states) {
-                                if (states.contains(MaterialState.pressed)) {
-                                  return CustomColors.systemGrey5;
-                                }
-                                return null;
-                              })),
-                          onPressed: () {},
-                          child: const Text('더보기 >',
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  color: CustomColors.systemGrey2))),
                     ],
                   ),
                 ),
@@ -302,10 +272,11 @@ class _SnoringWidgetState extends State<SnoringWidget> {
                                         ? '${context.read<HomePageProvider>().mainPageBiometricData!.nosingDetailData!.snoringPercent}%'
                                         : "0%",
                                     style: TextStyle(
-                                        fontFamily: 'SF-Pro',
-                                        fontSize: 28.sp,
-                                        fontWeight: FontWeight.w700,
-                                        color: CustomColors.lightGreen2),
+                                      fontFamily: 'SF-Pro',
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: CustomColors.lightGreen2,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -339,8 +310,8 @@ class _SnoringWidgetState extends State<SnoringWidget> {
                                             : "0dB",
                                         style: TextStyle(
                                             fontFamily: 'SF-Pro',
-                                            fontSize: 28.sp,
-                                            fontWeight: FontWeight.w700,
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.w500,
                                             color: CustomColors.lightGreen2),
                                       ),
                                     ),
@@ -380,8 +351,8 @@ class _SnoringWidgetState extends State<SnoringWidget> {
                                         : "0dB",
                                     style: const TextStyle(
                                         fontFamily: 'SF-Pro',
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w700,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
                                         color: CustomColors.lightGreen2),
                                   ),
                                 ),

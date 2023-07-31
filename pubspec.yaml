@@ -32,7 +32,6 @@ dependencies:
     git:
       url: https://github.com/yoct1994/alarm.git
       ref: main
-  audioplayers: ^0.18.3
   board_datetime_picker: ^1.0.2
   build_runner: ^2.4.5
   container_tab_indicator: ^0.3.0
@@ -157,6 +156,7 @@ flutter:
     - assets/alarm-clock-going-off.mp3
     - assets/wake_alarm_background.svg
     - assets/digital_alarm.jpg
+    - assets/sleep_teraphy.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

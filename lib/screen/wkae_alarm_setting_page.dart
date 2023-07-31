@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
@@ -161,18 +162,55 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                   color: const Color(0xFFF9F9F9),
                   child: Row(
                     children: [
-                      Container(
-                        width: 126,
-                        height: 126,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: CustomColors.blue,
-                          image: const DecorationImage(
-                            image: AssetImage('assets/digital_alarm.jpg'),
-                            fit: BoxFit.cover,
-                            alignment: Alignment.centerRight,
+                      Stack(
+                        children: [
+                          Container(
+                            width: 126,
+                            height: 126,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: CustomColors.blue,
+                              image: DecorationImage(
+                                image: AssetImage(list[i].alarmData['musicInfo']['imageAssets']),
+                                fit: BoxFit.cover,
+                                alignment: Alignment.centerRight,
+                              ),
+                            ),
                           ),
-                        ),
+                          Positioned(
+                            bottom: 13,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromRGBO(255, 255, 255, 0.5),
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                      child: Text(
+                                        list[i].alarmData['musicInfo']['title'],
+                                        style: const TextStyle(
+                                          fontFamily: "SF-Pro",
+                                          color: CustomColors.secondaryBlack,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(width: 20),
                       Padding(

@@ -26,15 +26,62 @@ class _SleepBetterWidgetState extends State<SleepBetterWidget> {
         decoration: widget.defaultBoxDecoration,
         child: Column(
           children: [
-            const Center(
-              child: Text(
-                '어제 나의 수면 호전도',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: "Pretendard",
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  style: IconButton.styleFrom(
+                    foregroundColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.info_outline,
+                    size: 18,
+                    color: Colors.transparent,
+                  ),
                 ),
-              ),
+                const Text(
+                  '나의 수면 호전도',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "Pretendard",
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const AlertDialog(
+                          title: Text(
+                            '수면 호전도란?',
+                            style: TextStyle(
+                              fontFamily: "Pretendard",
+                              fontSize: 17,
+                            ),
+                          ),
+                          content: Text(
+                            '수면 호전도란, 유저분들께서 패드를 사용하신 뒤 축적된 수면 데이터들의 평균을 기반으로 유저분들의 수면 스코어가 더욱 개선 될 수 있는 정도의 수치를 제공해 줌으로써 유저분들이 현제 목표 수면 스코어보다 얼마나 부족한지 인지하고 수면 개선에 도움을 주는 데이터입니다.',
+                            style: TextStyle(
+                              fontFamily: "Pretendard",
+                              fontSize: 12,
+                            ),
+                          ),
+                          backgroundColor: CustomColors.systemWhite,
+                          surfaceTintColor: CustomColors.systemWhite,
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.info_outline,
+                    size: 18,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             RepaintBoundary(

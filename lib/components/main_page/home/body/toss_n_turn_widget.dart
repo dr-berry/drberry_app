@@ -92,54 +92,18 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
         children: [
           Container(
             margin: const EdgeInsets.fromLTRB(0, 0, 0, 39),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextButton(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
-                      overlayColor: MaterialStateProperty.resolveWith(
-                        (states) {
-                          if (states.contains(MaterialState.pressed)) {
-                            return Colors.transparent;
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: const Text(
-                      '더보기 >',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.transparent),
-                    )),
-                const Text(
+                Text(
                   '뒤척임',
-                  style: TextStyle(fontFamily: 'Pretendard', fontSize: 17, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                TextButton(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
-                      overlayColor: MaterialStateProperty.resolveWith(
-                        (states) {
-                          if (states.contains(MaterialState.pressed)) {
-                            return CustomColors.systemGrey5;
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: const Text('더보기 >',
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
-                            color: CustomColors.systemGrey2))),
               ],
             ),
           ),

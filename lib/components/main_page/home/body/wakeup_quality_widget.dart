@@ -21,15 +21,8 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
     double deviceWidth = MediaQuery.of(context).size.width;
     WakeupQualityDetailData? wakeupQualityDetailData;
     if (context.watch<HomePageProvider>().mainPageBiometricData != null &&
-        context
-                .watch<HomePageProvider>()
-                .mainPageBiometricData!
-                .userBiometricData !=
-            null) {
-      wakeupQualityDetailData = context
-          .watch<HomePageProvider>()
-          .mainPageBiometricData!
-          .wakeupQualityDetailData!;
+        context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null) {
+      wakeupQualityDetailData = context.watch<HomePageProvider>().mainPageBiometricData!.wakeupQualityDetailData!;
     } else {
       wakeupQualityDetailData = null;
     }
@@ -53,16 +46,12 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
 
       for (var i = 0; i < wakeupQuality.length; i++) {
         widgets.add(Container(
-          margin:
-              EdgeInsets.fromLTRB(0, 0, 0, i == wakeupQuality.length ? 0 : 8),
+          margin: EdgeInsets.fromLTRB(0, 0, 0, i == wakeupQuality.length ? 0 : 8),
           padding: EdgeInsets.zero,
           child: Text(
             '${patterns[i]} : ${int.parse(wakeupQuality[i]) * 10} min',
             style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: CustomColors.systemGrey2,
-                fontFamily: 'SF-Pro'),
+                fontSize: 15, fontWeight: FontWeight.w400, color: CustomColors.systemGrey2, fontFamily: 'SF-Pro'),
           ),
         ));
       }
@@ -80,55 +69,18 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
           children: [
             Container(
               margin: const EdgeInsets.fromLTRB(0, 0, 0, 39),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: const Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith(
-                              (states) => EdgeInsets.zero),
-                          overlayColor:
-                              MaterialStateProperty.resolveWith((states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return Colors.transparent;
-                            }
-                            return null;
-                          })),
-                      onPressed: () {},
-                      child: const Text(
-                        '더보기 >',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.transparent),
-                      )),
-                  const Text(
+                  Text(
                     '기상 품질 데이터',
                     style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500),
+                      fontFamily: 'Pretendard',
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  TextButton(
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith(
-                              (states) => EdgeInsets.zero),
-                          overlayColor:
-                              MaterialStateProperty.resolveWith((states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return CustomColors.systemGrey5;
-                            }
-                            return null;
-                          })),
-                      onPressed: () {},
-                      child: const Text('더보기 >',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400,
-                              color: CustomColors.systemGrey2))),
                 ],
               ),
             ),
@@ -137,34 +89,14 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
               child: RepaintBoundary(
                 child: CustomPaint(
                     painter: PatternChart(
-                        serverData: context
-                                        .watch<HomePageProvider>()
-                                        .mainPageBiometricData !=
-                                    null &&
-                                context
-                                        .watch<HomePageProvider>()
-                                        .mainPageBiometricData!
-                                        .userBiometricData !=
-                                    null
-                            ? context
-                                .watch<HomePageProvider>()
-                                .mainPageBiometricData!
-                                .wakeupQualityGraphData!
+                        serverData: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                            ? context.watch<HomePageProvider>().mainPageBiometricData!.wakeupQualityGraphData!
                             : [],
                         size: Size(deviceWidth - 63, 220),
-                        labels: context
-                                        .watch<HomePageProvider>()
-                                        .mainPageBiometricData !=
-                                    null &&
-                                context
-                                        .watch<HomePageProvider>()
-                                        .mainPageBiometricData!
-                                        .userBiometricData !=
-                                    null
-                            ? [
-                                SleepPatternGraphX(times: '0'),
-                                SleepPatternGraphX(times: "60")
-                              ]
+                        labels: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                            ? [SleepPatternGraphX(times: '0'), SleepPatternGraphX(times: "60")]
                             : [],
                         sleepPatternNeedDataNum: []),
                     size: Size(deviceWidth - 63, 220)),
@@ -186,10 +118,7 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
                       margin: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                       child: const Text(
                         '기상 품질 점수',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400),
+                        style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                       ),
                     ),
                     Container(
@@ -197,22 +126,13 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
                         child: RepaintBoundary(
                           child: CustomPaint(
                               painter: ArcChart(
-                                  percentage: context
-                                                  .watch<HomePageProvider>()
-                                                  .mainPageBiometricData !=
-                                              null &&
-                                          context
-                                                  .watch<HomePageProvider>()
-                                                  .mainPageBiometricData!
-                                                  .userBiometricData !=
+                                  percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                          context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData !=
                                               null
-                                      ? wakeupQualityDetailData!
-                                          .wakeupQualityScore
-                                          .toDouble()
+                                      ? wakeupQualityDetailData!.wakeupQualityScore.toDouble()
                                       : 0,
                                   strokeWidth: deviceWidth * 0.035),
-                              size:
-                                  Size(deviceWidth * 0.28, deviceWidth * 0.28)),
+                              size: Size(deviceWidth * 0.28, deviceWidth * 0.28)),
                         )),
                   ],
                 ),
@@ -230,18 +150,13 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
                       margin: const EdgeInsets.fromLTRB(0, 0, 0, 6),
                       child: const Text(
                         '기상까지 걸린시간',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400),
+                        style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                       ),
                     ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(0, 0, 0, 12),
                       child: Text(
-                        wakeupQualityDetailData != null
-                            ? wakeupQualityDetailData.whenWakeTime.toString()
-                            : "0m",
+                        wakeupQualityDetailData != null ? wakeupQualityDetailData.whenWakeTime.toString() : "0m",
                         style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 28,
@@ -258,10 +173,7 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
                       margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                       child: const Text(
                         '각 항목에서 걸린시간',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400),
+                        style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                       ),
                     ),
                     ...setWakeupQualityDetail()
