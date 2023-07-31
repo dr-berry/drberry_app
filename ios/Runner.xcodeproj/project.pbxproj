@@ -515,7 +515,7 @@
 				DEVELOPMENT_TEAM = C62775G3NA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Drberry;
+				INFOPLIST_KEY_CFBundleDisplayName = DrBerry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -698,7 +698,7 @@
 				DEVELOPMENT_TEAM = C62775G3NA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Drberry;
+				INFOPLIST_KEY_CFBundleDisplayName = DrBerry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -725,7 +725,7 @@
 				DEVELOPMENT_TEAM = C62775G3NA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Drberry;
+				INFOPLIST_KEY_CFBundleDisplayName = DrBerry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

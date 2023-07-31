@@ -32,7 +32,6 @@ dependencies:
     git:
       url: https://github.com/yoct1994/alarm.git
       ref: main
-  flutter_sound: ^8.3.9
   audioplayers: ^0.18.3
   board_datetime_picker: ^1.0.2
   build_runner: ^2.4.5
@@ -81,6 +80,7 @@ dependencies:
   volume_controller: ^2.0.7
   flutter_datetime_picker_plus: ^2.0.1
   package_info: ^2.0.2
+  flutter_sound: ^8.3.9
 
 dev_dependencies:
   chopper_generator: ^6.0.1
