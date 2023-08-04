@@ -13,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -176,9 +177,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               provider.tall > 0 &&
                               provider.weight > 0 &&
                               provider.birth.isNotEmpty) {
+                            final pushAlarm = await Permission.notification.isGranted;
                             await server
                                 .signUp(provider.name, widget.deviceCode, provider.gender, provider.tall,
-                                    provider.weight, provider.birth, "deviceTokenTest", false, false)
+                                    provider.weight, provider.birth, "deviceTokenTest", pushAlarm, pushAlarm)
                                 .then((res) async {
                               if (res.statusCode == 201) {
                                 final tokenResponse = TokenResponse.fromJson(res.data);

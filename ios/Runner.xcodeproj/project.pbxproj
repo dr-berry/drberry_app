@@ -23,6 +23,14 @@
 		9B0CE0D82A71155100C72C1B /* ocean waves.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0D72A71155100C72C1B /* ocean waves.mp3 */; };
 		9B0CE0DA2A71156300C72C1B /* thunder rain.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0D92A71156300C72C1B /* thunder rain.mp3 */; };
 		9B0CE0DC2A71156B00C72C1B /* pink noise.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DB2A71156B00C72C1B /* pink noise.mp3 */; };
+		9B0CE0E52A7BC13D00C72C1B /* psycho-siren.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DD2A7BC13C00C72C1B /* psycho-siren.mp3 */; };
+		9B0CE0E62A7BC13D00C72C1B /* chiptune.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DE2A7BC13C00C72C1B /* chiptune.mp3 */; };
+		9B0CE0E72A7BC13D00C72C1B /* cyber-alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DF2A7BC13C00C72C1B /* cyber-alarm.mp3 */; };
+		9B0CE0E82A7BC13D00C72C1B /* ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E02A7BC13C00C72C1B /* ringtone.mp3 */; };
+		9B0CE0E92A7BC13D00C72C1B /* beep.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E12A7BC13C00C72C1B /* beep.mp3 */; };
+		9B0CE0EA2A7BC13D00C72C1B /* oversimplefied.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */; };
+		9B0CE0EB2A7BC13D00C72C1B /* old_alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */; };
+		9B0CE0EC2A7BC13D00C72C1B /* car.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E42A7BC13D00C72C1B /* car.mp3 */; };
 		9B0EB1792A69287000609A7D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B0EB1782A69287000609A7D /* GoogleService-Info.plist */; };
 		A4069FE6C098EAA06B06A9AB /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12D097E6BEDB508715182FA8 /* Pods_Runner.framework */; };
 		EBFC74F90715AFD1E5CC9F40 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C4D95104E9D4C1F6739C588 /* Pods_RunnerTests.framework */; };
@@ -80,6 +88,14 @@
 		9B0CE0D72A71155100C72C1B /* ocean waves.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "ocean waves.mp3"; path = "../../../../../Downloads/ocean waves.mp3"; sourceTree = "<group>"; };
 		9B0CE0D92A71156300C72C1B /* thunder rain.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "thunder rain.mp3"; path = "../../../../../Downloads/thunder rain.mp3"; sourceTree = "<group>"; };
 		9B0CE0DB2A71156B00C72C1B /* pink noise.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "pink noise.mp3"; path = "../../../../../Downloads/pink noise.mp3"; sourceTree = "<group>"; };
+		9B0CE0DD2A7BC13C00C72C1B /* psycho-siren.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "psycho-siren.mp3"; sourceTree = "<group>"; };
+		9B0CE0DE2A7BC13C00C72C1B /* chiptune.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = chiptune.mp3; sourceTree = "<group>"; };
+		9B0CE0DF2A7BC13C00C72C1B /* cyber-alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "cyber-alarm.mp3"; sourceTree = "<group>"; };
+		9B0CE0E02A7BC13C00C72C1B /* ringtone.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ringtone.mp3; sourceTree = "<group>"; };
+		9B0CE0E12A7BC13C00C72C1B /* beep.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = beep.mp3; sourceTree = "<group>"; };
+		9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = oversimplefied.mp3; sourceTree = "<group>"; };
+		9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = old_alarm.mp3; sourceTree = "<group>"; };
+		9B0CE0E42A7BC13D00C72C1B /* car.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = car.mp3; sourceTree = "<group>"; };
 		9B0EB1782A69287000609A7D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9B0EB17A2A6A038F00609A7D /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		9B2FDC872A6E17710006C9B0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -162,6 +178,14 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				9B0CE0E12A7BC13C00C72C1B /* beep.mp3 */,
+				9B0CE0E42A7BC13D00C72C1B /* car.mp3 */,
+				9B0CE0DE2A7BC13C00C72C1B /* chiptune.mp3 */,
+				9B0CE0DF2A7BC13C00C72C1B /* cyber-alarm.mp3 */,
+				9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */,
+				9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */,
+				9B0CE0DD2A7BC13C00C72C1B /* psycho-siren.mp3 */,
+				9B0CE0E02A7BC13C00C72C1B /* ringtone.mp3 */,
 				9B0CE0CF2A70EFFB00C72C1B /* gentle rain.mp3 */,
 				9B0CE0CD2A70C86F00C72C1B /* alarm_clock_going_off.aiff */,
 				9B0CE0D52A71154500C72C1B /* alarm-clock-going-off.mp3 */,
@@ -292,6 +316,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B0CE0E52A7BC13D00C72C1B /* psycho-siren.mp3 in Resources */,
+				9B0CE0E62A7BC13D00C72C1B /* chiptune.mp3 in Resources */,
+				9B0CE0E72A7BC13D00C72C1B /* cyber-alarm.mp3 in Resources */,
+				9B0CE0E82A7BC13D00C72C1B /* ringtone.mp3 in Resources */,
+				9B0CE0E92A7BC13D00C72C1B /* beep.mp3 in Resources */,
+				9B0CE0EA2A7BC13D00C72C1B /* oversimplefied.mp3 in Resources */,
+				9B0CE0EB2A7BC13D00C72C1B /* old_alarm.mp3 in Resources */,
+				9B0CE0EC2A7BC13D00C72C1B /* car.mp3 in Resources */,
 				9B0CE0D22A7114C200C72C1B /* white noise.mp3 in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				9B0CE0DA2A71156300C72C1B /* thunder rain.mp3 in Resources */,

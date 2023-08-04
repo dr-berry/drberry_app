@@ -2,7 +2,9 @@ import 'package:drberry_app/components/main_page/calendar/calendar_page.dart';
 import 'package:drberry_app/components/main_page/home/home_page.dart';
 import 'package:drberry_app/components/main_page/profile/profile_page.dart';
 import 'package:drberry_app/components/main_page/sleep_pad/sleep_pad_page.dart';
+import 'package:drberry_app/main.dart';
 import 'package:drberry_app/provider/main_page_provider.dart';
+import 'package:drberry_app/screen/music_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

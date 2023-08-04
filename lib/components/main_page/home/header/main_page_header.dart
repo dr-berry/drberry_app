@@ -5,9 +5,11 @@ import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/provider/home_page_provider.dart';
 import 'package:drberry_app/provider/main_page_provider.dart';
 import 'package:drberry_app/screen/permission_again_request.dart';
+import 'package:drberry_app/screen/sleep_alarm_page.dart';
 import 'package:drberry_app/screen/sleep_alarm_setting_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:drberry_app/server/server.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -88,6 +90,18 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                         builder: (context) => const SleepAlarmSettingPage(),
                       ),
                     );
+                    // Navigator.push(
+                    //   context,
+                    //   CupertinoPageRoute(
+                    //     builder: (context) => SleepAlarmPage(
+                    //       alarmSettings: AlarmSettings(
+                    //         id: 0,
+                    //         dateTime: DateTime.now(),
+                    //         assetAudioPath: "assets/alarm-clock-going-off.mp3",
+                    //       ),
+                    //     ),
+                    //   ),
+                    // );
                   },
                   child: SvgPicture.asset(
                     'assets/moon.svg',

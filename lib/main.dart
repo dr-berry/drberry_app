@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:alarm/alarm.dart';
+import 'package:drberry_app/screen/music_sheet.dart';
+import 'package:drberry_app/screen/sleep_alarm_page.dart';
 import 'package:drberry_app/screen/splash_page.dart';
 import 'package:drberry_app/screen/weke_alarm_page.dart';
+import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -219,10 +222,35 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> navigateToRingScreen(AlarmSettings alarmSettings) async {
     print('알람이 울렸다!');
     final pref = await SharedPreferences.getInstance();
-    // VolumeController().setVolume(1);
-    if (navigatorKey.currentState != null) {
-      await navigatorKey.currentState!.pushNamed("/wake_alarm_page", arguments: alarmSettings);
+
+    final str = pref.getString('alarmDatas');
+    if (str != null) {
+      final datas = jsonDecode(str);
+      List<AlarmData> alarms = [];
+      for (var data in datas) {
+        alarms.add(AlarmData.fromJson(data));
+      }
+      if (alarms.where((element) => element.alarmSettings.id == alarmSettings.id).isNotEmpty) {
+        if (navigatorKey.currentState != null) {
+          await navigatorKey.currentState!.pushNamed("/wake_alarm_page", arguments: alarmSettings);
+        }
+      }
     }
+
+    final str2 = pref.getString('sleepDatas');
+    if (str2 != null) {
+      final datas = jsonDecode(str2);
+      List<AlarmData> alarms = [];
+      for (var data in datas) {
+        alarms.add(AlarmData.fromJson(data));
+      }
+      if (alarms.where((element) => element.alarmSettings.id == alarmSettings.id).isNotEmpty) {
+        if (navigatorKey.currentState != null) {
+          await navigatorKey.currentState!.pushNamed("/sleep_alarm_page", arguments: alarmSettings);
+        }
+      }
+    }
+    // VolumeController().setVolume(1);
     loadAlarms();
   }
 
@@ -260,6 +288,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -277,7 +306,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             return MaterialPageRoute(builder: (context) => const PermissionPage());
           case "/wake_alarm_page":
             return MaterialPageRoute(
-                builder: (context) => WakeAlarmPage(alarmSettings: settings.arguments! as AlarmSettings));
+              builder: (context) => WakeAlarmPage(
+                alarmSettings: settings.arguments! as AlarmSettings,
+              ),
+            );
+          case "/sleep_alarm_page":
+            return MaterialPageRoute(
+              builder: (context) => SleepAlarmPage(
+                alarmSettings: settings.arguments! as AlarmSettings,
+              ),
+            );
         }
         return MaterialPageRoute(builder: (context) => const SplashPage());
       },

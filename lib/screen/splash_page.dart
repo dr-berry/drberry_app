@@ -2,11 +2,7 @@ import 'dart:convert';
 
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/splash/write_code_sheet.dart';
-import 'package:drberry_app/data/Data.dart';
-import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/ble_n_wifi_link_page.dart';
-import 'package:drberry_app/screen/main_page_widget.dart';
-import 'package:drberry_app/screen/sign_up_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -50,6 +46,91 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
+    if (barcode != null) {
+      controller?.pauseCamera();
+
+      print(barcode!.code!);
+
+      try {
+        final deviceName = jsonDecode(barcode!.code!)['name'];
+        print(deviceName);
+        if (deviceName == null) {
+          Future.delayed(Duration.zero, () {
+            showPlatformDialog(
+              context: context,
+              builder: (context) => BasicDialogAlert(
+                title: const Text(
+                  '잘못된 QR코드 입니다.',
+                  style: TextStyle(fontFamily: "Pretendard"),
+                ),
+                content: const Text(
+                  '구매하신 디바이스의 제공된 QR코드를 인식시켜 주세요.',
+                  style: TextStyle(fontFamily: "Pretnedard"),
+                ),
+                actions: [
+                  BasicDialogAction(
+                    title: const Text(
+                      '확인',
+                      style: TextStyle(
+                        fontFamily: "Pretendard",
+                        color: CustomColors.blue,
+                      ),
+                    ),
+                    onPressed: () {
+                      controller?.resumeCamera();
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+            );
+          });
+        } else {
+          Future.delayed(Duration.zero, () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BleNWifiLinkPage(
+                  code: deviceName,
+                ),
+              ),
+              (route) => false,
+            );
+          });
+        }
+      } catch (e) {
+        Future.delayed(Duration.zero, () {
+          showPlatformDialog(
+            context: context,
+            builder: (context) => BasicDialogAlert(
+              title: const Text(
+                '잘못된 QR코드 입니다.',
+                style: TextStyle(fontFamily: "Pretendard"),
+              ),
+              content: const Text(
+                '구매하신 디바이스의 제공된 QR코드를 인식시켜 주세요.',
+                style: TextStyle(fontFamily: "Pretnedard"),
+              ),
+              actions: [
+                BasicDialogAction(
+                  title: const Text(
+                    '확인',
+                    style: TextStyle(
+                      fontFamily: "Pretendard",
+                      color: CustomColors.blue,
+                    ),
+                  ),
+                  onPressed: () {
+                    controller?.resumeCamera();
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            ),
+          );
+        });
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -99,143 +180,37 @@ class _SplashPageState extends State<SplashPage> {
                 });
               },
             ),
-            Positioned(top: deviceHeight * 0.6, left: 0, right: 0, child: buildResult()),
+            Positioned(
+              top: deviceHeight * 0.6,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {},
+                      child: SvgPicture.asset("assets/QR.svg"),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 12),
+                      child: const Text(
+                        "패드의 부착된",
+                        style: TextStyle(
+                            fontFamily: 'Pretendard', fontWeight: FontWeight.w500, fontSize: 20, color: Colors.white),
+                      ),
+                    ),
+                    const Text(
+                      "QR코드를 인식해 주세요.",
+                      style: TextStyle(
+                          fontFamily: 'Pretendard', fontWeight: FontWeight.w500, fontSize: 20, color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  Widget buildResult() {
-    if (barcode != null) {
-      controller?.pauseCamera();
-
-      print(barcode!.code!);
-
-      try {
-        final deviceName = jsonDecode(barcode!.code!)['name'];
-        print(deviceName);
-        if (deviceName == null) {
-          showPlatformDialog(
-            context: context,
-            builder: (context) => BasicDialogAlert(
-              title: const Text(
-                '잘못된 QR코드 입니다.',
-                style: TextStyle(fontFamily: "Pretendard"),
-              ),
-              content: const Text(
-                '구매하신 디바이스의 제공된 QR코드를 인식시켜 주세요.',
-                style: TextStyle(fontFamily: "Pretnedard"),
-              ),
-              actions: [
-                BasicDialogAction(
-                  title: const Text(
-                    '확인',
-                    style: TextStyle(
-                      fontFamily: "Pretendard",
-                      color: CustomColors.blue,
-                    ),
-                  ),
-                  onPressed: () {
-                    controller?.resumeCamera();
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            ),
-          );
-        } else {
-          Future.delayed(Duration.zero, () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BleNWifiLinkPage(
-                  code: deviceName,
-                ),
-              ),
-              (route) => true,
-            );
-          });
-        }
-      } catch (e) {
-        print(e);
-
-        // showPlatformDialog(
-        //   context: context,
-        //   builder: (context) => BasicDialogAlert(
-        //     title: const Text(
-        //       '잘못된 QR코드 입니다.',
-        //       style: TextStyle(fontFamily: "Pretendard"),
-        //     ),
-        //     content: const Text(
-        //       '구매하신 디바이스의 제공된 QR코드를 인식시켜 주세요.',
-        //       style: TextStyle(fontFamily: "Pretnedard"),
-        //     ),
-        //     actions: [
-        //       BasicDialogAction(
-        //         title: const Text(
-        //           '확인',
-        //           style: TextStyle(
-        //             fontFamily: "Pretendard",
-        //             color: CustomColors.blue,
-        //           ),
-        //         ),
-        //         onPressed: () {
-        //           controller?.resumeCamera();
-        //           Navigator.pop(context);
-        //         },
-        //       )
-        //     ],
-        //   ),
-        // );
-      }
-    }
-
-    return Center(
-        child: Column(
-      children: [
-        GestureDetector(
-          onTap: () async {
-            // String code = "SDMM_EFEFEF";
-            // // Navigator.pushAndRemoveUntil(
-            // //     context,
-            // //     MaterialPageRoute(builder: (context) => const SignUpPage(deviceCode: "asdfasdfuashdfjksduf")),
-            // //     (route) => false);
-            // final deviceToken = await FirebaseMessaging.instance.getToken();
-            // print(deviceToken);
-            // await server.login(code, deviceToken ?? "deviceTokenTest").then((res) async {
-            //   print(res.data);
-            //   if (res.statusCode == 201) {
-            //     final tokenResponse = TokenResponse.fromJson(res.data);
-            //     print(
-            //         "a : ${tokenResponse.accessToken}, r : ${tokenResponse.refreshToken}, e : ${tokenResponse.expiredAt}");
-            //     await storage.write(key: "accessToken", value: tokenResponse.accessToken);
-            //     await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
-            //     await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
-
-            //     // ignore: use_build_context_synchronously
-            //     Navigator.push(context, MaterialPageRoute(builder: (context) => const MainPage()));
-            //   }
-            // }).catchError((err) => print(err));
-
-            // stopBackgroundAudio();
-
-            // await playBackgroundAudio();
-          },
-          child: SvgPicture.asset("assets/QR.svg"),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 12),
-          child: const Text(
-            "패드의 부착된",
-            style: TextStyle(fontFamily: 'Pretendard', fontWeight: FontWeight.w500, fontSize: 20, color: Colors.white),
-          ),
-        ),
-        const Text(
-          "QR코드를 인식해 주세요.",
-          style: TextStyle(fontFamily: 'Pretendard', fontWeight: FontWeight.w500, fontSize: 20, color: Colors.white),
-        )
-      ],
-    ));
   }
 }

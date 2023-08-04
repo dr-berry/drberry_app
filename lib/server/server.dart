@@ -213,4 +213,15 @@ class Server {
       ),
     );
   }
+
+  Future<Response> checkConnectWifi() async {
+    return await noneDio.get(
+      '/auth/check_connect_wifi',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
 }

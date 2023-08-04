@@ -18,7 +18,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WakeAlarmMakePage extends StatefulWidget {
-  const WakeAlarmMakePage({super.key});
+  AlarmData? alarmData;
+
+  WakeAlarmMakePage({super.key, this.alarmData});
 
   @override
   State<WakeAlarmMakePage> createState() => _WakeAlarmMakePageState();
@@ -52,10 +54,50 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
 
   List<Map<String, String>> musicList = [
     {
-      "imageAssets": "assets/digital_alarm.jpg",
+      "imageAssets": "assets/digital.jpg",
       "musicAssets": "assets/alarm-clock-going-off.mp3",
-      "title": "Test Alarm Sound",
-    }
+      "title": "Digital",
+    },
+    {
+      "imageAssets": "assets/beep.png",
+      "musicAssets": "assets/beep.mp3",
+      "title": "Beep",
+    },
+    {
+      "imageAssets": "assets/car.jpg",
+      "musicAssets": "assets/car.mp3",
+      "title": "Car Siren",
+    },
+    {
+      "imageAssets": "assets/chiptone.jpg",
+      "musicAssets": "assets/chiptune.mp3",
+      "title": "Chiptune",
+    },
+    {
+      "imageAssets": "assets/cyber.jpg",
+      "musicAssets": "assets/cyber-alarm.mp3",
+      "title": "Cyber",
+    },
+    {
+      "imageAssets": "assets/old_clock.jpg",
+      "musicAssets": "assets/old_alarm.mp3",
+      "title": "Old",
+    },
+    {
+      "imageAssets": "assets/rising sun.jpg",
+      "musicAssets": "assets/oversimplefied.mp3",
+      "title": "Rising Sun",
+    },
+    {
+      "imageAssets": "assets/siren.jpg",
+      "musicAssets": "assets/psycho-siren.mp3",
+      "title": "Siren",
+    },
+    {
+      "imageAssets": "assets/ringtone.jpg",
+      "musicAssets": "assets/ringtone.mp3",
+      "title": "Ringtone",
+    },
   ];
 
   Future<File> getAssetFile(String assetPath) async {
@@ -125,6 +167,31 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
         }
       }
     });
+
+    if (widget.alarmData != null) {
+      setState(() {
+        if (widget.alarmData!.alarmData['snooze'].isNotEmpty) {
+          _snooseDate.value = true;
+        }
+
+        if (widget.alarmData!.alarmData['weekOfNum'].isNotEmpty) {
+          _circleDate.value = true;
+        }
+
+        widget.alarmData!.alarmData['weekOfNum'].forEach((e) {
+          _selectCircleDate.add(e);
+        });
+        widget.alarmData!.alarmData['snooze'].forEach((e) {
+          _selectSnoozeData.add(e);
+        });
+        _musicIndex = musicList.indexWhere(
+          (element) => element['title'] == widget.alarmData?.alarmData['musicInfo']['title'],
+        );
+        _selectTime = TimeOfDay(
+            hour: widget.alarmData!.alarmSettings.dateTime.hour,
+            minute: widget.alarmData!.alarmSettings.dateTime.minute);
+      });
+    }
   }
 
   String getKoreanWeekday(int weekday) {
@@ -166,7 +233,7 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
           iconSize: 18,
         ),
         title: const Text(
-          "기상 알람 리스트",
+          "기상 알람 설정",
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
@@ -212,10 +279,44 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                 return;
               }
 
+              if (widget.alarmData != null) {
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                final jsonStr = pref.getString('alarmDatas');
+                List<AlarmData> alarmDatas = [];
+
+                await Alarm.stop(widget.alarmData!.alarmSettings.id);
+
+                widget.alarmData!.alarmData['snoozeIds'].forEach((e) async {
+                  await Alarm.stop(e);
+                  print(e);
+                });
+
+                if (jsonStr != null) {
+                  final parsedJson = jsonDecode(jsonStr);
+                  for (var i = 0; i < parsedJson.length; i++) {
+                    alarmDatas.add(AlarmData.fromJson(parsedJson[i]));
+                  }
+                }
+
+                alarmDatas.removeWhere(
+                  (element) => widget.alarmData!.alarmSettings.id == element.alarmSettings.id,
+                );
+
+                final alarmDatasJson = alarmDatas.map((e) => e.toJson()).toList();
+                final removeStr = jsonEncode(alarmDatasJson);
+                await pref.setString("alarmDatas", removeStr);
+
+                Future.delayed(Duration.zero, () {
+                  Navigator.pop(context, true);
+                });
+              }
+
               final alarms = Alarm.getAlarms();
               var now = DateTime.now();
               var selectTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
-              var id = int.parse("${now.hour}${now.month}${now.day}${now.hour}${now.minute}${now.second}");
+              var id = widget.alarmData != null
+                  ? widget.alarmData!.alarmSettings.id
+                  : int.parse("${now.hour}${now.month}${now.day}${now.hour}${now.minute}${now.second}");
 
               alarms.where((element) {
                 return element.dateTime.hour == selectTime.hour && element.dateTime.minute == selectTime.minute;
@@ -347,6 +448,7 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
 
               AlarmData alarmData = AlarmData(
                 alarmData: {
+                  "alarm": 'WAKE',
                   "snooze": _selectSnoozeData,
                   "weekOfNum": _selectCircleDate,
                   "alarmType": "일반알림",
@@ -429,13 +531,13 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                                       height: 165.w,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
-                                        color: CustomColors.lightGreen2,
+                                        color: CustomColors.systemGrey6,
                                         image: DecorationImage(
                                           image: AssetImage(
                                             musicList[index]['imageAssets']!,
                                           ),
                                           fit: BoxFit.cover,
-                                          alignment: Alignment.centerRight,
+                                          alignment: Alignment.center,
                                         ),
                                       ),
                                     ),
@@ -858,6 +960,70 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                   ),
                 ),
                 const SizedBox(height: 42),
+                widget.alarmData != null
+                    ? Center(
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () async {
+                              SharedPreferences pref = await SharedPreferences.getInstance();
+                              final jsonStr = pref.getString('alarmDatas');
+                              List<AlarmData> alarmDatas = [];
+
+                              await Alarm.stop(widget.alarmData!.alarmSettings.id);
+
+                              widget.alarmData!.alarmData['snoozeIds'].forEach((e) async {
+                                await Alarm.stop(e);
+                                print(e);
+                              });
+
+                              if (jsonStr != null) {
+                                final parsedJson = jsonDecode(jsonStr);
+                                for (var i = 0; i < parsedJson.length; i++) {
+                                  alarmDatas.add(AlarmData.fromJson(parsedJson[i]));
+                                }
+                              }
+
+                              alarmDatas.removeWhere(
+                                (element) => widget.alarmData!.alarmSettings.id == element.alarmSettings.id,
+                              );
+
+                              final alarmDatasJson = alarmDatas.map((e) => e.toJson()).toList();
+                              final removeStr = jsonEncode(alarmDatasJson);
+                              await pref.setString("alarmDatas", removeStr);
+
+                              Future.delayed(Duration.zero, () {
+                                Navigator.pop(context, true);
+                              });
+                            },
+                            child: Container(
+                              height: 48,
+                              width: deviceWidth - 90,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color: CustomColors.redorangeRed,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.transparent,
+                              ),
+                              child: const Text(
+                                '수면 테라피 삭제',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w400,
+                                  color: CustomColors.redorangeRed,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(),
                 const SizedBox(height: 63),
               ],
             ),

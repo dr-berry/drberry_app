@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
+import 'package:drberry_app/screen/make_sleep_alarm_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,24 +32,22 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
       }
     }
 
-    result.add(AlarmData(
-      alarmData: {
-        "weekOfNum": [1, 3, 5],
-        "alarmType": "일반알림",
-        "snoozeIds": [1, 3, 5],
-        "musicInfo": {
-          "imageAssets": "assets/digital_alarm.jpg",
-          "musicAssets": "assets/alarm-clock-going-off.mp3",
-          "title": "Test Alarm Sound",
-        },
-        "time": '오전 6:30 - 오전 7:30',
-      },
-      alarmSettings: AlarmSettings(
-        id: 0,
-        dateTime: DateTime.now(),
-        assetAudioPath: "assets/alarm-clock-going-off.mp3",
-      ),
-    ));
+    // result.add(AlarmData(
+    //   alarmData: {
+    //     "weekOfNum": [1, 3, 5],
+    //     "musicInfo": {
+    //       "imageAssets": "assets/digital.jpg",
+    //       "musicAssets": "assets/alarm-clock-going-off.mp3",
+    //       "title": "Test Alarm Sound",
+    //     },
+    //     "time": '오전 6:30 - 오전 7:30',
+    //   },
+    //   alarmSettings: AlarmSettings(
+    //     id: 0,
+    //     dateTime: DateTime.now(),
+    //     assetAudioPath: "assets/alarm-clock-going-off.mp3",
+    //   ),
+    // ));
 
     return result;
   }
@@ -282,18 +281,18 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () async {
-                        // final isChange = await Navigator.push<bool>(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const WakeAlarmMakePage(),
-                        //   ),
-                        // );
+                        final isChange = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MakeSleepAlarmPage(),
+                          ),
+                        );
 
-                        // if (isChange != null && isChange) {
-                        //   setState(() {
-                        //     datas = getDatas();
-                        //   });
-                        // }
+                        if (isChange != null && isChange) {
+                          setState(() {
+                            datas = getDatas();
+                          });
+                        }
                       },
                       child: Container(
                         decoration: BoxDecoration(

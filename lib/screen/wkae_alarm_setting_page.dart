@@ -3,9 +3,7 @@ import 'dart:ui';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
-import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/wake_alarm_make_page.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
@@ -23,13 +21,16 @@ class AlarmData {
   factory AlarmData.fromJson(Map<String, dynamic> jsonData) {
     var json = jsonData['alarmSettings'];
 
-    print(DateTime((json['dateTime'] / 1000).floor()));
+    print('===========');
+    print(json);
+    print(DateTime.fromMicrosecondsSinceEpoch(json['dateTime']));
+    print('===========');
 
     return AlarmData(
       alarmData: jsonData['alarmData'],
       alarmSettings: AlarmSettings(
         id: json['id'],
-        dateTime: DateTime(json['dateTime']),
+        dateTime: DateTime.fromMicrosecondsSinceEpoch(json['dateTime']),
         assetAudioPath: json['assetAudioPath'],
         loopAudio: json['loopAudio'],
         vibrate: json['vibrate'],
@@ -156,10 +157,18 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
             child: Material(
               color: const Color(0xFFF9F9F9),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WakeAlarmMakePage(
+                        alarmData: list[i],
+                      ),
+                    ),
+                  );
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  color: const Color(0xFFF9F9F9),
                   child: Row(
                     children: [
                       Stack(
@@ -169,7 +178,7 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                             height: 126,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: CustomColors.blue,
+                              color: CustomColors.systemGrey6,
                               image: DecorationImage(
                                 image: AssetImage(list[i].alarmData['musicInfo']['imageAssets']),
                                 fit: BoxFit.cover,
@@ -428,7 +437,7 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                         final isChange = await Navigator.push<bool>(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const WakeAlarmMakePage(),
+                            builder: (context) => WakeAlarmMakePage(),
                           ),
                         );
 
