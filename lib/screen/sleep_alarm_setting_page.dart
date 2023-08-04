@@ -22,13 +22,13 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
   Future<List<AlarmData>> getDatas() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     List<AlarmData> result = [];
-    final alarmDatasStr = pref.getString("sleepDatas");
+    final sleepDatasStr = pref.getString("sleepDatas");
 
-    if (alarmDatasStr != null && alarmDatasStr != '[]') {
-      final savedAlarmDatas = jsonDecode(alarmDatasStr) as List<dynamic>;
-      print(savedAlarmDatas[0].runtimeType);
-      for (var i = 0; i < savedAlarmDatas.length; i++) {
-        result.add(AlarmData.fromJson(savedAlarmDatas[i]));
+    if (sleepDatasStr != null && sleepDatasStr != '[]') {
+      final savedsleepDatas = jsonDecode(sleepDatasStr) as List<dynamic>;
+      print(savedsleepDatas[0].runtimeType);
+      for (var i = 0; i < savedsleepDatas.length; i++) {
+        result.add(AlarmData.fromJson(savedsleepDatas[i]));
       }
     }
 
@@ -88,30 +88,25 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
               SwipeAction(
                 onTap: (value) async {
                   SharedPreferences pref = await SharedPreferences.getInstance();
-                  final jsonStr = pref.getString('alarmDatas');
-                  List<AlarmData> alarmDatas = [];
+                  final jsonStr = pref.getString('sleepDatas');
+                  List<AlarmData> sleepDatas = [];
 
                   await Alarm.stop(list[i].alarmSettings.id);
-
-                  list[i].alarmData['snoozeIds'].forEach((e) async {
-                    await Alarm.stop(e);
-                    print(e);
-                  });
 
                   if (jsonStr != null) {
                     final parsedJson = jsonDecode(jsonStr);
                     for (var i = 0; i < parsedJson.length; i++) {
-                      alarmDatas.add(AlarmData.fromJson(parsedJson[i]));
+                      sleepDatas.add(AlarmData.fromJson(parsedJson[i]));
                     }
                   }
 
-                  alarmDatas.removeWhere(
+                  sleepDatas.removeWhere(
                     (element) => list[i].alarmSettings.id == element.alarmSettings.id,
                   );
 
-                  final alarmDatasJson = alarmDatas.map((e) => e.toJson()).toList();
-                  final removeStr = jsonEncode(alarmDatasJson);
-                  await pref.setString("alarmDatas", removeStr);
+                  final sleepDatasJson = sleepDatas.map((e) => e.toJson()).toList();
+                  final removeStr = jsonEncode(sleepDatasJson);
+                  await pref.setString("sleepDatas", removeStr);
 
                   value(true);
                   setState(() {
@@ -151,7 +146,7 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 10),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Column(
@@ -193,10 +188,16 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
                                 const SizedBox(width: 7),
                                 Text(
                                   (list[i].alarmData['weekOfNum'].map((element) => getKoreanWeekday(element)))
-                                      .join(','),
+                                              .toList()
+                                              .length >
+                                          6
+                                      ? '월 ~ 일'
+                                      : (list[i].alarmData['weekOfNum'].map((element) => getKoreanWeekday(element)))
+                                          .join(','),
                                   style: const TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 15,
+                                    overflow: TextOverflow.clip,
                                     color: CustomColors.secondaryBlack,
                                     fontWeight: FontWeight.w600,
                                   ),

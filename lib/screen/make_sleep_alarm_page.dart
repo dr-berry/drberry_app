@@ -44,7 +44,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
   void setAlarmData() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
-    final alarmDatasStr = pref.getString("alarmDatas");
+    final alarmDatasStr = pref.getString("sleepDatas");
 
     if (alarmDatasStr != null) {
       final savedAlarmDatas = jsonDecode(alarmDatasStr);
@@ -67,7 +67,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
       "title": "Gentle Rain",
     },
     {
-      "imageAssets": "assets/car.jpg",
+      "imageAssets": "assets/melody.png",
       "musicAssets": "assets/meditation melody.mp3",
       "title": "Meditation Melody",
     },
@@ -87,7 +87,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
       "title": "Thunder Rain",
     },
     {
-      "imageAssets": "assets/old_clock.jpg",
+      "imageAssets": "assets/white.jpg",
       "musicAssets": "assets/white noise.mp3",
       "title": "White Noise",
     },
@@ -266,6 +266,18 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
               }
 
               final n = DateTime.now();
+              AlarmSettings alarmSettings = AlarmSettings(
+                id: int.parse('${n.year}${n.day}${n.hour}${n.minute}'),
+                dateTime: n,
+                assetAudioPath: musicList[_musicIndex]['musicAssets']!,
+                loopAudio: true,
+                fadeDuration: 5,
+                vibrate: true,
+                notificationTitle: 'This time to wake',
+                notificationBody: '설정하신 알람입니다! 일어나세요!!',
+                enableNotificationOnKill: true,
+                stopOnNotificationOpen: false,
+              );
 
               AlarmData alarmData = AlarmData(
                 alarmData: {
@@ -274,17 +286,16 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                   "musicInfo": musicList[_musicIndex],
                   "time":
                       '${_selectStartTime!.hour < 10 ? '0${_selectStartTime!.hour}' : _selectStartTime!.hour}:${_selectStartTime!.minute < 10 ? '0${_selectStartTime!.minute}' : _selectStartTime!.minute} - ${_selectEndTime!.hour < 10 ? '0${_selectEndTime!.hour}' : _selectEndTime!.hour}:${_selectEndTime!.minute < 10 ? '0${_selectEndTime!.minute}' : _selectEndTime!.minute}',
-                  "startTime": DateTime(n.year, n.month, n.day, _selectStartTime!.hour, _selectStartTime!.minute, 0),
-                  "endTime": DateTime(n.year, n.month, n.day, _selectEndTime!.hour, _selectEndTime!.minute, 0),
+                  "startTime": DateTime(n.year, n.month, n.day, _selectStartTime!.hour, _selectStartTime!.minute, 0)
+                      .toIso8601String(),
+                  "endTime": DateTime(n.year, n.month, n.day, _selectEndTime!.hour, _selectEndTime!.minute, 0)
+                      .toIso8601String(),
                 },
-                alarmSettings: AlarmSettings(
-                  assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                  id: 0,
-                  dateTime: DateTime.now(),
-                ),
+                alarmSettings: alarmSettings,
               );
 
               SharedPreferences pref = await SharedPreferences.getInstance();
+              print(alarmData.toJson());
               _savedAlarmData.add(alarmData.toJson());
               await pref.setString("sleepDatas", jsonEncode(_savedAlarmData));
 
