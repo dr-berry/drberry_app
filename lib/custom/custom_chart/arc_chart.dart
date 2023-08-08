@@ -7,7 +7,7 @@ class ArcChart extends CustomPainter {
   final String backgroundColor;
   late String foregroundColors;
   late String state;
-  final Color percentageColor = CustomColors.systemBlack;
+  Color percentageColor = CustomColors.systemBlack;
   late Color scoreStateColor;
   final double percentageTextSize;
   final double scoreStateTextSize;
@@ -51,7 +51,14 @@ class ArcChart extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    scoreState(percentage);
+    if (percentage > 0) {
+      scoreState(percentage);
+    } else {
+      state = 'Worst';
+      percentageColor = CustomColors.systemGrey3;
+      foregroundColors = 'RED';
+      scoreStateColor = CustomColors.systemGrey3;
+    }
     Rect rect = Rect.fromCircle(
         center: Offset(max(size.width, size.height) / 2, max(size.width, size.height) / 2), radius: size.width / 2);
 

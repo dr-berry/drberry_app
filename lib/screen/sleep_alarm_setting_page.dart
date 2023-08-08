@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
-import 'package:drberry_app/screen/make_sleep_alarm_page.dart';
+import 'package:drberry_app/screen/music_bar.dart';
+import 'package:drberry_app/screen/sleep_alarm_make_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sliding_box/flutter_sliding_box.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +20,7 @@ class SleepAlarmSettingPage extends StatefulWidget {
 
 class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
   Future<List<AlarmData>>? datas;
+  final BoxController _controller = BoxController();
 
   Future<List<AlarmData>> getDatas() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -252,103 +255,107 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              const Row(
-                children: [
-                  SizedBox(width: 20),
-                  Text(
-                    '자동으로 재생되는 AI 수면 테라피',
-                    style: TextStyle(
-                      fontFamily: "Pretendard",
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: CustomColors.secondaryBlack,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Material(
-                    color: CustomColors.systemWhite,
-                    borderRadius: BorderRadius.circular(10),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () async {
-                        final isChange = await Navigator.push<bool>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MakeSleepAlarmPage(),
-                          ),
-                        );
-
-                        if (isChange != null && isChange) {
-                          setState(() {
-                            datas = getDatas();
-                          });
-                        }
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0xFFE5E5EA),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        width: deviceWidth - 32,
-                        height: 108,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset('assets/sleep_teraphy.svg'),
-                            const SizedBox(height: 8),
-                            const Text(
-                              '새로운 수면 테라피 만들기',
-                              style: TextStyle(
-                                fontFamily: "Pretendard",
-                                fontSize: 15,
-                                color: CustomColors.secondaryBlack,
-                              ),
-                            )
-                          ],
-                        ),
+      body: MusicBar(
+        controller: _controller,
+        oldBackground: const Color(0xFFF9F9F9),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                const Row(
+                  children: [
+                    SizedBox(width: 20),
+                    Text(
+                      '자동으로 재생되는 AI 수면 테라피',
+                      style: TextStyle(
+                        fontFamily: "Pretendard",
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: CustomColors.secondaryBlack,
                       ),
                     ),
-                  )
-                ],
-              ),
-              FutureBuilder(
-                future: datas,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    print("error");
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.connectionState == ConnectionState.waiting) {
-                    print("wating");
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    return Column(
-                      children: getAlarmWidgets(deviceWidth, snapshot.data!),
-                    );
-                  }
-                },
-              ),
-              // ...getAlarmWidgets(deviceWidth),
-              const SizedBox(height: 25),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Material(
+                      color: CustomColors.systemWhite,
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () async {
+                          final isChange = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MakeSleepAlarmPage(),
+                            ),
+                          );
+
+                          if (isChange != null && isChange) {
+                            setState(() {
+                              datas = getDatas();
+                            });
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color(0xFFE5E5EA),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          width: deviceWidth - 32,
+                          height: 108,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/sleep_teraphy.svg'),
+                              const SizedBox(height: 8),
+                              const Text(
+                                '새로운 수면 테라피 만들기',
+                                style: TextStyle(
+                                  fontFamily: "Pretendard",
+                                  fontSize: 15,
+                                  color: CustomColors.secondaryBlack,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                FutureBuilder(
+                  future: datas,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      print(snapshot.error);
+                      print("error");
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.connectionState == ConnectionState.waiting) {
+                      print("wating");
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return Column(
+                        children: getAlarmWidgets(deviceWidth, snapshot.data!),
+                      );
+                    }
+                  },
+                ),
+                // ...getAlarmWidgets(deviceWidth),
+                const SizedBox(height: 25),
+              ],
+            ),
           ),
         ),
       ),

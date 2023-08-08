@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/calendar/calendar/calendar_item.dart';
 import 'package:drberry_app/components/main_page/calendar/history_graph/history_graph_page.dart';
@@ -112,11 +114,6 @@ class _CalendarPageState extends State<CalendarPage>
   void initState() {
     super.initState();
 
-    var controller = ScrollController(
-        initialScrollOffset: (148 + (((widget.deviceWidth / 7) * (861 / widget.deviceWidth)) * 6)) * 6,
-        keepScrollOffset: false);
-
-    _controller = controller;
     _tabController = TabController(length: 6, vsync: this);
 
     _isCall = getCalendarData();
@@ -129,7 +126,8 @@ class _CalendarPageState extends State<CalendarPage>
   }
 
   Future<List<Month>> getCalendarData() async {
-    DateTime firstDate = DateTime(DateTime.now().year, DateTime.now().month - 6, 1);
+    DateTime firstDate = DateTime(context.read<CalendarPageProvider>().selectDate.year,
+        context.read<CalendarPageProvider>().selectDate.month - 6, 1);
     List<Month> cal = [];
 
     for (var i = 0; i < 13; i++) {
@@ -198,10 +196,23 @@ class _CalendarPageState extends State<CalendarPage>
                   valueListenable: _segmentController,
                   builder: (context, value, child) {
                     if (value == 0) {
+                      final selectMonth = context.read<CalendarPageProvider>().selectDate.month;
+                      final todayMonth = DateTime.now().month;
+
+                      print("fuck : $selectMonth you : $todayMonth Tlqkf : ${6 + (selectMonth - todayMonth)}");
+
+                      print((148 + (((widget.deviceWidth / 7) * (861 / widget.deviceWidth)) * 6)) *
+                          (6 + (selectMonth - todayMonth)));
+
+                      var controller = ScrollController(
+                          initialScrollOffset: (148 + (((widget.deviceWidth / 7) * (861 / widget.deviceWidth)) * 6)) *
+                              (6 + (selectMonth - todayMonth)),
+                          keepScrollOffset: false);
+
                       return Container(
                         padding: const EdgeInsets.only(top: 115),
                         child: CustomScrollView(
-                          controller: _controller,
+                          controller: controller,
                           slivers: [
                             SliverList(
                                 delegate: SliverChildBuilderDelegate(
@@ -224,7 +235,7 @@ class _CalendarPageState extends State<CalendarPage>
                               context.watch<CalendarPageProvider>().monthHistoryList == null
                           ? const Center(
                               child: Text(
-                                '아직 데이터가 없습니다..',
+                                '아직 데이터가 없습니다',
                                 style: TextStyle(
                                   fontFamily: "Pretendard",
                                   fontSize: 15,

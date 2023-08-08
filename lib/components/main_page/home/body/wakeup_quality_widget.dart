@@ -150,7 +150,11 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
                       margin: const EdgeInsets.fromLTRB(0, 0, 0, 6),
                       child: const Text(
                         '기상까지 걸린시간',
-                        style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                     Container(
@@ -159,7 +163,7 @@ class _WakeupQualityWidgetState extends State<WakeupQualityWidget> {
                         wakeupQualityDetailData != null ? wakeupQualityDetailData.whenWakeTime.toString() : "0m",
                         style: const TextStyle(
                             fontFamily: 'Pretendard',
-                            fontSize: 28,
+                            fontSize: 22,
                             fontWeight: FontWeight.w400,
                             color: CustomColors.lightGreen2),
                       ),

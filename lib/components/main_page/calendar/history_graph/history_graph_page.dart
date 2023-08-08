@@ -24,6 +24,30 @@ class HistoryGraphPage extends StatefulWidget {
 }
 
 class _HistoryGraphPageState extends State<HistoryGraphPage> {
+  String type = 'Day';
+
+  @override
+  void initState() {
+    super.initState();
+    switch (widget.graphController.value) {
+      case 0:
+        setState(() {
+          type = 'Day';
+        });
+        break;
+      case 1:
+        setState(() {
+          type = 'Month';
+        });
+        break;
+      case 2:
+        setState(() {
+          type = 'Month';
+        });
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -41,6 +65,7 @@ class _HistoryGraphPageState extends State<HistoryGraphPage> {
                   GestureDetector(
                     onTap: () {
                       widget.graphController.value = 0;
+                      type = 'Day';
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -51,10 +76,11 @@ class _HistoryGraphPageState extends State<HistoryGraphPage> {
                       child: const Text(
                         "주",
                         style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: "WorkSans",
-                            fontWeight: FontWeight.w400,
-                            color: CustomColors.secondaryBlack),
+                          fontSize: 15,
+                          fontFamily: "WorkSans",
+                          fontWeight: FontWeight.w400,
+                          color: CustomColors.secondaryBlack,
+                        ),
                       ),
                     ),
                   ),
@@ -83,6 +109,7 @@ class _HistoryGraphPageState extends State<HistoryGraphPage> {
                   GestureDetector(
                     onTap: () {
                       widget.graphController.value = 2;
+                      type = 'Year';
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -107,11 +134,17 @@ class _HistoryGraphPageState extends State<HistoryGraphPage> {
                 builder: (context, value, child) {
                   switch (value) {
                     case 0:
-                      return GraphContainer(history: widget.history);
+                      return GraphContainer(
+                        history: widget.history,
+                        type: 'Day',
+                      );
                     case 1:
                       return WeeklyGraphContainer(weekHistory: widget.weekHistory);
                     case 2:
-                      return GraphContainer(history: widget.monthHistory);
+                      return GraphContainer(
+                        history: widget.monthHistory,
+                        type: 'Year',
+                      );
                     default:
                       return const SizedBox.expand(
                         child: Center(

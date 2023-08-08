@@ -14,6 +14,7 @@ class CalendarPageProvider extends ChangeNotifier {
   List<History>? _weekHistoryList = [];
   List<History>? _monthHistoryList = [];
   int _historyIndex = 0;
+  DateTime _selectDate = DateTime.now();
   int get pageIndex => _pageIndex;
   List<Month> get calendar => _calendar;
   String get selectedDate => _selectedDate;
@@ -21,6 +22,7 @@ class CalendarPageProvider extends ChangeNotifier {
   List<History>? get weekHistoryList => _weekHistoryList;
   List<History>? get monthHistoryList => _monthHistoryList;
   int get historyIndex => _historyIndex;
+  DateTime get selectDate => _selectDate;
 
   void setIndex(int index) {
     _pageIndex = index;
@@ -102,6 +104,11 @@ class CalendarPageProvider extends ChangeNotifier {
 
   void setMonthHistoryList(List<History>? histories) {
     _monthHistoryList = histories;
+    notifyListeners();
+  }
+
+  void setSelectDate(DateTime date) {
+    _selectDate = date;
     notifyListeners();
   }
 }

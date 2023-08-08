@@ -416,6 +416,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.9"
+  flutter_blurhash:
+    dependency: "direct main"
+    description:
+      name: flutter_blurhash
+      sha256: "05001537bd3fac7644fa6558b09ec8c0a3f2eba78c0765f88912882b1331a5c6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   flutter_custom_tab_bar:
     dependency: "direct main"
     description:
@@ -560,6 +568,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  flutter_sliding_box:
+    dependency: "direct main"
+    description:
+      name: flutter_sliding_box
+      sha256: c952053bd3996b96893a44b59430c024bc1bbe56902323c72cb2e660c1977238
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter_sound:
     dependency: "direct main"
     description:

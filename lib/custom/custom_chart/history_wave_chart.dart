@@ -7,17 +7,44 @@ import 'package:flutter/material.dart';
 class HistoryLineChart extends CustomPainter {
   final List<Offset> dataPoints = [];
 
+  final String type;
   final List<HistoryGraph> datas;
   late Picture _picture;
   final List<HistoryLabels> labels;
 
-  HistoryLineChart({required Size size, required this.datas, required this.labels}) {
-    _picture = _captureGraph(size);
+  HistoryLineChart({
+    required Size size,
+    required this.datas,
+    required this.labels,
+    required this.type,
+  }) {
+    // _picture = _captureGraph(size);
   }
 
-  Picture _captureGraph(Size size) {
-    final recorder = PictureRecorder();
-    final canvas = Canvas(recorder);
+  // Picture _captureGraph(Size size) {
+  //   final recorder = PictureRecorder();
+  //   final canvas = Canvas(recorder);
+
+  //   return recorder.endRecording();
+  // }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    print("length라고 씨발년아 2라고 2 왜 못알아 쳐먹지? 애미없는년 ${datas.length} ${7 - datas.length}");
+
+    for (var i = 0; i < 7 - datas.length; i++) {
+      datas.insert(0, HistoryGraph(avgScore: 0));
+      final label = labels[0].date.split('/');
+      var newLabel = "";
+      if (int.parse(label[1]) == 1) {
+        newLabel =
+            '${int.parse(label[0]) - 1}/${DateTime(DateTime.now().year, int.parse(label[0]), 1).subtract(const Duration(days: 1))}';
+      } else {
+        newLabel = '${int.parse(label[0])}/${int.parse(label[1]) - 1}';
+      }
+
+      labels.insert(0, HistoryLabels(date: newLabel));
+    }
 
     final paint = Paint()
       ..color = CustomColors.lightGreen2
@@ -99,7 +126,7 @@ class HistoryLineChart extends CustomPainter {
 
       for (var i = 0; i < datas.length; i++) {
         var score = (100 - datas[i].avgScore) / 100;
-        var y = (startY - 55) * score + 23;
+        var y = startY * score;
 
         dataPoints.add(Offset(graphX, y));
 
@@ -148,17 +175,10 @@ class HistoryLineChart extends CustomPainter {
       canvas.drawPath(fillPath, gradientPaint); // 그라데이션을 채웁니다.
       canvas.drawPath(path, paint); // 곡선을 그립니다.
     }
-
-    return recorder.endRecording();
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawPicture(_picture);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate != this;
+    return true;
   }
 }

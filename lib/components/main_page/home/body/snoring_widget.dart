@@ -273,7 +273,7 @@ class _SnoringWidgetState extends State<SnoringWidget> {
                                         : "0%",
                                     style: TextStyle(
                                       fontFamily: 'SF-Pro',
-                                      fontSize: 20.sp,
+                                      fontSize: 22.sp,
                                       fontWeight: FontWeight.w500,
                                       color: CustomColors.lightGreen2,
                                     ),
@@ -310,7 +310,7 @@ class _SnoringWidgetState extends State<SnoringWidget> {
                                             : "0dB",
                                         style: TextStyle(
                                             fontFamily: 'SF-Pro',
-                                            fontSize: 20.sp,
+                                            fontSize: 22.sp,
                                             fontWeight: FontWeight.w500,
                                             color: CustomColors.lightGreen2),
                                       ),
@@ -351,7 +351,7 @@ class _SnoringWidgetState extends State<SnoringWidget> {
                                         : "0dB",
                                     style: const TextStyle(
                                         fontFamily: 'SF-Pro',
-                                        fontSize: 20,
+                                        fontSize: 22,
                                         fontWeight: FontWeight.w500,
                                         color: CustomColors.lightGreen2),
                                   ),
@@ -368,7 +368,10 @@ class _SnoringWidgetState extends State<SnoringWidget> {
                                       child: const Text(
                                         '지속구간',
                                         style: TextStyle(
-                                            fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       ),
                                     ),
                                     Container(

@@ -65,7 +65,14 @@ class CircularChart extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    scoreState(percentage);
+    if (percentage > 0) {
+      scoreState(percentage);
+    } else {
+      state = 'Worst';
+      foregroundColors = 'RED';
+      percentageColor = CustomColors.systemGrey3;
+      scoreStateColor = CustomColors.systemGrey3;
+    }
     Paint bgCircle = Paint()
       ..color = backgroundColor
       ..strokeWidth = strokeWidth
@@ -101,11 +108,13 @@ class CircularChart extends CustomPainter {
             color: scoreStateColor, fontSize: scoreStateTextSize, fontWeight: FontWeight.w700, fontFamily: 'SF-Pro'));
 
     final scoreStatePainter = TextPainter(text: scoreStateSpan, textDirection: TextDirection.ltr);
-
-    percentagePainter.layout();
     scoreStatePainter.layout();
-    Offset textCenter =
-        Offset((size.width / 2 - percentagePainter.width / 2), (size.height / 2 - percentagePainter.height / 2 - 10));
+    percentagePainter.layout();
+    Offset textCenter = Offset(
+        (size.width / 2 - percentagePainter.width / 2),
+        percentage > 0
+            ? (size.height / 2 - percentagePainter.height / 2 - 10)
+            : size.height / 2 - percentagePainter.height / 2);
     Offset textCenterBottom = Offset((size.width / 2 - scoreStatePainter.width / 2),
         size.height / 2 - scoreStatePainter.height / 2 + percentagePainter.height / 2);
 
@@ -115,7 +124,9 @@ class CircularChart extends CustomPainter {
 
     if (isScoreState) {
       percentagePainter.paint(canvas, textCenter);
-      scoreStatePainter.paint(canvas, textCenterBottom);
+      if (percentage > 0) {
+        scoreStatePainter.paint(canvas, textCenterBottom);
+      }
     }
   }
 

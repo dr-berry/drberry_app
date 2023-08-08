@@ -48,6 +48,26 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
   Future<void> scanWiFi() async {
     try {
       if (wifiScanCharacteristic != null) {
+        // int resultCount = 0;
+        // final wifiScanStatus = WiFiScanPayload()
+        //   ..msg = WiFiScanMsgType.TypeCmdScanStatus
+        //   ..cmdScanStatus = (CmdScanStatus());
+
+        // final bufferSatatus = wifiScanStatus.writeToBuffer();
+        // await wifiScanCharacteristic?.write(bufferSatatus);
+
+        // wifiScanCharacteristic!.lastValueStream.listen((event) {
+        //   if (event.isNotEmpty) {
+        //     final payload = WiFiScanPayload.fromBuffer(event);
+
+        //     final resp = payload.respScanStatus;
+
+        //     if (resp.scanFinished) {
+        //       resultCount = resp.resultCount;
+        //     }
+        //   }
+        // });
+
         wifiScanCharacteristic!.lastValueStream.listen((event) {
           if (event.isNotEmpty) {
             final payload = WiFiScanPayload.fromBuffer(event);
@@ -71,6 +91,13 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
             }
           }
         });
+        final wifiScanData = WiFiScanPayload()
+          ..msg = WiFiScanMsgType.TypeCmdScanResult
+          ..cmdScanResult = (CmdScanResult()
+            ..startIndex = 4
+            ..count = 10);
+        final binaryWifiScanData = wifiScanData.writeToBuffer();
+        await wifiScanCharacteristic?.write(binaryWifiScanData, timeout: 10000);
       }
     } catch (e) {
       setState(() {
@@ -149,23 +176,23 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
     }
 
     //scanWifiList
-    final wifiStatusPaylaod = WiFiScanPayload()
-      ..msg = WiFiScanMsgType.TypeCmdScanStatus
-      ..cmdScanStatus = (CmdScanStatus());
+    // final wifiStatusPaylaod = WiFiScanPayload()
+    //   ..msg = WiFiScanMsgType.TypeCmdScanStatus
+    //   ..cmdScanStatus = (CmdScanStatus());
 
-    final binaryStatus = wifiStatusPaylaod.writeToBuffer();
-    await wifiScanCharacteristic!.write(binaryStatus);
+    // final binaryStatus = wifiStatusPaylaod.writeToBuffer();
+    // await wifiScanCharacteristic!.write(binaryStatus, timeout: 10000);
 
     final wifiScanPayload = WiFiScanPayload()
       ..msg = WiFiScanMsgType.TypeCmdScanStart
       ..status = Status.Success
       ..cmdScanStart = (CmdScanStart()
-        ..blocking = false
+        ..blocking = true
         ..passive = true
         ..groupChannels = 0
         ..periodMs = 120);
     List<int> data = wifiScanPayload.writeToBuffer();
-    await wifiScanCharacteristic!.write(data);
+    await wifiScanCharacteristic!.write(data, timeout: 10000);
 
     scanWiFi();
   }
@@ -305,18 +332,26 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
 
       List<int> binarySec = sec0payload.writeToBuffer();
 
-      await securityCharacteristic?.write(binarySec);
+      await securityCharacteristic?.write(binarySec, timeout: 10000);
 
       //scanWifiList
+      final wifiScanData = WiFiScanPayload()
+        ..msg = WiFiScanMsgType.TypeCmdScanResult
+        ..cmdScanResult = (CmdScanResult()
+          ..startIndex = 4
+          ..count = 10);
+      final binaryWifiScanData = wifiScanData.writeToBuffer();
+      await wifiScanCharacteristic?.write(binaryWifiScanData, timeout: 10000);
+
       final wifiScanPayload = WiFiScanPayload()
         ..msg = WiFiScanMsgType.TypeCmdScanStart
         ..cmdScanStart = (CmdScanStart()
-          ..blocking = false
+          ..blocking = true
           ..passive = true
           ..groupChannels = 0
           ..periodMs = 120);
       List<int> data = wifiScanPayload.writeToBuffer();
-      await wifiScanCharacteristic?.write(data);
+      await wifiScanCharacteristic?.write(data, timeout: 10000);
 
       scanWiFi();
 

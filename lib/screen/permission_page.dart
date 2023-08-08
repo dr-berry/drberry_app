@@ -19,7 +19,10 @@ class PermissionPage extends StatefulWidget {
 
 class _PermissionPageState extends State<PermissionPage> {
   Future<void> requestPermissions() async {
-    await setupFlutterNotifications();
+    final notification = await Permission.notification.request();
+    if (notification.isGranted) {
+      await setupFlutterNotifications();
+    }
     final cameraState = await Permission.camera.request();
     final bluetoothState = await Permission.bluetooth.request();
     // final setting = await FirebaseMessaging.instance.requestPermission();

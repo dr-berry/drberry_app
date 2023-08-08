@@ -137,7 +137,11 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                     margin: const EdgeInsets.fromLTRB(4, 0, 0, 0),
                     child: const Text(
                       '뒤척임 점수',
-                      style: TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                   Container(
@@ -192,7 +196,7 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                                   : "0회",
                               style: const TextStyle(
                                   fontFamily: 'Pretendard',
-                                  fontSize: 28,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w400,
                                   color: CustomColors.lightGreen2),
                             ),
@@ -221,7 +225,7 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
                                       : "0%",
                                   style: const TextStyle(
                                       fontFamily: 'Pretendard',
-                                      fontSize: 28,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.w400,
                                       color: CustomColors.lightGreen2),
                                 ),

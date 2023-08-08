@@ -7,6 +7,7 @@ import 'package:drberry_app/provider/calendar_page_provider.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:provider/provider.dart';
 
 class MonthDaysWidget extends StatefulWidget {
@@ -43,6 +44,7 @@ class _MonthDaysWidgetState extends State<MonthDaysWidget> {
   void initState() {
     super.initState();
     calendarData = getCalender();
+    // print("init state calendar!!!!!!!!!");
   }
 
   @override
@@ -130,6 +132,10 @@ class _MonthDaysWidgetState extends State<MonthDaysWidget> {
                                 .read<CalendarPageProvider>()
                                 .setSelectedDate(widget.month.year, widget.month.month, days[idx].day);
 
+                            context
+                                .read<CalendarPageProvider>()
+                                .setSelectDate(DateTime(widget.month.year, widget.month.month, days[idx].day));
+
                             widget.controller.value = 1;
                           },
                           child: Stack(
@@ -144,11 +150,15 @@ class _MonthDaysWidgetState extends State<MonthDaysWidget> {
                                     ),
                                     Text(
                                       (days[idx].day).toString(),
-                                      style: const TextStyle(
-                                          fontFamily: "Pretendard",
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color(0xFF8E8E93)),
+                                      style: TextStyle(
+                                        fontFamily: "Pretendard",
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: context.watch<CalendarPageProvider>().selectDate.isSameDay(
+                                                DateTime(widget.month.year, widget.month.month, days[idx].day))
+                                            ? CustomColors.systemBlack
+                                            : const Color(0xFF8E8E93),
+                                      ),
                                     ),
                                     const SizedBox(height: 13),
                                     RepaintBoundary(

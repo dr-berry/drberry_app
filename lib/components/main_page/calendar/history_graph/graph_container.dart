@@ -7,8 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GraphContainer extends StatefulWidget {
   final History history;
+  final String type;
 
-  const GraphContainer({super.key, required this.history});
+  const GraphContainer({super.key, required this.history, required this.type});
 
   @override
   State<GraphContainer> createState() => _GraphContainerState();
@@ -52,6 +53,7 @@ class _GraphContainerState extends State<GraphContainer> {
                     RepaintBoundary(
                       child: CustomPaint(
                         painter: HistoryLineChart(
+                          type: widget.type,
                           size: Size((deviceWidth - 63), ((deviceWidth - 63) * 0.6606060606060606).h),
                           datas: widget.history.graph,
                           labels: widget.history.labels,

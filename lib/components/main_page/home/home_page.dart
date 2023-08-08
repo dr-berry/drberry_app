@@ -89,7 +89,10 @@ class _HomePageState extends State<HomePage> {
           SleepTimeData(defaultBoxDecoration: defaultBoxDecoration),
           SevenDaysData(defaultBoxDecoration: defaultBoxDecoration),
           WeeklyChangeData(defaultBoxDecoration: defaultBoxDecoration),
-          SleepBetterWidget(defaultBoxDecoration: defaultBoxDecoration),
+          context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                  context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+              ? SleepBetterWidget(defaultBoxDecoration: defaultBoxDecoration)
+              : Container(),
           SleepScoreRingData(defaultBoxDecoration: defaultBoxDecoration),
           context.watch<HomePageProvider>().mainPageBiometricData != null &&
                   context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null &&

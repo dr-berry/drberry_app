@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:alarm/alarm.dart';
+import 'package:drberry_app/provider/global_provider.dart';
 import 'package:drberry_app/screen/music_sheet.dart';
 import 'package:drberry_app/screen/sleep_alarm_page.dart';
 import 'package:drberry_app/screen/splash_page.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,6 +28,46 @@ import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:drberry_app/screen/permission_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:volume_controller/volume_controller.dart';
+
+List<Map<String, String>> musicList = [
+  {
+    "imageAssets": "assets/fire.png",
+    "musicAssets": "assets/crackling fireplace.mp3",
+    "blur": "LEFX0DE20M^j03XS\$*ni0g\$%~BIV",
+    "title": "Crackling Fireplace",
+  },
+  {
+    "imageAssets": "assets/rain.png",
+    "musicAssets": "assets/gentle rain.mp3",
+    "title": "Gentle Rain",
+  },
+  {
+    "imageAssets": "assets/melody.png",
+    "musicAssets": "assets/meditation melody.mp3",
+    "title": "Meditation Melody",
+  },
+  {
+    "imageAssets": "assets/pink.png",
+    "musicAssets": "assets/pink noise.mp3",
+    "title": "Pink Noise",
+  },
+  {
+    "imageAssets": "assets/ocean.png",
+    "musicAssets": "assets/ocean waves.mp3",
+    "title": "Ocean Waves",
+  },
+  {
+    "imageAssets": "assets/thunder.png",
+    "musicAssets": "assets/thunder rain.mp3",
+    "title": "Thunder Rain",
+  },
+  {
+    "imageAssets": "assets/white.jpg",
+    "musicAssets": "assets/white noise.mp3",
+    "title": "White Noise",
+  },
+];
+FlutterSoundPlayer soundPlayer = FlutterSoundPlayer(logLevel: Level.nothing);
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -182,7 +224,8 @@ void main() async {
       ChangeNotifierProvider(create: (_) => SignUpProvider()),
       ChangeNotifierProvider(create: (_) => MainPageProvider()),
       ChangeNotifierProvider(create: (_) => HomePageProvider()),
-      ChangeNotifierProvider(create: (_) => CalendarPageProvider())
+      ChangeNotifierProvider(create: (_) => CalendarPageProvider()),
+      ChangeNotifierProvider(create: (_) => GlobalPageProvider())
     ],
     child: MyApp(
       initialRoute: isRinging

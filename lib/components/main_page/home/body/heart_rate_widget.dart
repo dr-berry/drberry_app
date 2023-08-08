@@ -157,7 +157,7 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                                     : "0bpm",
                                 style: const TextStyle(
                                     fontFamily: 'Pretendard',
-                                    fontSize: 20,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.w400,
                                     color: CustomColors.lightGreen2),
                               ),
@@ -190,7 +190,7 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                                         : '${HeartRateGraphY(maxHeartRate: "0", minHeartRate: "0").maxHeartRate}bpm',
                                     style: const TextStyle(
                                         fontFamily: 'SF-Pro',
-                                        fontSize: 20,
+                                        fontSize: 22,
                                         fontWeight: FontWeight.w500,
                                         color: CustomColors.lightGreen2),
                                   ),

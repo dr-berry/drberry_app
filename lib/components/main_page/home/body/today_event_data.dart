@@ -18,8 +18,7 @@ class _TodayEventDataState extends State<TodayEventData> {
     double deviceWidth = MediaQuery.of(context).size.width;
 
     String getType() {
-      final provider =
-          context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!;
+      final provider = context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!;
       switch (provider.scoreType) {
         case 'HEART_BEAT':
           return '심박수';
@@ -37,10 +36,11 @@ class _TodayEventDataState extends State<TodayEventData> {
     }
 
     String getMessage() {
-      final event =
-          context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!;
+      final event = context.watch<HomePageProvider>().mainPageBiometricData!.todayEvent!;
 
-      return '${getType()} 점수가 이전보다 ${event.scoreDiff}점 ${event.lastDayScore! > event.thisDayScore! ? "떨어졌습니다." : "높아졌습니다!"}';
+      print('${event.scoreDiff} ${event.lastDayScore} ${event.thisDayScore}');
+
+      return '${getType()} 점수가 어제보다 ${event.scoreDiff}점 ${event.lastDayScore! > event.thisDayScore! ? "떨어졌습니다." : "높아졌습니다!"}';
     }
 
     return Center(
@@ -55,10 +55,7 @@ class _TodayEventDataState extends State<TodayEventData> {
             Container(
               margin: const EdgeInsets.fromLTRB(0, 0, 0, 30),
               child: const Text('Today Event',
-                  style: TextStyle(
-                      fontFamily: 'SF-Pro',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20)),
+                  style: TextStyle(fontFamily: 'SF-Pro', fontWeight: FontWeight.w400, fontSize: 20)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,10 +83,7 @@ class _TodayEventDataState extends State<TodayEventData> {
                   constraints: BoxConstraints(maxWidth: deviceWidth - 169),
                   child: Text(
                     getMessage(),
-                    style: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400),
+                    style: const TextStyle(fontFamily: 'Pretendard', fontSize: 15, fontWeight: FontWeight.w400),
                     overflow: TextOverflow.clip,
                   ),
                 )
