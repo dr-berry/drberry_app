@@ -3,6 +3,7 @@ import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/account_setting/dialog/change_gender_dialog.dart';
 import 'package:drberry_app/components/account_setting/dialog/change_name_dialog.dart';
 import 'package:drberry_app/data/data.dart';
+import 'package:drberry_app/screen/splash_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
           child: BoardDateTimeBuilder(
             controller: controller,
             pickerType: DateTimePickerType.time,
-            options: BoardDateTimeOptions(
+            options: const BoardDateTimeOptions(
               backgroundColor: CustomColors.systemGrey6,
               activeColor: CustomColors.lightGreen2,
             ),
@@ -130,8 +131,11 @@ class _AccountManagePageState extends State<AccountManagePage> {
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () {
-                                  showModalBottomSheet(
+                                  showBottomSheet(
                                     context: context,
+                                    backgroundColor: Colors.white,
+                                    // isScrollControlled: true,
+                                    // useSafeArea: true,
                                     builder: (context) {
                                       return ChangeNameDialog(
                                         name: _serverName == "" ? snapshot.data!.name : _serverName,
@@ -350,7 +354,49 @@ class _AccountManagePageState extends State<AccountManagePage> {
                       children: [
                         Material(
                           child: InkWell(
-                              onTap: () {},
+                              onTap: () async {
+                                await server.deleteAccount().then((res) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const SplashPage(type: "")),
+                                    (route) => true,
+                                  );
+                                }).catchError((err) {
+                                  showPlatformDialog(
+                                    context: context,
+                                    builder: (context) => BasicDialogAlert(
+                                      title: const Text(
+                                        "로그인 실패",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w600,
+                                            color: CustomColors.systemBlack),
+                                      ),
+                                      content: Text(
+                                        "계정삭제에 실패했습니다. Error: [${err.toString()}]",
+                                        style: const TextStyle(
+                                          fontFamily: "Pretendard",
+                                        ),
+                                      ),
+                                      actions: [
+                                        BasicDialogAction(
+                                          title: const Text(
+                                            "완료",
+                                            style: TextStyle(
+                                              fontFamily: "Pretendard",
+                                              color: CustomColors.lightGreen2,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                });
+                              },
                               child: Container(
                                 decoration: const BoxDecoration(
                                     border: Border(

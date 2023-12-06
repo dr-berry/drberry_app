@@ -22,6 +22,11 @@ class _GraphContainerState extends State<GraphContainer> {
   @override
   void initState() {
     super.initState();
+    print("===============SUB_HISTORY==============");
+    for (var e in widget.history.labels) {
+      print(e.date);
+    }
+    print("===============SUB_HISTORY==============");
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final RenderBox box = _historyKey.currentContext?.findRenderObject() as RenderBox;
       setState(() {

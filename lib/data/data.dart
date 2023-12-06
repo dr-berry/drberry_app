@@ -80,6 +80,9 @@ class MainPageBiometricData {
     // print(json['components'][5]['sleepPatternNeedDataNum']);
     // print("-=-=-=-=-=-=-=-=-=-");
 
+    print(json['components'][9]['nosingDetailData']);
+    print(json['components'][9]['nosingDetailPercent']);
+
     return MainPageBiometricData(
         userBiometricData: UserBiometricData.fromJson(
           json["userBiometricData"],
@@ -105,7 +108,7 @@ class MainPageBiometricData {
         tossNTurnGraphY: TossNTurnGraphY.fromJson(json['components'][8]['tossNTurnGraphY']),
         tossNTurnDetailData: TossNTurnDetailData.fromJson(json['components'][8]['tossNTurnDetailData']),
         nosingGraph: NosingGraph.fromJsonList(json['components'][9]['nosingGraph']),
-        nosingGraphX: NosingGraphX.fromJson(json['components'][9]['nosingGraphX']),
+        nosingGraphX: NosingGraphX.fromJson(json['components'][9]['nosingGraphX'] ?? {}),
         nosingDetailData: NosingDetailData.fromJson(
             json['components'][9]['nosingDetailData'], json['components'][9]['nosingDetailPercent']),
         nosingPartPercent: NosingPartPercent.fromJsonList(json['components'][9]['nosingPartPercent']),
@@ -508,9 +511,10 @@ class TossNTurnDetailData {
 
   factory TossNTurnDetailData.fromJson(Map<String, dynamic> json) {
     return TossNTurnDetailData(
-        tossNTurnCnt: json['tossNTurnCnt'],
-        tossNTurnPercent: json['tossNTurnPercent'],
-        tossNTurnScore: json['tossNTurnScore']);
+      tossNTurnCnt: json['tossNTurnCnt'],
+      tossNTurnPercent: json['tossNTurnPercent'] ?? 0,
+      tossNTurnScore: json['tossNTurnScore'],
+    );
   }
 }
 
@@ -548,14 +552,14 @@ class NosingGraphX {
   NosingGraphX({required this.maxTime, required this.minTime});
 
   factory NosingGraphX.fromJson(Map<String, dynamic> json) {
-    return NosingGraphX(maxTime: json["maxTime"], minTime: json['minTime']);
+    return NosingGraphX(maxTime: json["maxTime"] ?? "없음", minTime: json['minTime'] ?? "없음");
   }
 }
 
 class NosingDetailData {
   int score;
   int avgSnoring;
-  int maxSnoring;
+  double maxSnoring;
   String date;
   String snoringPercent;
 

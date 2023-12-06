@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/screen/splash_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -93,7 +90,9 @@ class _PermissionAgainRequestPageState extends State<PermissionAgainRequestPage>
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const SplashPage(),
+                        builder: (context) => const SplashPage(
+                          type: null,
+                        ),
                       ),
                       (route) => false,
                     );

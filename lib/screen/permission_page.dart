@@ -6,7 +6,6 @@ import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/permission_again_request.dart';
 import 'package:drberry_app/screen/splash_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -48,7 +47,7 @@ class _PermissionPageState extends State<PermissionPage> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => const SplashPage(),
+            builder: (context) => const SplashPage(type: null),
           ),
           (route) => false);
     }

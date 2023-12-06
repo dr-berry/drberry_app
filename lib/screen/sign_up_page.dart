@@ -99,7 +99,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const SplashPage(),
+                                builder: (context) => const SplashPage(type: null),
                               ),
                               (route) => false);
                         } else {
@@ -202,7 +202,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                 Navigator.push(
                                     context, MaterialPageRoute(builder: (context) => const SuccessSignupPage()));
                               }
-                            }).catchError((err) => print(err.toString()));
+                            }).catchError((err) {
+                              print(err.toString());
+                            });
                           }
                         }
 

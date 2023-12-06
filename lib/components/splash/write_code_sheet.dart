@@ -1,13 +1,20 @@
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/Data.dart';
+import 'package:drberry_app/screen/ble_n_wifi_link_page.dart';
 import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:drberry_app/screen/sign_up_page.dart';
 import 'package:drberry_app/server/server.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class WriteCodeSheet extends StatefulWidget {
-  const WriteCodeSheet({super.key});
+  final String? type;
+
+  const WriteCodeSheet({super.key, required this.type});
 
   @override
   State<WriteCodeSheet> createState() => _WriteCodeSheetState();
@@ -119,12 +126,99 @@ class _WriteCodeSheetState extends State<WriteCodeSheet> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(13),
                 onTap: () async {
+                  if (_code == "") {
+                    showPlatformDialog(
+                      context: context,
+                      builder: (context) => BasicDialogAlert(
+                        title: const Text(
+                          "로그인 실패",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: "Pretendard",
+                              fontWeight: FontWeight.w600,
+                              color: CustomColors.systemBlack),
+                        ),
+                        content: const Text(
+                          "빈코드는 입력할 수 없습니다. 기기 코드를 정확하게 입력해주세요.",
+                          style: TextStyle(
+                            fontFamily: "Pretendard",
+                          ),
+                        ),
+                        actions: [
+                          BasicDialogAction(
+                            title: const Text(
+                              "완료",
+                              style: TextStyle(
+                                fontFamily: "Pretendard",
+                                color: CustomColors.lightGreen2,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
+                  if (!_code.startsWith("SDMM_")) {
+                    showPlatformDialog(
+                      context: context,
+                      builder: (context) => BasicDialogAlert(
+                        title: const Text(
+                          "로그인 실패",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: "Pretendard",
+                              fontWeight: FontWeight.w600,
+                              color: CustomColors.systemBlack),
+                        ),
+                        content: const Text(
+                          "기기 코드를 정확하게 입력해주세요.",
+                          style: TextStyle(
+                            fontFamily: "Pretendard",
+                          ),
+                        ),
+                        actions: [
+                          BasicDialogAction(
+                            title: const Text(
+                              "완료",
+                              style: TextStyle(
+                                fontFamily: "Pretendard",
+                                color: CustomColors.lightGreen2,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
+                  if (widget.type == 'reconnect') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BleNWifiLinkPage(
+                          code: _code,
+                        ),
+                      ),
+                    );
+                    return;
+                  }
                   print(_code);
                   await server.checkSignUp(_code).then((value) async {
                     print(value.data);
                     print(bool.parse(value.data));
                     if (bool.parse(value.data)) {
-                      await server.login(_code, "deviceTokenTest").then((res) async {
+                      final token = await FirebaseMessaging.instance.getToken();
+                      print("deviceToken : $token");
+                      await server.login(_code, token ?? "none_device_token").then((res) async {
                         if (res.statusCode == 201) {
                           final tokenResponse = TokenResponse.fromJson(res.data);
                           print(
@@ -135,17 +229,22 @@ class _WriteCodeSheetState extends State<WriteCodeSheet> {
 
                           // ignore: use_build_context_synchronously
                           Navigator.pushAndRemoveUntil(
-                              context, MaterialPageRoute(builder: (context) => const MainPage()), (route) => false);
+                            context,
+                            MaterialPageRoute(builder: (context) => const MainPage()),
+                            (route) => false,
+                          );
                         }
                       }).catchError((err) => print(err));
                     } else {
                       Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SignUpPage(
-                                    deviceCode: _code,
-                                  )),
-                          (route) => false);
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BleNWifiLinkPage(
+                            code: _code,
+                          ),
+                        ),
+                        (route) => false,
+                      );
                     }
                   }).catchError((err) {
                     print(err);

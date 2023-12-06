@@ -5,13 +5,16 @@ import 'package:drberry_app/components/main_page/calendar/calendar/calendar_item
 import 'package:drberry_app/components/main_page/calendar/history_graph/history_graph_page.dart';
 import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/provider/calendar_page_provider.dart';
+import 'package:drberry_app/provider/home_page_provider.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:container_tab_indicator/container_tab_indicator.dart';
 import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Day {
   int day;
@@ -50,6 +53,15 @@ class _CalendarPageState extends State<CalendarPage>
   final int _segment = 0;
   Server server = Server();
 
+  void getSleepState() async {
+    final sleepState = await server.getSleepState();
+    // setState(() {
+    //   _sleepState = sleepState.data;
+    // });
+    print("getSleepState");
+    context.read<HomePageProvider>().setSleepState(bool.parse(sleepState.data));
+  }
+
   Future<List<CalendarData>> getCalender(int month) async {
     final data = server.getCalendar(month).then((res) {
       // print(res.data);
@@ -69,6 +81,10 @@ class _CalendarPageState extends State<CalendarPage>
       List<History> result = [];
       List<History> weekResult = [];
       List<History> monthResult = [];
+
+      print("=========ORIFINAL_DATA=========");
+      print(History.fromJson(value.data['day']['sleepScore']).labels);
+      print("=========ORIFINAL_DATA=========");
 
       result.add(History.fromJson(value.data['day']['sleepScore']));
       result.add(History.fromJson(value.data['day']['sleepPattern']));
@@ -110,8 +126,47 @@ class _CalendarPageState extends State<CalendarPage>
     });
   }
 
+  void getPadOff() async {
+    final pref = await SharedPreferences.getInstance();
+    final isPO = pref.getBool("isPadOff");
+
+    print("lsajdfhlkasdhflkjahfkljasdlkufjahsdlkjfhakfhalksjdfhjk");
+
+    if (isPO != null) {
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: const Text(
+            '수면을 종료하시겠습니까?',
+            style: TextStyle(fontFamily: "Pretendard"),
+          ),
+          content: const Text(
+            '패드에서 떨어진지 10분이 지났습니다. 수면 종료를 원할시 확인을 눌러주세요.',
+            style: TextStyle(fontFamily: "Pretnedard"),
+          ),
+          actions: [
+            BasicDialogAction(
+              title: const Text(
+                '확인',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  color: CustomColors.blue,
+                ),
+              ),
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
+    getPadOff();
+    getSleepState();
     super.initState();
 
     _tabController = TabController(length: 6, vsync: this);
@@ -199,7 +254,7 @@ class _CalendarPageState extends State<CalendarPage>
                       final selectMonth = context.read<CalendarPageProvider>().selectDate.month;
                       final todayMonth = DateTime.now().month;
 
-                      print("fuck : $selectMonth you : $todayMonth Tlqkf : ${6 + (selectMonth - todayMonth)}");
+                      // print("fuck : $selectMonth you : $todayMonth Tlqkf : ${6 + (selectMonth - todayMonth)}");
 
                       print((148 + (((widget.deviceWidth / 7) * (861 / widget.deviceWidth)) * 6)) *
                           (6 + (selectMonth - todayMonth)));
@@ -299,133 +354,137 @@ class _CalendarPageState extends State<CalendarPage>
                   },
                 ),
                 Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      width: deviceWidth,
-                      height: 115,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                              width: deviceWidth,
-                              padding: const EdgeInsets.symmetric(vertical: 24),
-                              color: Colors.white,
-                              child: Center(
-                                  child: AdvancedSegment(
-                                controller: _segmentController,
-                                backgroundColor: const Color.fromRGBO(118, 118, 128, 0.12),
-                                segments: const {0: "캘린더", 1: "그래프"},
-                                activeStyle: const TextStyle(
-                                    fontFamily: "SF-Pro",
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                    color: CustomColors.lightGreen2),
-                                inactiveStyle: const TextStyle(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    width: deviceWidth,
+                    height: 115,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: deviceWidth,
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          color: Colors.white,
+                          child: Center(
+                            child: AdvancedSegment(
+                              controller: _segmentController,
+                              backgroundColor: const Color.fromRGBO(118, 118, 128, 0.12),
+                              segments: const {0: "캘린더", 1: "그래프"},
+                              activeStyle: const TextStyle(
                                   fontFamily: "SF-Pro",
-                                  fontWeight: FontWeight.w400,
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 13,
-                                  color: CustomColors.secondaryBlack,
-                                ),
-                                animationDuration: const Duration(milliseconds: 250),
-                                itemPadding: const EdgeInsets.only(left: 30, right: 30, top: 7, bottom: 7),
-                                shadow: const [
-                                  BoxShadow(
-                                    blurRadius: 8,
-                                    color: Color.fromRGBO(0, 0, 0, 0.12),
-                                    offset: Offset(0, 3),
-                                  ),
-                                  BoxShadow(
-                                    blurRadius: 1,
-                                    color: Color.fromRGBO(0, 0, 0, 0.04),
-                                    offset: Offset(0, 3),
-                                  )
-                                ],
-                              ))),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.transparent),
-                                color: Colors.white,
+                                  color: CustomColors.lightGreen2),
+                              inactiveStyle: const TextStyle(
+                                fontFamily: "SF-Pro",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                                color: CustomColors.secondaryBlack,
                               ),
-                              child: DefaultTabController(
-                                length: 6,
-                                child: TabBar(
-                                  isScrollable: true,
-                                  tabs: [
-                                    Text(
-                                      "수면 스코어",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 0
-                                              ? FontWeight.w400
-                                              : FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "수면 패턴",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 1
-                                              ? FontWeight.w400
-                                              : FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "기상 품질",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 2
-                                              ? FontWeight.w400
-                                              : FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "심박수",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 3
-                                              ? FontWeight.w400
-                                              : FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "코골이",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 4
-                                              ? FontWeight.w400
-                                              : FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "뒤척임",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: context.watch<CalendarPageProvider>().pageIndex != 5
-                                              ? FontWeight.w400
-                                              : FontWeight.w600),
-                                    ),
-                                  ],
-                                  indicator: const ContainerTabIndicator(
-                                      height: 2,
-                                      radius: BorderRadius.all(Radius.circular(2)),
-                                      color: CustomColors.secondaryBlack,
-                                      padding: EdgeInsets.only(top: 16)),
-                                  onTap: (value) {
-                                    print(value);
-                                    context.read<CalendarPageProvider>().setIndex(value);
-                                  },
-                                  controller: _tabController,
+                              animationDuration: const Duration(milliseconds: 250),
+                              itemPadding: const EdgeInsets.only(left: 30, right: 30, top: 7, bottom: 7),
+                              shadow: const [
+                                BoxShadow(
+                                  blurRadius: 8,
+                                  color: Color.fromRGBO(0, 0, 0, 0.12),
+                                  offset: Offset(0, 3),
                                 ),
+                                BoxShadow(
+                                  blurRadius: 1,
+                                  color: Color.fromRGBO(0, 0, 0, 0.04),
+                                  offset: Offset(0, 3),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.transparent),
+                              color: Colors.white,
+                            ),
+                            child: DefaultTabController(
+                              length: 6,
+                              child: TabBar(
+                                isScrollable: true,
+                                tabs: [
+                                  Text(
+                                    "수면 스코어",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: CustomColors.secondaryBlack,
+                                        fontWeight: context.watch<CalendarPageProvider>().pageIndex != 0
+                                            ? FontWeight.w400
+                                            : FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "수면 패턴",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: CustomColors.secondaryBlack,
+                                        fontWeight: context.watch<CalendarPageProvider>().pageIndex != 1
+                                            ? FontWeight.w400
+                                            : FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "기상 품질",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: CustomColors.secondaryBlack,
+                                        fontWeight: context.watch<CalendarPageProvider>().pageIndex != 2
+                                            ? FontWeight.w400
+                                            : FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "심박수",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: CustomColors.secondaryBlack,
+                                        fontWeight: context.watch<CalendarPageProvider>().pageIndex != 3
+                                            ? FontWeight.w400
+                                            : FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "코골이",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: CustomColors.secondaryBlack,
+                                        fontWeight: context.watch<CalendarPageProvider>().pageIndex != 4
+                                            ? FontWeight.w400
+                                            : FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "뒤척임",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: CustomColors.secondaryBlack,
+                                        fontWeight: context.watch<CalendarPageProvider>().pageIndex != 5
+                                            ? FontWeight.w400
+                                            : FontWeight.w600),
+                                  ),
+                                ],
+                                indicator: const ContainerTabIndicator(
+                                  height: 2,
+                                  radius: BorderRadius.all(Radius.circular(2)),
+                                  color: CustomColors.secondaryBlack,
+                                  padding: EdgeInsets.only(top: 16),
+                                ),
+                                onTap: (value) {
+                                  print(value);
+                                  context.read<CalendarPageProvider>().setIndex(value);
+                                },
+                                controller: _tabController,
                               ),
                             ),
-                          )
-                        ],
-                      ),
-                    )),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               ],
             );
           }

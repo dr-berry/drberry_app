@@ -9,6 +9,7 @@ import 'package:drberry_app/screen/sleep_alarm_page.dart';
 import 'package:drberry_app/screen/sleep_alarm_setting_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:drberry_app/server/server.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -77,6 +78,7 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))),
                   onPressed: () async {
+                    print(await FirebaseMessaging.instance.getToken());
                     // Alarm.getAlarms().forEach((element) async {
                     //   await Alarm.stop(element.id);
                     //   print(element.id);
@@ -84,12 +86,30 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                     //     await Alarm.stop(element.id);
                     //   }
                     // });
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SleepAlarmSettingPage(),
-                      ),
-                    );
+                    print(await Permission.notification.status);
+                    // pref.clear();
+                    if (await Permission.notification.isGranted) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SleepAlarmSettingPage(),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PermissionAgainRequestPage(
+                            permission: RequiredPermission(
+                              bluetoothPermision: false,
+                              notificationPermission: true,
+                              cameraPermission: false,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
                     // Navigator.push(
                     //   context,
                     //   CupertinoPageRoute(
@@ -133,7 +153,6 @@ class _MainPageHeaderState extends State<MainPageHeader> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))),
                   onPressed: () async {
                     print(await Permission.notification.status);
-                    SharedPreferences pref = await SharedPreferences.getInstance();
                     // pref.clear();
                     if (await Permission.notification.isGranted) {
                       // ignore: use_build_context_synchronously

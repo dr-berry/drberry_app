@@ -97,7 +97,9 @@ class _ChangeGenderDialogState extends State<ChangeGenderDialog> {
                           Material(
                             color: CustomColors.systemWhite,
                             child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
                                 child: const Text(
                                   "취소",
                                   style: TextStyle(

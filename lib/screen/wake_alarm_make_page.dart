@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
+import 'package:drberry_app/server/server.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,14 +17,16 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WakeAlarmMakePage extends StatefulWidget {
   AlarmData? alarmData;
+  dynamic aiAlarmData;
 
-  WakeAlarmMakePage({super.key, this.alarmData});
+  WakeAlarmMakePage({super.key, this.alarmData, this.aiAlarmData});
 
   @override
   State<WakeAlarmMakePage> createState() => _WakeAlarmMakePageState();
@@ -37,10 +41,12 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
   int _musicIndex = -1;
   final ValueNotifier<bool> _circleDate = ValueNotifier(false);
   final ValueNotifier<bool> _snooseDate = ValueNotifier(false);
-  final List<dynamic> _savedAlarmData = [];
+  List<dynamic> _savedAlarmData = [];
   final ValueNotifier<int> _segmentController = ValueNotifier(1);
   TimeOfDay? _selectStartTime;
   TimeOfDay? _selectEndTime;
+
+  final Server _server = Server();
 
   void setAlarmData() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -191,10 +197,42 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
         _musicIndex = musicList.indexWhere(
           (element) => element['title'] == widget.alarmData?.alarmData['musicInfo']['title'],
         );
+
+        print(widget.alarmData!.alarmSettings.dateTime);
         _selectTime = TimeOfDay(
             hour: widget.alarmData!.alarmSettings.dateTime.hour,
             minute: widget.alarmData!.alarmSettings.dateTime.minute);
       });
+    }
+  }
+
+  DateTime setAlarm() {
+    DateTime now = DateTime.now();
+    DateTime alarmTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
+
+    if (_selectCircleDate.isEmpty) {
+      if (alarmTime.isBefore(now)) {
+        return alarmTime.add(const Duration(days: 1));
+      } else {
+        return alarmTime;
+      }
+    } else {
+      int todayWeekday = now.weekday; // Monday is 1, Sunday is 7
+      bool todayIncluded = _selectCircleDate.contains(todayWeekday);
+
+      if (todayIncluded && alarmTime.isBefore(now)) {
+        // 오늘을 제외하고 가장 가까운 다음 반복 주기 계산
+        List<int> nextRepeatDays = List.from(_selectCircleDate)..remove(todayWeekday);
+        int daysUntilNextAlarm =
+            nextRepeatDays.map((weekday) => (weekday - todayWeekday + 7) % 7).reduce((a, b) => min(a, b));
+        return alarmTime.add(Duration(days: daysUntilNextAlarm));
+      } else if (todayIncluded) {
+        return alarmTime;
+      } else {
+        int daysUntilNextAlarm =
+            _selectCircleDate.map((weekday) => (weekday - todayWeekday + 7) % 7).reduce((a, b) => min(a, b));
+        return alarmTime.add(Duration(days: daysUntilNextAlarm));
+      }
     }
   }
 
@@ -288,13 +326,14 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                   SharedPreferences pref = await SharedPreferences.getInstance();
                   final jsonStr = pref.getString('alarmDatas');
                   List<AlarmData> alarmDatas = [];
+                  print(widget.alarmData?.alarmData);
 
-                  await Alarm.stop(widget.alarmData!.alarmSettings.id);
+                  // await Alarm.stop(widget.alarmData!.alarmSettings.id);
 
-                  widget.alarmData!.alarmData['snoozeIds'].forEach((e) async {
-                    await Alarm.stop(e);
-                    print(e);
-                  });
+                  // widget.alarmData!.alarmData['snoozeIds'].forEach((e) async {
+                  //   await Alarm.stop(e);
+                  //   print(e);
+                  // });
 
                   if (jsonStr != null) {
                     final parsedJson = jsonDecode(jsonStr);
@@ -303,25 +342,29 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                     }
                   }
 
-                  alarmDatas.removeWhere(
-                    (element) => widget.alarmData!.alarmSettings.id == element.alarmSettings.id,
+                  var alarms = alarmDatas.where(
+                    (element) => widget.alarmData!.alarmSettings.id != element.alarmSettings.id,
                   );
 
-                  final alarmDatasJson = alarmDatas.map((e) => e.toJson()).toList();
-                  final removeStr = jsonEncode(alarmDatasJson);
-                  await pref.setString("alarmDatas", removeStr);
+                  final alarmDatasJson = alarms.toList().map((e) => e.toJson()).toList();
 
-                  Future.delayed(Duration.zero, () {
-                    Navigator.pop(context, true);
+                  final removeStr = jsonEncode(alarmDatasJson);
+                  await pref.remove("alarmDatas");
+                  await pref.setString("alarmDatas", removeStr);
+                  print(alarms.toList());
+                  setState(() {
+                    _savedAlarmData = [];
+                    _savedAlarmData.addAll(jsonDecode(removeStr));
                   });
+
+                  // Future.delayed(Duration.zero, () {
+                  //   Navigator.pop(context, true);
+                  // });
                 }
 
                 final alarms = Alarm.getAlarms();
                 var now = DateTime.now();
                 var selectTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
-                var id = widget.alarmData != null
-                    ? widget.alarmData!.alarmSettings.id
-                    : int.parse("${now.hour}${now.month}${now.day}${now.hour}${now.minute}${now.second}");
 
                 alarms.where((element) {
                   return element.dateTime.hour == selectTime.hour && element.dateTime.minute == selectTime.minute;
@@ -332,123 +375,47 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                 List<int> snoozeIds = [];
                 AlarmSettings alarmSettings;
 
-                if (_selectCircleDate.isEmpty) {
-                  alarmSettings = AlarmSettings(
-                    id: id,
-                    dateTime: now.add(const Duration(days: 1)),
+                final alarmTime = setAlarm();
+                var id = widget.alarmData != null
+                    ? widget.alarmData!.alarmSettings.id
+                    : int.parse(
+                        "${alarmTime.hour}${alarmTime.month}${alarmTime.day}${alarmTime.hour}${alarmTime.minute}");
+
+                alarmSettings = AlarmSettings(
+                  id: id,
+                  dateTime: alarmTime,
+                  assetAudioPath: musicList[_musicIndex]['musicAssets']!,
+                  loopAudio: true,
+                  fadeDuration: 5,
+                  vibrate: true,
+                  notificationTitle: 'This time to wake',
+                  notificationBody: '설정하신 알람입니다! 일어나세요!!',
+                  enableNotificationOnKill: true,
+                  stopOnNotificationOpen: false,
+                );
+                await Alarm.set(alarmSettings: alarmSettings);
+                print(alarmSettings);
+
+                for (var i = 0; i < _selectSnoozeData.length; i++) {
+                  var snoozeTime = alarmTime.add(Duration(minutes: _selectSnoozeData[i] + i + 1));
+
+                  final snoozeId = id + i + 1;
+
+                  final alarmSettings = AlarmSettings(
+                    id: snoozeId,
+                    dateTime: snoozeTime,
                     assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                    loopAudio: true,
+                    loopAudio: false,
                     fadeDuration: 5,
-                    vibrate: true,
-                    notificationTitle: 'This time to wake',
-                    notificationBody: '설정하신 알람입니다! 일어나세요!!',
+                    vibrate: false,
+                    notificationTitle: 'This time to sleep',
+                    notificationBody: '설정하신 스누즈 알림입니다! 어서 일어나세요!',
                     enableNotificationOnKill: true,
                     stopOnNotificationOpen: false,
                   );
 
                   await Alarm.set(alarmSettings: alarmSettings);
-                } else {
-                  if (selectTime.isAfter(now) && selectTime.weekday == now.weekday) {
-                    alarmSettings = AlarmSettings(
-                      id: id,
-                      dateTime:
-                          DateTime(now.year, now.month, now.day, selectTime.hour, selectTime.minute, selectTime.second),
-                      assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                      loopAudio: false,
-                      fadeDuration: 5,
-                      vibrate: false,
-                      notificationTitle: 'This time to wake',
-                      notificationBody: '설정하신 알람입니다! 일어나세요!!',
-                      enableNotificationOnKill: true,
-                      stopOnNotificationOpen: false,
-                    );
-
-                    await Alarm.set(alarmSettings: alarmSettings);
-                  } else {
-                    int target = now.weekday;
-                    int closedWeek = _selectCircleDate.reduce(
-                      (a, b) => (target - a).abs() < (target - b).abs() ? a : b,
-                    );
-
-                    DateTime targetDate = now;
-                    if (closedWeek < now.weekday) {
-                      targetDate = now.add(Duration(days: now.weekday - closedWeek));
-                    } else if (closedWeek > 6) {
-                      targetDate = now.add(Duration(days: now.weekday - closedWeek + 7));
-                    } else {
-                      targetDate = now.add(const Duration(days: 7));
-                    }
-
-                    alarmSettings = AlarmSettings(
-                      id: id,
-                      dateTime: targetDate,
-                      assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                      loopAudio: false,
-                      fadeDuration: 5,
-                      vibrate: false,
-                      notificationTitle: 'This time to wake',
-                      notificationBody: '설정하신 알람입니다! 일어나세요!!',
-                      enableNotificationOnKill: true,
-                      stopOnNotificationOpen: false,
-                    );
-
-                    await Alarm.set(alarmSettings: alarmSettings);
-                  }
-                }
-
-                if (_selectSnoozeData.isNotEmpty) {
-                  for (var i = 0; i < _selectSnoozeData.length; i++) {
-                    final settedAlarm = alarms.where((element) {
-                      return element.dateTime.hour == selectTime.hour && element.dateTime.minute == selectTime.minute;
-                    });
-
-                    if (settedAlarm.isNotEmpty) {
-                      continue;
-                    }
-                    DateTime selectedDate;
-
-                    if (_selectCircleDate.isEmpty) {
-                      selectedDate = now.add(const Duration(days: 1)).add(Duration(minutes: now.minute + i + (i + 1)));
-                    } else {
-                      if (selectTime.isAfter(now) && selectTime.weekday == now.weekday) {
-                        selectedDate = DateTime(now.year, now.month, now.day, selectTime.hour,
-                            selectTime.minute + i + (i + 1), selectTime.second);
-                      } else {
-                        int target = now.weekday;
-                        int closedWeek = _selectCircleDate.reduce(
-                          (a, b) => (target - a).abs() < (target - b).abs() ? a : b,
-                        );
-
-                        DateTime targetDate = now;
-                        if (closedWeek < now.weekday) {
-                          targetDate = now.add(Duration(days: now.weekday - closedWeek));
-                        } else if (closedWeek > 6) {
-                          targetDate = now.add(Duration(days: now.weekday - closedWeek + 7));
-                        }
-
-                        targetDate.add(Duration(minutes: targetDate.minute + i + (i + 1)));
-                        selectedDate = targetDate;
-                      }
-                    }
-
-                    final snoozeId = id + i + 1;
-
-                    final alarmSettings = AlarmSettings(
-                      id: snoozeId,
-                      dateTime: selectedDate,
-                      assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                      loopAudio: false,
-                      fadeDuration: 5,
-                      vibrate: false,
-                      notificationTitle: 'This time to sleep',
-                      notificationBody: '설정하신 스누즈 알림입니다! 어서 일어나세요!',
-                      enableNotificationOnKill: true,
-                      stopOnNotificationOpen: false,
-                    );
-
-                    await Alarm.set(alarmSettings: alarmSettings);
-                    snoozeIds.add(snoozeId);
-                  }
+                  snoozeIds.add(snoozeId);
                 }
 
                 AlarmData alarmData = AlarmData(
@@ -460,7 +427,7 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                     "snoozeIds": snoozeIds,
                     "musicInfo": musicList[_musicIndex],
                     "time":
-                        '${_selectTime!.hour < 10 ? '0${_selectTime!.hour}' : _selectTime!.hour}:${_selectTime!.minute < 10 ? '0${_selectTime!.minute}' : _selectTime!.minute}',
+                        '${alarmTime.hour < 10 ? '0${alarmTime.hour}' : alarmTime.hour}:${alarmTime.minute < 10 ? '0${alarmTime.minute}' : alarmTime.minute}',
                   },
                   alarmSettings: alarmSettings,
                 );
@@ -474,35 +441,92 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                 });
               } else {
                 print(_segmentController.value);
-                await showPlatformDialog(
-                  context: context,
-                  builder: (context) {
-                    return BasicDialogAlert(
-                      title: const Text(
-                        '알람 설정 실패',
-                        style: TextStyle(fontFamily: "Pretendard"),
-                      ),
-                      content: const Text(
-                        'AI알람은 아직 구현되어있지 않습니다.',
-                        style: TextStyle(fontFamily: "Pretnedard"),
-                      ),
-                      actions: [
-                        BasicDialogAction(
-                          title: const Text(
-                            '확인',
-                            style: TextStyle(
-                              fontFamily: "Pretendard",
-                              color: CustomColors.blue,
+                if (_selectStartTime == null || _selectEndTime == null || _musicIndex == -1) {
+                  showPlatformDialog(
+                    context: context,
+                    builder: (context) {
+                      return BasicDialogAlert(
+                        title: const Text(
+                          '알람 설정 실패',
+                          style: TextStyle(fontFamily: "Pretendard"),
+                        ),
+                        content: const Text(
+                          '시간과 음원을 설정해주세요.',
+                          style: TextStyle(fontFamily: "Pretnedard"),
+                        ),
+                        actions: [
+                          BasicDialogAction(
+                            title: const Text(
+                              '확인',
+                              style: TextStyle(
+                                fontFamily: "Pretendard",
+                                color: CustomColors.blue,
+                              ),
                             ),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
-                    );
-                  },
-                );
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  );
+                  return;
+                }
+
+                final now = DateTime.now();
+                if (widget.aiAlarmData == null) {
+                  await _server.setAlarm(
+                    "WAKE",
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectStartTime!.hour,
+                        _selectStartTime!.minute,
+                      ),
+                    ),
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectEndTime!.hour,
+                        _selectEndTime!.minute,
+                      ),
+                    ),
+                    musicList[_musicIndex]['title']!,
+                    _selectSnoozeData,
+                    _selectCircleDate,
+                  );
+                } else {
+                  await _server.updateAlarm(
+                    int.parse(widget.aiAlarmData['alarmId'].toString()),
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectStartTime!.hour,
+                        _selectStartTime!.minute,
+                      ),
+                    ),
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectEndTime!.hour,
+                        _selectEndTime!.minute,
+                      ),
+                    ),
+                    musicList[_musicIndex]['title']!,
+                    _selectSnoozeData,
+                    _selectCircleDate,
+                  );
+                }
+
                 Future.delayed(Duration.zero, () {
                   Navigator.pop(context, true);
                 });
@@ -873,40 +897,40 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                                               int start = time.hour * 60 + time.minute;
                                               int end = _selectEndTime!.hour * 60 + _selectEndTime!.minute;
 
-                                              if (start > end) {
-                                                Future.delayed(Duration.zero, () {
-                                                  showPlatformDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return BasicDialogAlert(
-                                                        title: const Text(
-                                                          '시간 설정 실패',
-                                                          style: TextStyle(fontFamily: "Pretendard"),
-                                                        ),
-                                                        content: const Text(
-                                                          '첫 시간이 끝시간 보다 앞으로 설정해주세요.',
-                                                          style: TextStyle(fontFamily: "Pretnedard"),
-                                                        ),
-                                                        actions: [
-                                                          BasicDialogAction(
-                                                            title: const Text(
-                                                              '확인',
-                                                              style: TextStyle(
-                                                                fontFamily: "Pretendard",
-                                                                color: CustomColors.blue,
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.pop(context);
-                                                            },
-                                                          )
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                });
-                                                return;
-                                              }
+                                              // if (start > end) {
+                                              //   Future.delayed(Duration.zero, () {
+                                              //     showPlatformDialog(
+                                              //       context: context,
+                                              //       builder: (context) {
+                                              //         return BasicDialogAlert(
+                                              //           title: const Text(
+                                              //             '시간 설정 실패',
+                                              //             style: TextStyle(fontFamily: "Pretendard"),
+                                              //           ),
+                                              //           content: const Text(
+                                              //             '첫 시간이 끝시간 보다 앞으로 설정해주세요.',
+                                              //             style: TextStyle(fontFamily: "Pretnedard"),
+                                              //           ),
+                                              //           actions: [
+                                              //             BasicDialogAction(
+                                              //               title: const Text(
+                                              //                 '확인',
+                                              //                 style: TextStyle(
+                                              //                   fontFamily: "Pretendard",
+                                              //                   color: CustomColors.blue,
+                                              //                 ),
+                                              //               ),
+                                              //               onPressed: () {
+                                              //                 Navigator.pop(context);
+                                              //               },
+                                              //             )
+                                              //           ],
+                                              //         );
+                                              //       },
+                                              //     );
+                                              //   });
+                                              //   return;
+                                              // }
                                             }
 
                                             if (time != null) {

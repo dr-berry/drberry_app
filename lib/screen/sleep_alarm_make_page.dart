@@ -2,13 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/main.dart';
 import 'package:drberry_app/provider/global_provider.dart';
 import 'package:drberry_app/screen/music_bar.dart';
-import 'package:drberry_app/screen/music_sheet.dart';
-import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
+import 'package:drberry_app/server/server.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,15 +14,15 @@ import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sliding_box/flutter_sliding_box.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logger/logger.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class MakeSleepAlarmPage extends StatefulWidget {
-  AlarmData? alarmData;
+  dynamic alarmData;
 
   MakeSleepAlarmPage({super.key, this.alarmData});
 
@@ -44,6 +42,8 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
   final ValueNotifier<bool> _snooseDate = ValueNotifier(false);
   final List<dynamic> _savedAlarmData = [];
   final BoxController _controller = BoxController();
+
+  final Server _server = Server();
 
   void setAlarmData() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -93,7 +93,6 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
   @override
   void initState() {
     super.initState();
-    setAlarmData();
 
     _snooseDate.addListener(() {
       if (!_snooseDate.value) {
@@ -126,24 +125,6 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
         }
       }
     });
-
-    if (widget.alarmData != null) {
-      setState(() {
-        if (widget.alarmData!.alarmData['weekOfNum'].isNotEmpty) {
-          _circleDate.value = true;
-        }
-
-        widget.alarmData!.alarmData['weekOfNum'].forEach((e) {
-          _selectCircleDate.add(e);
-        });
-        widget.alarmData!.alarmData['snooze'].forEach((e) {
-          _selectSnoozeData.add(e);
-        });
-        _musicIndex = musicList.indexWhere(
-          (element) => element['title'] == widget.alarmData?.alarmData['musicInfo']['title'],
-        );
-      });
-    }
   }
 
   String getKoreanWeekday(int weekday) {
@@ -199,7 +180,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                 foregroundColor: CustomColors.systemGrey2,
               ),
               onPressed: () async {
-                if (_selectStartTime == null || _selectEndTime == null || _musicIndex == -1) {
+                if (_selectStartTime == null || _selectEndTime == null) {
                   showPlatformDialog(
                     context: context,
                     builder: (context) {
@@ -232,42 +213,86 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                   return;
                 }
 
-                final n = DateTime.now();
-                AlarmSettings alarmSettings = AlarmSettings(
-                  id: int.parse('${n.year}${n.day}${n.hour}${n.minute}'),
-                  dateTime: n,
-                  assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                  loopAudio: true,
-                  fadeDuration: 5,
-                  vibrate: true,
-                  notificationTitle: 'This time to wake',
-                  notificationBody: '설정하신 알람입니다! 일어나세요!!',
-                  enableNotificationOnKill: true,
-                  stopOnNotificationOpen: false,
-                );
+                final now = DateTime.now();
+                print(DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                  DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                    _selectStartTime!.hour,
+                    _selectStartTime!.minute,
+                  ),
+                ));
+                print(DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                  DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                    _selectEndTime!.hour,
+                    _selectEndTime!.minute,
+                  ),
+                ));
 
-                AlarmData alarmData = AlarmData(
-                  alarmData: {
-                    "alarm": 'SLEEP',
-                    "weekOfNum": _selectCircleDate,
-                    "musicInfo": musicList[_musicIndex],
-                    "time":
-                        '${_selectStartTime!.hour < 10 ? '0${_selectStartTime!.hour}' : _selectStartTime!.hour}:${_selectStartTime!.minute < 10 ? '0${_selectStartTime!.minute}' : _selectStartTime!.minute} - ${_selectEndTime!.hour < 10 ? '0${_selectEndTime!.hour}' : _selectEndTime!.hour}:${_selectEndTime!.minute < 10 ? '0${_selectEndTime!.minute}' : _selectEndTime!.minute}',
-                    "startTime": DateTime(n.year, n.month, n.day, _selectStartTime!.hour, _selectStartTime!.minute, 0)
-                        .toIso8601String(),
-                    "endTime": DateTime(n.year, n.month, n.day, _selectEndTime!.hour, _selectEndTime!.minute, 0)
-                        .toIso8601String(),
-                  },
-                  alarmSettings: alarmSettings,
-                );
+                int musicIndex = _musicIndex;
+                if (_musicIndex == -1) {
+                  musicIndex = 2;
+                }
 
-                SharedPreferences pref = await SharedPreferences.getInstance();
-                print(alarmData.toJson());
-                _savedAlarmData.add(alarmData.toJson());
-                await pref.setString("sleepDatas", jsonEncode(_savedAlarmData));
+                if (widget.alarmData == null) {
+                  await _server.setAlarm(
+                    "SLEEP",
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectStartTime!.hour,
+                        _selectStartTime!.minute,
+                      ),
+                    ),
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectEndTime!.hour,
+                        _selectEndTime!.minute,
+                      ),
+                    ),
+                    musicList[musicIndex]['title']!,
+                    _selectSnoozeData,
+                    _selectCircleDate,
+                  );
+                } else {
+                  await _server.updateAlarm(
+                    int.parse(widget.alarmData['alarmId'].toString()),
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectStartTime!.hour,
+                        _selectStartTime!.minute,
+                      ),
+                    ),
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
+                      DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        _selectEndTime!.hour,
+                        _selectEndTime!.minute,
+                      ),
+                    ),
+                    musicList[musicIndex]['title']!,
+                    _selectSnoozeData,
+                    _selectCircleDate,
+                  );
+                }
 
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context, true);
+                Future.delayed(Duration.zero, () {
+                  Navigator.pop(context, true);
+                });
               },
               child: const Text(
                 '완료',
@@ -296,7 +321,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '기상 음원을 선택해주세요',
+                        '수면 음원을 선택해주세요',
                         style: TextStyle(
                           fontFamily: "Pretendard",
                           fontSize: 22,
@@ -366,7 +391,38 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                                                 ),
                                               ),
                                             ),
-                                          )
+                                          ),
+                                          if (musicList[index]['title'] == 'Meditation Melody')
+                                            Positioned(
+                                              top: 12,
+                                              left: 12,
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                                decoration: BoxDecoration(
+                                                  color: CustomColors.lightGreen2,
+                                                  borderRadius: BorderRadius.circular(15),
+                                                ),
+                                                child: const Row(
+                                                  children: [
+                                                    Icon(
+                                                      CupertinoIcons.check_mark_circled,
+                                                      size: 14,
+                                                      color: Colors.white,
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                    Text(
+                                                      '추천!',
+                                                      style: TextStyle(
+                                                        fontFamily: "Pretendard",
+                                                        color: Colors.white,
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
                                         ],
                                       ),
                                     ),
@@ -466,7 +522,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                                 ),
                                 SizedBox(width: 8),
                                 Text(
-                                  'AI 자동 음원 재생 구간',
+                                  'AI 자동 수면 음원 재생',
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 20,
@@ -519,43 +575,43 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                                         print(time);
 
                                         if (_selectEndTime != null && time != null) {
-                                          int start = time.hour * 60 + time.minute;
-                                          int end = _selectEndTime!.hour * 60 + _selectEndTime!.minute;
+                                          // int start = time.hour * 60 + time.minute;
+                                          // int end = _selectEndTime!.hour * 60 + _selectEndTime!.minute;
 
-                                          if (start > end) {
-                                            Future.delayed(Duration.zero, () {
-                                              showPlatformDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return BasicDialogAlert(
-                                                    title: const Text(
-                                                      '시간 설정 실패',
-                                                      style: TextStyle(fontFamily: "Pretendard"),
-                                                    ),
-                                                    content: const Text(
-                                                      '첫 시간이 끝시간 보다 앞으로 설정해주세요.',
-                                                      style: TextStyle(fontFamily: "Pretnedard"),
-                                                    ),
-                                                    actions: [
-                                                      BasicDialogAction(
-                                                        title: const Text(
-                                                          '확인',
-                                                          style: TextStyle(
-                                                            fontFamily: "Pretendard",
-                                                            color: CustomColors.blue,
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.pop(context);
-                                                        },
-                                                      )
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            });
-                                            return;
-                                          }
+                                          // if (start > end) {
+                                          //   Future.delayed(Duration.zero, () {
+                                          //     showPlatformDialog(
+                                          //       context: context,
+                                          //       builder: (context) {
+                                          //         return BasicDialogAlert(
+                                          //           title: const Text(
+                                          //             '시간 설정 실패',
+                                          //             style: TextStyle(fontFamily: "Pretendard"),
+                                          //           ),
+                                          //           content: const Text(
+                                          //             '첫 시간이 끝시간 보다 앞으로 설정해주세요.',
+                                          //             style: TextStyle(fontFamily: "Pretnedard"),
+                                          //           ),
+                                          //           actions: [
+                                          //             BasicDialogAction(
+                                          //               title: const Text(
+                                          //                 '확인',
+                                          //                 style: TextStyle(
+                                          //                   fontFamily: "Pretendard",
+                                          //                   color: CustomColors.blue,
+                                          //                 ),
+                                          //               ),
+                                          //               onPressed: () {
+                                          //                 Navigator.pop(context);
+                                          //               },
+                                          //             )
+                                          //           ],
+                                          //         );
+                                          //       },
+                                          //     );
+                                          //   });
+                                          //   return;
+                                          // }
                                         }
 
                                         if (time != null) {

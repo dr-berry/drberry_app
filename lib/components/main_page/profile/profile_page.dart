@@ -1,13 +1,18 @@
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/data.dart';
 import 'package:drberry_app/main.dart';
+import 'package:drberry_app/provider/home_page_provider.dart';
 import 'package:drberry_app/screen/account_management_page.dart';
 import 'package:drberry_app/screen/app_setting_page.dart';
 import 'package:drberry_app/screen/sleep_data_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,6 +24,15 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Server server = Server();
   Future<ProfileTabData>? _userData;
+
+  void getSleepState() async {
+    final sleepState = await server.getSleepState();
+    // setState(() {
+    //   _sleepState = sleepState.data;
+    // });
+    context.read<HomePageProvider>().setSleepState(bool.parse(sleepState.data));
+  }
+
   final storage = const FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock));
@@ -29,8 +43,48 @@ class _ProfilePageState extends State<ProfilePage> {
     return result;
   }
 
+  void getPadOff() async {
+    final pref = await SharedPreferences.getInstance();
+    final isPO = pref.getBool("isPadOff");
+
+    print("lsajdfhlkasdhflkjahfkljasdlkufjahsdlkjfhakfhalksjdfhjk");
+
+    if (isPO != null) {
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: const Text(
+            '수면을 종료하시겠습니까?',
+            style: TextStyle(fontFamily: "Pretendard"),
+          ),
+          content: const Text(
+            '패드에서 떨어진지 10분이 지났습니다. 수면 종료를 원할시 확인을 눌러주세요.',
+            style: TextStyle(fontFamily: "Pretnedard"),
+          ),
+          actions: [
+            BasicDialogAction(
+              title: const Text(
+                '확인',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  color: CustomColors.blue,
+                ),
+              ),
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
+    getPadOff();
+    getSleepState();
+    print("getSleepState");
     super.initState();
     _userData = getUserData();
   }
@@ -412,7 +466,12 @@ class _ProfilePageState extends State<ProfilePage> {
               color: CustomColors.systemWhite,
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-                onTap: () {},
+                onTap: () async {
+                  const url = 'http://greenberry.kr';
+                  if (await canLaunchUrl(Uri.parse(url))) {
+                    await launchUrl(Uri.parse(url));
+                  }
+                },
                 child: Container(
                   padding: const EdgeInsets.only(left: 20, right: 25),
                   height: (deviceWidth - 32) / 5,
@@ -468,6 +527,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     }).catchError((err) async {
                       print(err);
+                      await storage.deleteAll();
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyApp(initialRoute: '/login'),
+                        ),
+                        (route) => false,
+                      );
                       // await storage.deleteAll();
                       // // ignore: use_build_context_synchronously
                       // Navigator.pushAndRemoveUntil(

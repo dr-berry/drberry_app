@@ -29,6 +29,11 @@ class _HistoryGraphPageState extends State<HistoryGraphPage> {
   @override
   void initState() {
     super.initState();
+    print("=======HISTORY======");
+    for (var i in widget.history.labels) {
+      print(i.date);
+    }
+    print("=======HISTORY======");
     switch (widget.graphController.value) {
       case 0:
         setState(() {
@@ -134,6 +139,9 @@ class _HistoryGraphPageState extends State<HistoryGraphPage> {
                 builder: (context, value, child) {
                   switch (value) {
                     case 0:
+                      print("=============asdfasdfasdfasdf=============");
+                      print(widget.history.labels);
+                      print("=============asdfasdfasdfasdf=============");
                       return GraphContainer(
                         history: widget.history,
                         type: 'Day',

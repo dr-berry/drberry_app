@@ -109,16 +109,19 @@ class _TossNTurnWidgetState extends State<TossNTurnWidget> {
           ),
           RepaintBoundary(
             child: CustomPaint(
-                painter: TossChart(Size(deviceWidth - 80, 155),
-                    tossNTurnGraph: context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                            context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
-                        ? context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnGraph!
-                        : [],
-                    tossNTurnGraphY: context.watch<HomePageProvider>().mainPageBiometricData != null &&
-                            context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
-                        ? context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnGraphY!
-                        : TossNTurnGraphY(minToss: "0", maxToss: "0")),
-                size: Size(deviceWidth - 80, 155)),
+              painter: TossChart(
+                Size(deviceWidth - 80, 155),
+                tossNTurnGraph: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                        context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                    ? context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnGraph!
+                    : [],
+                tossNTurnGraphY: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                        context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
+                    ? context.read<HomePageProvider>().mainPageBiometricData!.tossNTurnGraphY!
+                    : TossNTurnGraphY(minToss: "0", maxToss: "0"),
+              ),
+              size: Size(deviceWidth - 80, 155),
+            ),
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(0, 28, 0, 16),

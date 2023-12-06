@@ -3,10 +3,13 @@ import 'dart:ui';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
+import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/wake_alarm_make_page.dart';
+import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AlarmData {
@@ -59,9 +62,11 @@ class WakeAlarmSettingPage extends StatefulWidget {
 }
 
 class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
-  Future<List<AlarmData>>? datas;
+  Future<List<dynamic>>? datas;
 
-  Future<List<AlarmData>> getDatas() async {
+  final Server _server = Server();
+
+  Future<List<dynamic>> getDatas() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     List<AlarmData> result = [];
     final alarmDatasStr = pref.getString("alarmDatas");
@@ -71,10 +76,21 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
       print(savedAlarmDatas[0].runtimeType);
       for (var i = 0; i < savedAlarmDatas.length; i++) {
         result.add(AlarmData.fromJson(savedAlarmDatas[i]));
+        print("===sajdf====");
+        print(savedAlarmDatas[i]);
       }
     }
 
-    return result;
+    final response = await _server.getAlarms("WAKE").then((res) {
+      return res.data;
+    }).catchError((err) {
+      return [];
+    });
+    // print(response);
+
+    print([...result, ...response]);
+
+    return [...result, ...response];
   }
 
   String getKoreanWeekday(int weekday) {
@@ -98,10 +114,58 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
     }
   }
 
-  List<Widget> getAlarmWidgets(double deviceWidth, List<AlarmData> list) {
+  List<Widget> getAlarmWidgets(double deviceWidth, List<dynamic> list) {
+    print(list);
     List<Widget> result = [];
 
     for (var i = 0; i < list.length; i++) {
+      print(list[i]);
+      Map<String, dynamic> music;
+      int alarmType;
+      String time;
+      List<String> weekday;
+      List<String> snooze;
+
+      // print(list[i].alarmData['weekOfNum']);
+
+      if (list[i] is AlarmData) {
+        music = (list[i] as AlarmData).alarmData['musicInfo'];
+        print(music);
+        alarmType = 1;
+        time = list[i].alarmData['time'];
+        weekday = (list[i].alarmData['weekOfNum'] as List<dynamic>).map((element) {
+          return getKoreanWeekday(element);
+        }).toList();
+        snooze = (list[i].alarmData['snooze'] as List<dynamic>).map((element) => "${element}m").toList();
+      } else {
+        print(list[i]['musicTitle']);
+        try {
+          music = wakeMusicList.firstWhere((element) {
+            print(element['title']);
+            print(list[i]['musicTitle']);
+            return element['title'] == list[i]['musicTitle'];
+          });
+        } catch (e) {
+          print(e);
+        }
+        music = wakeMusicList.firstWhere((element) => element['title'] == list[i]['musicTitle']);
+        // music = {};
+        print(music);
+        alarmType = 0;
+        final start = DateTime.fromMillisecondsSinceEpoch(int.parse(list[i]['startDate'].toString()), isUtc: true);
+        final end = DateTime.fromMillisecondsSinceEpoch(int.parse(list[i]['endDate'].toString()), isUtc: true);
+        final dateFormat = DateFormat("HH:mm");
+        time = '${dateFormat.format(start)} ~ ${dateFormat.format(end)}';
+        print(list[i]['weekdays'].map((res) => int.parse(res["alarmWeekday"].toString())));
+        print(list[i]['snoozes'].map((res) => int.parse(res['snoozeMinute'].toString())));
+        weekday = (list[i]['weekdays'] as List<dynamic>)
+            .map((res) => getKoreanWeekday(int.parse(res["alarmWeekday"].toString())))
+            .toList();
+        snooze = (list[i]['snoozes'] as List<dynamic>)
+            .map((res) => '${int.parse(res['snoozeMinute'].toString())}m')
+            .toList();
+      }
+
       result.add(
         Container(
           width: deviceWidth,
@@ -112,36 +176,44 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
             trailingActions: [
               SwipeAction(
                 onTap: (value) async {
-                  SharedPreferences pref = await SharedPreferences.getInstance();
-                  final jsonStr = pref.getString('alarmDatas');
-                  List<AlarmData> alarmDatas = [];
+                  if (list[i] is AlarmData) {
+                    SharedPreferences pref = await SharedPreferences.getInstance();
+                    final jsonStr = pref.getString('alarmDatas');
+                    List<AlarmData> alarmDatas = [];
 
-                  await Alarm.stop(list[i].alarmSettings.id);
+                    await Alarm.stop(list[i].alarmSettings.id);
 
-                  list[i].alarmData['snoozeIds'].forEach((e) async {
-                    await Alarm.stop(e);
-                    print(e);
-                  });
+                    list[i].alarmData['snoozeIds'].forEach((e) async {
+                      await Alarm.stop(e);
+                      print(e);
+                    });
 
-                  if (jsonStr != null) {
-                    final parsedJson = jsonDecode(jsonStr);
-                    for (var i = 0; i < parsedJson.length; i++) {
-                      alarmDatas.add(AlarmData.fromJson(parsedJson[i]));
+                    if (jsonStr != null) {
+                      final parsedJson = jsonDecode(jsonStr);
+                      for (var i = 0; i < parsedJson.length; i++) {
+                        alarmDatas.add(AlarmData.fromJson(parsedJson[i]));
+                      }
                     }
+
+                    alarmDatas.removeWhere(
+                      (element) => list[i].alarmSettings.id == element.alarmSettings.id,
+                    );
+
+                    final alarmDatasJson = alarmDatas.map((e) => e.toJson()).toList();
+                    final removeStr = jsonEncode(alarmDatasJson);
+                    await pref.setString("alarmDatas", removeStr);
+
+                    value(true);
+                    setState(() {
+                      datas = getDatas();
+                    });
+                  } else {
+                    await _server.deleteAlarm(int.parse(list[i]['alarmId'].toString())).then((res) {
+                      setState(() {
+                        datas = getDatas();
+                      });
+                    });
                   }
-
-                  alarmDatas.removeWhere(
-                    (element) => list[i].alarmSettings.id == element.alarmSettings.id,
-                  );
-
-                  final alarmDatasJson = alarmDatas.map((e) => e.toJson()).toList();
-                  final removeStr = jsonEncode(alarmDatasJson);
-                  await pref.setString("alarmDatas", removeStr);
-
-                  value(true);
-                  setState(() {
-                    datas = getDatas();
-                  });
                 },
                 widthSpace: 92,
                 title: '삭제',
@@ -157,15 +229,38 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
             child: Material(
               color: const Color(0xFFF9F9F9),
               child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WakeAlarmMakePage(
-                        alarmData: list[i],
+                onTap: () async {
+                  if (list[i] is AlarmData) {
+                    var isChange = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WakeAlarmMakePage(
+                          alarmData: list[i],
+                        ),
                       ),
-                    ),
-                  );
+                    );
+
+                    if (isChange != null && isChange) {
+                      setState(() {
+                        datas = getDatas();
+                      });
+                    }
+                  } else {
+                    var isChange = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WakeAlarmMakePage(
+                          aiAlarmData: list[i],
+                        ),
+                      ),
+                    );
+
+                    if (isChange != null && isChange) {
+                      setState(() {
+                        datas = getDatas();
+                      });
+                    }
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -180,7 +275,7 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                               borderRadius: BorderRadius.circular(10),
                               color: CustomColors.systemGrey6,
                               image: DecorationImage(
-                                image: AssetImage(list[i].alarmData['musicInfo']['imageAssets']),
+                                image: AssetImage(music['imageAssets']),
                                 fit: BoxFit.cover,
                                 alignment: Alignment.centerRight,
                               ),
@@ -205,7 +300,7 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                                     child: BackdropFilter(
                                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                                       child: Text(
-                                        list[i].alarmData['musicInfo']['title'],
+                                        music['title'],
                                         style: const TextStyle(
                                           fontFamily: "SF-Pro",
                                           color: CustomColors.secondaryBlack,
@@ -231,7 +326,7 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                list[i].alarmData['alarmType'] == 0
+                                alarmType == 0
                                     ? Container(
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
@@ -270,7 +365,7 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                                       ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  list[i].alarmData['time'],
+                                  time,
                                   style: const TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 17,
@@ -285,61 +380,62 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                               height: 1,
                               color: const Color(0xFFE5E5EA),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset('assets/calendar_small.svg'),
-                                    const SizedBox(width: 7),
-                                    const Text(
-                                      '반복 주기',
-                                      style: TextStyle(
-                                        fontFamily: "Pretendard",
-                                        fontSize: 15,
-                                        color: Color(0xFF8E8E93),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SvgPicture.asset('assets/calendar_small.svg'),
+                                      const SizedBox(width: 7),
+                                      const Text(
+                                        '반복 주기',
+                                        style: TextStyle(
+                                          fontFamily: "Pretendard",
+                                          fontSize: 15,
+                                          color: Color(0xFF8E8E93),
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 7),
-                                    Text(
-                                      (list[i].alarmData['weekOfNum'].map((element) => getKoreanWeekday(element)))
-                                          .join(','),
-                                      style: const TextStyle(
-                                        fontFamily: "Pretendard",
-                                        fontSize: 15,
-                                        color: CustomColors.secondaryBlack,
-                                        fontWeight: FontWeight.w600,
+                                      const SizedBox(width: 7),
+                                      Text(
+                                        weekday.join(','),
+                                        style: const TextStyle(
+                                          fontFamily: "Pretendard",
+                                          fontSize: 15,
+                                          color: CustomColors.secondaryBlack,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset('assets/snooze.svg'),
-                                    const SizedBox(width: 7),
-                                    const Text(
-                                      '스누즈',
-                                      style: TextStyle(
-                                        fontFamily: "Pretendard",
-                                        fontSize: 15,
-                                        color: Color(0xFF8E8E93),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SvgPicture.asset('assets/snooze.svg'),
+                                      const SizedBox(width: 7),
+                                      const Text(
+                                        '스누즈',
+                                        style: TextStyle(
+                                          fontFamily: "Pretendard",
+                                          fontSize: 15,
+                                          color: Color(0xFF8E8E93),
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 7),
-                                    Text(
-                                      (list[i].alarmData['snooze'].map((element) => "${element}m")).join(','),
-                                      style: const TextStyle(
-                                        fontFamily: "Pretendard",
-                                        fontSize: 15,
-                                        color: CustomColors.secondaryBlack,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
+                                      const SizedBox(width: 7),
+                                      Text(
+                                        snooze.join(','),
+                                        style: const TextStyle(
+                                          fontFamily: "Pretendard",
+                                          fontSize: 15,
+                                          color: CustomColors.secondaryBlack,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
                             )
                           ],
                         ),

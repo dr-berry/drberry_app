@@ -12,7 +12,6 @@ import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
 class MusicBar extends StatefulWidget {
   final Widget child;

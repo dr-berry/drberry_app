@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
@@ -32,6 +33,30 @@ class _WakeAlarmPageState extends State<WakeAlarmPage> {
     }
 
     return result;
+  }
+
+  DateTime setNextAlarm(DateTime selectedTime, List<dynamic> repeatDays) {
+    DateTime now = DateTime.now();
+    DateTime nextAlarmTime = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
+
+    if (repeatDays.isEmpty) {
+      // 반복 주기가 없는 경우, 일주일 후에 알람 설정
+      return nextAlarmTime.add(const Duration(days: 7));
+    } else {
+      int todayWeekday = now.weekday; // Monday is 1, Sunday is 7
+      List<int> futureDays =
+          repeatDays.map((day) => int.parse(day.toString())).where((day) => day > todayWeekday).toList();
+
+      if (futureDays.isNotEmpty) {
+        // 현재 요일 이후의 가장 가까운 반복 주기에 알람 설정
+        int daysUntilNextAlarm = futureDays.reduce(min) - todayWeekday;
+        return nextAlarmTime.add(Duration(days: daysUntilNextAlarm));
+      } else {
+        // 다음 주의 첫 번째 반복 주기에 알람 설정
+        int daysUntilNextAlarm = 7 - todayWeekday + repeatDays.map((day) => int.parse(day.toString())).reduce(min);
+        return nextAlarmTime.add(Duration(days: daysUntilNextAlarm));
+      }
+    }
   }
 
   @override
@@ -134,7 +159,6 @@ class _WakeAlarmPageState extends State<WakeAlarmPage> {
                       alarmList.where((element) => element.alarmSettings.id == widget.alarmSettings!.id).toList();
 
                   for (var element in targetList) {
-                    DateTime resultDate = element.alarmSettings.dateTime;
                     final circleList = element.alarmData['weekOfNum'];
                     final snoozeIds = element.alarmData['snoozeIds'];
                     final snoozeList = element.alarmData['snooze'];
@@ -148,64 +172,51 @@ class _WakeAlarmPageState extends State<WakeAlarmPage> {
                       });
                     }
 
-                    if (circleList.isNotEmpty) {
-                      int targetWeekday = 0;
-                      DateTime targetDate;
-                      if (circleList.length == 1) {
-                        targetWeekday = resultDate.weekday;
-                        targetDate = resultDate.add(const Duration(days: 8));
-                      } else {
-                        targetWeekday =
-                            circleList.where((e) => resultDate.weekday != e).reduce((a, b) => a < b ? a : b);
-                        targetDate = resultDate.add(Duration(days: targetWeekday));
-                      }
+                    final alarmTime = setNextAlarm(element.alarmSettings.dateTime, circleList);
 
-                      AlarmSettings oldAlarm = element.alarmSettings;
-                      AlarmSettings newAlarm;
-                      newAlarm = AlarmSettings(
-                        id: oldAlarm.id,
-                        dateTime: targetDate,
+                    AlarmSettings oldAlarm = element.alarmSettings;
+                    AlarmSettings newAlarm;
+                    newAlarm = AlarmSettings(
+                      id: oldAlarm.id,
+                      dateTime: alarmTime,
+                      assetAudioPath: oldAlarm.assetAudioPath,
+                      loopAudio: oldAlarm.loopAudio,
+                      vibrate: oldAlarm.vibrate,
+                      fadeDuration: oldAlarm.fadeDuration,
+                      notificationBody: oldAlarm.notificationBody,
+                      notificationTitle: oldAlarm.notificationTitle,
+                      enableNotificationOnKill: oldAlarm.enableNotificationOnKill,
+                      stopOnNotificationOpen: oldAlarm.stopOnNotificationOpen,
+                    );
+
+                    await Alarm.set(alarmSettings: newAlarm);
+
+                    for (var i = 0; i < snoozeList.length; i++) {
+                      DateTime snoozeDate = alarmTime.add(Duration(minutes: snoozeList[i] + (i + 1)));
+                      AlarmSettings snoozeAlarm = AlarmSettings(
+                        id: snoozeIds[i],
+                        dateTime: snoozeDate,
                         assetAudioPath: oldAlarm.assetAudioPath,
                         loopAudio: oldAlarm.loopAudio,
                         vibrate: oldAlarm.vibrate,
                         fadeDuration: oldAlarm.fadeDuration,
-                        notificationBody: oldAlarm.notificationBody,
                         notificationTitle: oldAlarm.notificationTitle,
+                        notificationBody: oldAlarm.notificationBody,
                         enableNotificationOnKill: oldAlarm.enableNotificationOnKill,
                         stopOnNotificationOpen: oldAlarm.stopOnNotificationOpen,
                       );
 
-                      await Alarm.set(alarmSettings: newAlarm);
+                      await Alarm.set(alarmSettings: snoozeAlarm);
+                    }
 
-                      if (snoozeList.isNotEmpty) {
-                        for (var i = 0; i < snoozeList.length; i++) {
-                          DateTime snoozeDate = targetDate.add(Duration(minutes: targetDate.minute + (i + (i + 1))));
-                          AlarmSettings snoozeAlarm = AlarmSettings(
-                            id: snoozeIds[i],
-                            dateTime: snoozeDate,
-                            assetAudioPath: oldAlarm.assetAudioPath,
-                            loopAudio: oldAlarm.loopAudio,
-                            vibrate: oldAlarm.vibrate,
-                            fadeDuration: oldAlarm.fadeDuration,
-                            notificationTitle: oldAlarm.notificationTitle,
-                            notificationBody: oldAlarm.notificationBody,
-                            enableNotificationOnKill: oldAlarm.enableNotificationOnKill,
-                            stopOnNotificationOpen: oldAlarm.stopOnNotificationOpen,
-                          );
+                    AlarmData newAlarmData = AlarmData(
+                      alarmData: element.alarmData,
+                      alarmSettings: newAlarm,
+                    );
 
-                          await Alarm.set(alarmSettings: snoozeAlarm);
-                        }
-                      }
-
-                      AlarmData newAlarmData = AlarmData(
-                        alarmData: element.alarmData,
-                        alarmSettings: newAlarm,
-                      );
-
-                      for (var i = 0; i < alarmList.length; i++) {
-                        if (alarmList[i].alarmSettings.id == newAlarmData.alarmSettings.id) {
-                          alarmList[i] = newAlarmData;
-                        }
+                    for (var i = 0; i < alarmList.length; i++) {
+                      if (alarmList[i].alarmSettings.id == newAlarmData.alarmSettings.id) {
+                        alarmList[i] = newAlarmData;
                       }
                     }
 

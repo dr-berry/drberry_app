@@ -5,15 +5,18 @@ import 'dart:ui';
 import 'package:alarm/alarm.dart';
 import 'package:alarm/model/alarm_settings.dart';
 import 'package:drberry_app/color/color.dart';
+import 'package:drberry_app/server/server.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 class SleepAlarmPage extends StatefulWidget {
   AlarmSettings? alarmSettings;
+  dynamic alarmData;
 
   SleepAlarmPage({super.key, this.alarmSettings});
 
@@ -24,6 +27,10 @@ class SleepAlarmPage extends StatefulWidget {
 class _SleepAlarmPageState extends State<SleepAlarmPage> {
   VideoPlayerController? _controller;
   FlutterSoundPlayer soundPlayer = FlutterSoundPlayer();
+  dynamic alarmData;
+  Server server = Server();
+  DateTime? startDate;
+  DateTime? endDate;
 
   Future<File> getAssetFile(String assetPath) async {
     // Load the asset as a byte array.
@@ -58,6 +65,14 @@ class _SleepAlarmPageState extends State<SleepAlarmPage> {
 
   bool _isStop = false;
   bool _pause = true;
+
+  setAlarmData() async {
+    final response = await server.getSleepAlarm(widget.alarmSettings!.id);
+    setState(() {
+      startDate = DateTime.fromMillisecondsSinceEpoch(int.parse(response.data['startDate'].toString()), isUtc: true);
+      endDate = DateTime.fromMillisecondsSinceEpoch(int.parse(response.data['endDate'].toString()), isUtc: true);
+    });
+  }
 
   @override
   void initState() {
@@ -125,9 +140,9 @@ class _SleepAlarmPageState extends State<SleepAlarmPage> {
                           ),
                         ),
                         const SizedBox(height: 17),
-                        const Text(
-                          '오후 12:00',
-                          style: TextStyle(
+                        Text(
+                          '${DateTime.now().hour < 12 ? '오전' : '오후'} ${DateFormat('HH:mm').format(DateTime.now())}',
+                          style: const TextStyle(
                             fontFamily: "Pretendard",
                             fontSize: 50,
                             color: CustomColors.systemWhite,
@@ -196,9 +211,9 @@ class _SleepAlarmPageState extends State<SleepAlarmPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                'Gentle Rain',
-                                style: TextStyle(
+                              Text(
+                                "${startDate!.hour < 12 ? '오전' : '오후'} ${startDate!.hour}:${startDate!.minute} ~ ${endDate!.hour < 12 ? '오전' : '오후'} ${endDate!.hour}:${endDate!.minute}",
+                                style: const TextStyle(
                                   fontFamily: "Pretendard",
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,

@@ -23,7 +23,7 @@ class _ExportBiometricPageState extends State<ExportBiometricPage> {
 
   Future<String> export() async {
     var dir = await getApplicationDocumentsDirectory();
-    var path = '${dir.path}/${DateFormat('yyyy-MM-dd').format(DateTime.now())}_유저_수면데이터.xlsx';
+    var path = '${dir.path}/${DateFormat('yyyy-MM-dd:HH:mm:ss').format(DateTime.now())}_유저_수면데이터.xlsx';
 
     print(dir.path);
     print(path);

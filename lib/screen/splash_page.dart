@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/splash/write_code_sheet.dart';
+import 'package:drberry_app/data/data.dart';
 import 'package:drberry_app/screen/ble_n_wifi_link_page.dart';
+import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -13,7 +15,12 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../server/server.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+  final String? type;
+
+  const SplashPage({
+    super.key,
+    required this.type,
+  });
 
   @override
   State<SplashPage> createState() => _SplashPageState();
@@ -28,6 +35,56 @@ class _SplashPageState extends State<SplashPage> {
 
   Barcode? barcode;
   QRViewController? controller;
+
+  void checkSignUp(String deviceName) async {
+    if (widget.type == "reconnect") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BleNWifiLinkPage(
+            code: deviceName,
+          ),
+        ),
+      );
+      return;
+    }
+    await server.checkSignUp(deviceName).then((value) async {
+      print(value.data);
+      print(bool.parse(value.data));
+      if (bool.parse(value.data)) {
+        final token = await FirebaseMessaging.instance.getToken();
+        print("deviceToken : $token");
+        await server.login(deviceName, token ?? 'none_device_token').then((res) async {
+          if (res.statusCode == 201) {
+            final tokenResponse = TokenResponse.fromJson(res.data);
+            print(
+                "a : ${tokenResponse.accessToken}, r : ${tokenResponse.refreshToken}, e : ${tokenResponse.expiredAt}");
+            await storage.write(key: "accessToken", value: tokenResponse.accessToken);
+            await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
+            await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
+
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainPage()),
+              (route) => false,
+            );
+          }
+        }).catchError((err) => print(err));
+      } else {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BleNWifiLinkPage(
+                code: deviceName,
+              ),
+            ),
+            (route) => false);
+      }
+    }).catchError((err) {
+      print(err);
+    });
+  }
 
   @override
   void dispose() {
@@ -86,17 +143,7 @@ class _SplashPageState extends State<SplashPage> {
             );
           });
         } else {
-          Future.delayed(Duration.zero, () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BleNWifiLinkPage(
-                  code: deviceName,
-                ),
-              ),
-              (route) => false,
-            );
-          });
+          checkSignUp(deviceName);
         }
       } catch (e) {
         Future.delayed(Duration.zero, () {
@@ -145,7 +192,7 @@ class _SplashPageState extends State<SplashPage> {
             context: context,
             isScrollControlled: true,
             builder: (context) {
-              return const WriteCodeSheet();
+              return WriteCodeSheet(type: widget.type);
             },
           );
         },

@@ -9,11 +9,7 @@
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
-		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
-		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
-		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
-		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		9B0CE0CC2A70C57500C72C1B /* crackling fireplace.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0CB2A70C57500C72C1B /* crackling fireplace.aiff */; };
 		9B0CE0CE2A70C86F00C72C1B /* alarm_clock_going_off.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0CD2A70C86F00C72C1B /* alarm_clock_going_off.aiff */; };
 		9B0CE0D02A70EFFB00C72C1B /* gentle rain.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0CF2A70EFFB00C72C1B /* gentle rain.mp3 */; };
@@ -31,7 +27,11 @@
 		9B0CE0EA2A7BC13D00C72C1B /* oversimplefied.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */; };
 		9B0CE0EB2A7BC13D00C72C1B /* old_alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */; };
 		9B0CE0EC2A7BC13D00C72C1B /* car.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E42A7BC13D00C72C1B /* car.mp3 */; };
-		9B0EB1792A69287000609A7D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B0EB1782A69287000609A7D /* GoogleService-Info.plist */; };
+		9B20FCCE2B0B0FCC00A3436E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
+		9B20FCCF2B0B0FCC00A3436E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
+		9B20FCD02B0B0FCC00A3436E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		9B20FCD42B0B147100A3436E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B20FC582B0B0A2700A3436E /* GoogleService-Info.plist */; };
+		9B20FCD52B0B147700A3436E /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		A4069FE6C098EAA06B06A9AB /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12D097E6BEDB508715182FA8 /* Pods_Runner.framework */; };
 		EBFC74F90715AFD1E5CC9F40 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C4D95104E9D4C1F6739C588 /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
@@ -96,9 +96,8 @@
 		9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = oversimplefied.mp3; sourceTree = "<group>"; };
 		9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = old_alarm.mp3; sourceTree = "<group>"; };
 		9B0CE0E42A7BC13D00C72C1B /* car.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = car.mp3; sourceTree = "<group>"; };
-		9B0EB1782A69287000609A7D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9B0EB17A2A6A038F00609A7D /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
-		9B2FDC872A6E17710006C9B0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9B20FC582B0B0A2700A3436E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9CD5A4BB0877D7CED40C775C /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		AED4419A5816166B0E8E90F6 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		DA6A082922C3D58A36392465 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
@@ -156,7 +155,6 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
-				9B2FDC872A6E17710006C9B0 /* GoogleService-Info.plist */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
@@ -181,6 +179,7 @@
 				9B0CE0E12A7BC13C00C72C1B /* beep.mp3 */,
 				9B0CE0E42A7BC13D00C72C1B /* car.mp3 */,
 				9B0CE0DE2A7BC13C00C72C1B /* chiptune.mp3 */,
+				9B20FC582B0B0A2700A3436E /* GoogleService-Info.plist */,
 				9B0CE0DF2A7BC13C00C72C1B /* cyber-alarm.mp3 */,
 				9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */,
 				9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */,
@@ -196,7 +195,6 @@
 				9B0CE0D92A71156300C72C1B /* thunder rain.mp3 */,
 				9B0CE0D72A71155100C72C1B /* ocean waves.mp3 */,
 				9B0EB17A2A6A038F00609A7D /* Runner.entitlements */,
-				9B0EB1782A69287000609A7D /* GoogleService-Info.plist */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -272,6 +270,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
@@ -316,6 +315,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B20FCD52B0B147700A3436E /* AppFrameworkInfo.plist in Resources */,
+				9B20FCD42B0B147100A3436E /* GoogleService-Info.plist in Resources */,
+				9B20FCCE2B0B0FCC00A3436E /* Main.storyboard in Resources */,
+				9B20FCCF2B0B0FCC00A3436E /* Assets.xcassets in Resources */,
+				9B20FCD02B0B0FCC00A3436E /* LaunchScreen.storyboard in Resources */,
 				9B0CE0E52A7BC13D00C72C1B /* psycho-siren.mp3 in Resources */,
 				9B0CE0E62A7BC13D00C72C1B /* chiptune.mp3 in Resources */,
 				9B0CE0E72A7BC13D00C72C1B /* cyber-alarm.mp3 in Resources */,
@@ -325,14 +329,9 @@
 				9B0CE0EB2A7BC13D00C72C1B /* old_alarm.mp3 in Resources */,
 				9B0CE0EC2A7BC13D00C72C1B /* car.mp3 in Resources */,
 				9B0CE0D22A7114C200C72C1B /* white noise.mp3 in Resources */,
-				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				9B0CE0DA2A71156300C72C1B /* thunder rain.mp3 in Resources */,
-				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
-				9B0EB1792A69287000609A7D /* GoogleService-Info.plist in Resources */,
-				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				9B0CE0D82A71155100C72C1B /* ocean waves.mp3 in Resources */,
 				9B0CE0CE2A70C86F00C72C1B /* alarm_clock_going_off.aiff in Resources */,
-				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 				9B0CE0D62A71154500C72C1B /* alarm-clock-going-off.mp3 in Resources */,
 				9B0CE0D02A70EFFB00C72C1B /* gentle rain.mp3 in Resources */,
 				9B0CE0CC2A70C57500C72C1B /* crackling fireplace.aiff in Resources */,
@@ -509,6 +508,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -519,6 +519,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -527,10 +528,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -547,7 +548,7 @@
 				DEVELOPMENT_TEAM = C62775G3NA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DrBerry;
+				INFOPLIST_KEY_CFBundleDisplayName = Dr.berry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -556,8 +557,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dr.berry.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Profile;
@@ -635,6 +640,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -645,6 +651,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -659,7 +666,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -690,6 +697,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -700,6 +708,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -708,10 +717,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -726,11 +735,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = C62775G3NA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DrBerry;
+				INFOPLIST_KEY_CFBundleDisplayName = Dr.berry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -739,9 +750,14 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dr.berry.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -757,7 +773,7 @@
 				DEVELOPMENT_TEAM = C62775G3NA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DrBerry;
+				INFOPLIST_KEY_CFBundleDisplayName = Dr.berry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -766,8 +782,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dr.berry.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

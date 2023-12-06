@@ -30,20 +30,43 @@ class HistoryLineChart extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print("length라고 씨발년아 2라고 2 왜 못알아 쳐먹지? 애미없는년 ${datas.length} ${7 - datas.length}");
+    print("=====LABEL=====");
+    print(labels);
+    print(datas);
+    print("=====LABEL=====");
 
-    for (var i = 0; i < 7 - datas.length; i++) {
+    for (var label in labels) {
+      print(label.date);
+    }
+
+    for (var i = 0; i < 7 - labels.length; i++) {
       datas.insert(0, HistoryGraph(avgScore: 0));
+      print("===빨리끝내야해===");
+      print(labels[0].date);
       final label = labels[0].date.split('/');
+      print(label);
       var newLabel = "";
-      if (int.parse(label[1]) == 1) {
-        newLabel =
-            '${int.parse(label[0]) - 1}/${DateTime(DateTime.now().year, int.parse(label[0]), 1).subtract(const Duration(days: 1))}';
+
+      if (label.length == 1) {
+        if (int.parse(label[0]) == 1) {
+          newLabel = "12";
+        } else {
+          newLabel = "${int.parse(label[0]) - 1}";
+        }
       } else {
-        newLabel = '${int.parse(label[0])}/${int.parse(label[1]) - 1}';
+        if (int.parse(label[1]) == 1) {
+          newLabel =
+              '${int.parse(label[0]) - 1}/${DateTime(DateTime.now().year, int.parse(label[0]), 1).subtract(const Duration(days: 1)).day}';
+        } else {
+          newLabel =
+              '${int.parse(label[0])}/${int.parse(label[1]) - 1 < 10 ? '0${int.parse(label[1]) - 1}' : int.parse(label[1]) - 1}';
+        }
       }
 
       labels.insert(0, HistoryLabels(date: newLabel));
+      print("응 추가");
+      print(labels);
+      print("응 추가");
     }
 
     final paint = Paint()
@@ -126,7 +149,7 @@ class HistoryLineChart extends CustomPainter {
 
       for (var i = 0; i < datas.length; i++) {
         var score = (100 - datas[i].avgScore) / 100;
-        var y = startY * score;
+        var y = ((startY) * score);
 
         dataPoints.add(Offset(graphX, y));
 

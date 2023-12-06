@@ -19,8 +19,10 @@ import 'package:drberry_app/provider/main_page_provider.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../data/Data.dart';
 
@@ -39,6 +41,53 @@ class _HomePageState extends State<HomePage> {
   final Server server = Server();
   DateTime _today = DateTime.now();
 
+  void getSleepState() async {
+    final sleepState = await server.getSleepState();
+    // setState(() {
+    //   _sleepState = sleepState.data;
+    // });
+    print("getSleepState");
+    print(sleepState.data);
+    context.read<HomePageProvider>().setSleepState(bool.parse(sleepState.data));
+  }
+
+  void getPadOff() async {
+    final pref = await SharedPreferences.getInstance();
+    final isPO = pref.getBool("isPadOff");
+
+    print("lsajdfhlkasdhflkjahfkljasdlkufjahsdlkjfhakfhalksjdfhjk");
+
+    if (isPO != null) {
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: const Text(
+            '수면을 종료하시겠습니까?',
+            style: TextStyle(fontFamily: "Pretendard"),
+          ),
+          content: const Text(
+            '패드에서 떨어진지 10분이 지났습니다. 수면 종료를 원할시 확인을 눌러주세요.',
+            style: TextStyle(fontFamily: "Pretnedard"),
+          ),
+          actions: [
+            BasicDialogAction(
+              title: const Text(
+                '확인',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  color: CustomColors.blue,
+                ),
+              ),
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -53,13 +102,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    getPadOff();
+    getSleepState();
     super.initState();
     _controller.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      server.getMainPage(DateFormat("yyyy-MM-dd").format(context.read<MainPageProvider>().savedToday), -1).then((res) {
-        // print(res.data);
+      server.getMainPage(context.read<HomePageProvider>().serverDate, -1).then((res) {
+        print(context.read<HomePageProvider>().serverDate);
+        print(res.data);
 
         MainPageBiometricData mainPageBiometricData = MainPageBiometricData.fromJson(res.data);
+
+        // print(mainPageBiometricData.sleepPatternGraphData);
 
         context.read<HomePageProvider>().setMainPageData(mainPageBiometricData);
       });
@@ -78,9 +132,12 @@ class _HomePageState extends State<HomePage> {
           MainPageHeader(
             controller: controller,
             today: context.watch<HomePageProvider>().today,
-            setToday: (val) => setState(() {
-              _today = val;
-            }),
+            setToday: (val) {
+              setState(() {
+                _today = val;
+              });
+              context.read<HomePageProvider>().setServerDate(DateFormat('yyyy-MM-dd').format(val));
+            },
           ),
           TodayShortData(
             defaultBoxDecoration: defaultBoxDecoration,

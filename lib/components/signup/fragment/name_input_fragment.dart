@@ -82,33 +82,23 @@ class _NameInputFragmentState extends State<NameInputFragment> {
                 cursorColor: Colors.black,
                 cursorHeight: 17,
                 style: const TextStyle(
-                    fontFamily: "Pretendard",
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black),
+                    fontFamily: "Pretendard", fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black),
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 1, color: Color(0xFFe5e5ea)),
+                        borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                     enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 1, color: Color(0xFFe5e5ea)),
+                        borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                     focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 1, color: Color(0xFFe5e5ea)),
+                        borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                     hintText: "홍길동",
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                     hintStyle: TextStyle(
-                        fontFamily: "Pretendard",
-                        fontWeight: FontWeight.w500,
-                        fontSize: 17,
-                        color: Color(0xFFAEAEB2))),
+                        fontFamily: "Pretendard", fontWeight: FontWeight.w500, fontSize: 17, color: Color(0xFFAEAEB2))),
               )),
         )
       ],

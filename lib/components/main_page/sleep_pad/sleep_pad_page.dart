@@ -1,9 +1,15 @@
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/data.dart';
+import 'package:drberry_app/provider/home_page_provider.dart';
+import 'package:drberry_app/screen/ble_n_wifi_link_page.dart';
+import 'package:drberry_app/screen/splash_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SleepPadPage extends StatefulWidget {
   const SleepPadPage({super.key});
@@ -15,6 +21,53 @@ class SleepPadPage extends StatefulWidget {
 class _SleepPadPageState extends State<SleepPadPage> {
   Server server = Server();
   Future<UseTime>? _useTime;
+  Future<dynamic>? _state;
+
+  void getSleepState() async {
+    print("getSleepState");
+    final sleepState = await server.getSleepState();
+    // setState(() {
+    //   _sleepState = sleepState.data;
+    // });
+    context.read<HomePageProvider>().setSleepState(bool.parse(sleepState.data));
+  }
+
+  void getPadOff() async {
+    final pref = await SharedPreferences.getInstance();
+    final isPO = pref.getBool("isPadOff");
+
+    print("lsajdfhlkasdhflkjahfkljasdlkufjahsdlkjfhakfhalksjdfhjk");
+
+    if (isPO != null) {
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: const Text(
+            '수면을 종료하시겠습니까?',
+            style: TextStyle(fontFamily: "Pretendard"),
+          ),
+          content: const Text(
+            '패드에서 떨어진지 10분이 지났습니다. 수면 종료를 원할시 확인을 눌러주세요.',
+            style: TextStyle(fontFamily: "Pretnedard"),
+          ),
+          actions: [
+            BasicDialogAction(
+              title: const Text(
+                '확인',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  color: CustomColors.blue,
+                ),
+              ),
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   Future<UseTime> getUseTime() async {
     final useTime = server.getUseDeviceData().then((value) {
@@ -27,10 +80,25 @@ class _SleepPadPageState extends State<SleepPadPage> {
     return useTime;
   }
 
+  Future<dynamic> checkDeviceState() async {
+    final state = server.deviceState().then(
+      (value) {
+        return value.data;
+      },
+    ).catchError((err) {
+      return {"state": "disconnected"};
+    });
+
+    return state;
+  }
+
   @override
   void initState() {
+    getPadOff();
+    getSleepState();
     super.initState();
     _useTime = getUseTime();
+    _state = checkDeviceState();
   }
 
   @override
@@ -42,16 +110,60 @@ class _SleepPadPageState extends State<SleepPadPage> {
       designSize: const Size(393, 852),
       builder: (context, child) {
         return Container(
-          padding: EdgeInsets.only(top: 142.h, left: 16.w, right: 16.w),
+          padding: EdgeInsets.only(top: 70.h, left: 16.w, right: 16.w),
           // color: CustomColors.blue,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                "assets/Disconnect.svg",
-                width: 361.w,
-                height: 383.h,
+              FutureBuilder(
+                future: _state,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return SvgPicture.asset(
+                      "assets/Disconnect.svg",
+                      width: 361.w,
+                      height: 383.h,
+                    );
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      width: 361.w,
+                      height: 383.h,
+                      alignment: Alignment.center,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: CustomColors.lightGreen,
+                      ),
+                    );
+                  } else {
+                    switch (snapshot.data['state']) {
+                      case 'connected':
+                        return SvgPicture.asset(
+                          "assets/Connect.svg",
+                          width: 361.w,
+                          height: 383.h,
+                        );
+                      case 'disconnected':
+                        return SvgPicture.asset(
+                          "assets/Disconnect.svg",
+                          width: 361.w,
+                          height: 383.h,
+                        );
+                      case 'padOn':
+                        return SvgPicture.asset(
+                          "assets/OnPad.svg",
+                          width: 361.w,
+                          height: 383.h,
+                        );
+                      default:
+                        return SvgPicture.asset(
+                          "assets/Disconnect.svg",
+                          width: 361.w,
+                          height: 383.h,
+                        );
+                    }
+                  }
+                },
               ),
               SizedBox(height: 20.h),
               FutureBuilder(
@@ -250,38 +362,92 @@ class _SleepPadPageState extends State<SleepPadPage> {
                   onTap: () {
                     showModalBottomSheet(
                       elevation: 10,
+                      backgroundColor: Colors.white,
+                      useSafeArea: true,
                       context: context,
                       builder: (context) {
-                        return Container(
-                            width: deviceWidth,
-                            height: 138.h,
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                              color: CustomColors.systemWhite,
-                            ),
-                            child: Center(
-                                child: SizedBox(
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
                               width: deviceWidth,
-                              height: 60.h,
-                              child: Material(
-                                  color: CustomColors.systemWhite,
-                                  child: InkWell(
-                                    onTap: () {},
-                                    child: Container(
+                              height: 80.h,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                color: CustomColors.systemWhite,
+                              ),
+                              child: Center(
+                                child: SizedBox(
+                                  width: deviceWidth,
+                                  height: 60.h,
+                                  child: Material(
+                                    color: CustomColors.systemWhite,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => const SplashPage(
+                                              type: "reconnect",
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
                                         padding: const EdgeInsets.only(top: 10, bottom: 10),
                                         alignment: Alignment.center,
                                         width: deviceWidth,
                                         child: const Text(
-                                          "기기변경",
+                                          "네트워크 연결",
                                           style: TextStyle(
-                                              fontFamily: "Pretendard",
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFFFC2E2E)),
-                                        )),
-                                  )),
-                            )));
+                                            fontFamily: "Pretendard",
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: deviceWidth,
+                              height: 80.h,
+                              margin: const EdgeInsets.only(bottom: 20),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                color: CustomColors.systemWhite,
+                              ),
+                              child: Center(
+                                child: SizedBox(
+                                  width: deviceWidth,
+                                  height: 60.h,
+                                  child: Material(
+                                      color: CustomColors.systemWhite,
+                                      child: InkWell(
+                                        onTap: () {},
+                                        child: Container(
+                                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                            alignment: Alignment.center,
+                                            width: deviceWidth,
+                                            child: const Text(
+                                              "기기변경",
+                                              style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xFFFC2E2E)),
+                                            )),
+                                      )),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
                       },
                     );
                   },

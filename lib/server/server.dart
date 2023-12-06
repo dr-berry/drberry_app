@@ -58,8 +58,15 @@ class Server {
   }
 
   Future<Response> login(String deviceCode, String deviceToken) async {
-    return await noneDio.post("/auth/signin",
-        options: Options(headers: {"X-Device-Code": deviceCode, "X-Device-Token": deviceToken}));
+    return await noneDio.post(
+      "/auth/signin",
+      options: Options(
+        headers: {
+          "X-Device-Code": deviceCode,
+          "X-Device-Token": deviceToken,
+        },
+      ),
+    );
   }
 
   Future<Response> signUp(String name, String deviceCode, String gender, int tall, int weight, String birth,
@@ -114,7 +121,14 @@ class Server {
     String accessToken = "Bearer ${await getAccessToken()}";
     print(accessToken);
 
-    return await noneDio.get("/biometric/use_time", options: Options(headers: {"Authorization": accessToken}));
+    return await noneDio.get(
+      "/biometric/use_time",
+      options: Options(
+        headers: {
+          "Authorization": accessToken,
+        },
+      ),
+    );
   }
 
   Future<Response> getProfileTabData() async {
@@ -123,10 +137,14 @@ class Server {
   }
 
   Future<Response> getAccountInfo() async {
-    return await noneDio.get("/user/account",
-        options: Options(headers: {
+    return await noneDio.get(
+      "/user/account",
+      options: Options(
+        headers: {
           "Authorization": "Bearer ${await getAccessToken()}",
-        }));
+        },
+      ),
+    );
   }
 
   Future<Response> updateUser(String? name, String? birthday, String? gender) async {
@@ -220,6 +238,144 @@ class Server {
       options: Options(
         headers: {
           "Authorization": "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> deviceState() async {
+    return await noneDio.get(
+      '/device/state',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> setConnectDeviceWifi(String deviceCode) async {
+    return await noneDio.post(
+      '/auth/set_connect_wifi',
+      options: Options(
+        headers: {
+          "X-Device-Code": deviceCode,
+        },
+      ),
+    );
+  }
+
+  Future<Response> getAlarms(String type) async {
+    return await noneDio.get(
+      '/alarm/$type',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> setAlarm(String alarmType, String startDate, String endDate, String musicTitle, List<int> snooze,
+      List<int> weekdays) async {
+    return await noneDio.post(
+      '/alarm',
+      data: {
+        "alarmType": alarmType,
+        "startDate": startDate,
+        "endDate": endDate,
+        "musicTitle": musicTitle,
+        "snooze": snooze,
+        "weekday": weekdays,
+      },
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> updateAlarm(
+      int alarmId, String startDate, String endDate, String musicTitle, List<int> snooze, List<int> weekdays) async {
+    return await noneDio.put(
+      '/alarm/$alarmId',
+      data: {
+        "startDate": startDate,
+        "endDate": endDate,
+        "musicTitle": musicTitle,
+        "snooze": snooze,
+        "weekday": weekdays,
+      },
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> deleteAlarm(int alarmId) async {
+    return await noneDio.delete(
+      '/alarm/$alarmId',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> startSleep() async {
+    return await noneDio.post(
+      '/device/start_sleep',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> endSleep() async {
+    return await noneDio.put(
+      '/device/end_sleep',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> getSleepState() async {
+    return await noneDio.get(
+      '/device/sleep/state',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> deleteAccount() async {
+    return await noneDio.delete(
+      '/user/delete/account',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> getSleepAlarm(int alarmId) async {
+    return await noneDio.get(
+      '/alarm/$alarmId',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
         },
       ),
     );

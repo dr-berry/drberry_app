@@ -29,6 +29,54 @@ import 'package:drberry_app/screen/permission_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:volume_controller/volume_controller.dart';
 
+List<Map<String, String>> wakeMusicList = [
+  {
+    "imageAssets": "assets/digital.jpg",
+    "musicAssets": "assets/alarm-clock-going-off.mp3",
+    "title": "Digital",
+  },
+  {
+    "imageAssets": "assets/beep.png",
+    "musicAssets": "assets/beep.mp3",
+    "title": "Beep",
+  },
+  {
+    "imageAssets": "assets/car.jpg",
+    "musicAssets": "assets/car.mp3",
+    "title": "Car Siren",
+  },
+  {
+    "imageAssets": "assets/chiptone.jpg",
+    "musicAssets": "assets/chiptune.mp3",
+    "title": "Chiptune",
+  },
+  {
+    "imageAssets": "assets/cyber.jpg",
+    "musicAssets": "assets/cyber-alarm.mp3",
+    "title": "Cyber",
+  },
+  {
+    "imageAssets": "assets/old_clock.jpg",
+    "musicAssets": "assets/old_alarm.mp3",
+    "title": "Old",
+  },
+  {
+    "imageAssets": "assets/rising sun.jpg",
+    "musicAssets": "assets/oversimplefied.mp3",
+    "title": "Rising Sun",
+  },
+  {
+    "imageAssets": "assets/siren.jpg",
+    "musicAssets": "assets/psycho-siren.mp3",
+    "title": "Siren",
+  },
+  {
+    "imageAssets": "assets/ringtone.jpg",
+    "musicAssets": "assets/ringtone.mp3",
+    "title": "Ringtone",
+  },
+];
+
 List<Map<String, String>> musicList = [
   {
     "imageAssets": "assets/fire.png",
@@ -69,45 +117,109 @@ List<Map<String, String>> musicList = [
 ];
 FlutterSoundPlayer soundPlayer = FlutterSoundPlayer(logLevel: Level.nothing);
 
+clearSecureStorageOnReinstall() async {
+  String key = 'hasRunBefore';
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  final runBefore = prefs.getBool(key);
+
+  print(prefs.getBool(key));
+  if (runBefore != null) {
+    print(!runBefore);
+  }
+
+  if (runBefore == null || !runBefore) {
+    print("삭제!");
+    const storage = FlutterSecureStorage(
+        aOptions: AndroidOptions(encryptedSharedPreferences: true),
+        iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock));
+    final all = storage.readAll();
+    print(all);
+
+    await storage.deleteAll();
+    prefs.setBool(key, true);
+  } else {
+    print("삭제 안함!");
+  }
+}
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   await setupFlutterNotifications();
-  print('Handling a background message: ${message.messageId}');
+  print('Handling front message: ${message.messageId}');
   VolumeController().setVolume(1);
-  var now = DateTime.now();
-  final alarmSettings = AlarmSettings(
-      id: 42,
-      dateTime: now,
-      assetAudioPath: 'assets/alarm-clock-going-off.mp3',
-      loopAudio: true,
-      fadeDuration: 5,
-      vibrate: true,
-      notificationTitle: 'This time to sleep',
-      notificationBody: '지금 잘시간이에요! 수면음원을 재생합니다!',
-      enableNotificationOnKill: true,
-      stopOnNotificationOpen: false);
+  var now = DateTime.now().add(const Duration(seconds: 5));
 
-  await Alarm.set(alarmSettings: alarmSettings);
+  print(now);
+  print(message.data);
 
-  // final file = await getAssetFile('assets/ocean waves.mp3');
-  // final track = Track(trackPath: file.path);
+  if (message.data['body'] != null) {
+    final decodeBody = jsonDecode(message.data['body'].toString());
+    print(decodeBody);
 
-  // await audioPlayer.startPlayerFromTrack(track);
+    if (decodeBody['type'] == 'STOP') {
+      await Alarm.stop(int.parse(decodeBody['alarmId'].toString()));
 
-  // double volume = 0.0;
-  // Timer.periodic(const Duration(milliseconds: 500), (timer) {
-  //   volume += 0.1;
-  //   audioPlayer.setVolume(volume);
+      for (var snooze in decodeBody['snoozes']) {
+        await Alarm.stop(int.parse(decodeBody['alarmId'].toString()) + int.parse(snooze.toString()));
+      }
+    } else {
+      if (decodeBody['type'] == 'WAKE') {
+        final music = musicList.firstWhere((element) => element['title'] == decodeBody['musicTitle']);
 
-  //   if (volume >= 0.3) {
-  //     timer.cancel();
-  //   }
-  // });
+        final alarmSettings = AlarmSettings(
+          id: int.parse(decodeBody['alarmId'].toString()),
+          dateTime: now,
+          assetAudioPath: music['musicAssets'] ?? 'assets/alarm-clock-going-off.mp3',
+          loopAudio: true,
+          fadeDuration: 5,
+          vibrate: false,
+          notificationTitle: 'This time to wake',
+          notificationBody: '지금 일어날 시간이에요! 기상 알림을 재생합니다!',
+          enableNotificationOnKill: true,
+          stopOnNotificationOpen: false,
+        );
 
-  // Future.delayed(const Duration(minutes: 1), () {
-  //   stopBackgroundAudio();
-  // });
+        await Alarm.set(alarmSettings: alarmSettings);
+        for (var i = 0; i < decodeBody['snoozes'].length; i++) {
+          final alarmSettings = AlarmSettings(
+            id: int.parse(decodeBody['alarmId'].toString()) + int.parse(decodeBody['snoozes'][i].toString()),
+            dateTime: now.add(Duration(minutes: decodeBody['snoozes'][i] + 1 + i)),
+            assetAudioPath: music['musicAssets'] ?? 'assets/alarm-clock-going-off.mp3',
+            loopAudio: true,
+            fadeDuration: 5,
+            vibrate: false,
+            notificationTitle: 'This time to wake',
+            notificationBody: '지금 일어날 시간이에요! 기상 알림을 재생합니다!',
+            enableNotificationOnKill: true,
+            stopOnNotificationOpen: false,
+          );
+          await Alarm.set(alarmSettings: alarmSettings);
+        }
+      } else {
+        final music = musicList.firstWhere((element) => element['title'] == decodeBody['musicTitle']);
+
+        final alarmSettings = AlarmSettings(
+          id: int.parse(decodeBody['alarmId'].toString()),
+          dateTime: now,
+          assetAudioPath: music['musicAssets'] ?? 'assets/alarm-clock-going-off.mp3',
+          loopAudio: true,
+          fadeDuration: 5,
+          vibrate: false,
+          notificationTitle: 'This time to sleep',
+          notificationBody: '지금 잘시간이에요! 수면음원을 재생합니다!',
+          enableNotificationOnKill: true,
+          stopOnNotificationOpen: false,
+        );
+
+        await Alarm.set(alarmSettings: alarmSettings);
+      }
+    }
+  } else {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setBool("isPadOff", true);
+  }
 }
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -184,6 +296,7 @@ void showFlutterNotification(RemoteMessage message) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await clearSecureStorageOnReinstall();
   await Alarm.init(showDebugLogs: true);
   await Alarm.setNotificationOnAppKillContent("앱을 끄면 수면 음원 재생이 안되요! ㅠㅠ", "수면/기상 음원을 듣고싶다면 앱을 켜주세요!");
   final prefs = await SharedPreferences.getInstance();
@@ -210,12 +323,31 @@ void main() async {
 
   final cameraStatus = await Permission.camera.status;
   final bluetoothStatus = await Permission.bluetooth.status;
+  final notificationStatus = await Permission.notification.status;
 
+  int id = -1;
   var isRinging = false;
+  String type = 'WAKE';
 
   Alarm.getAlarms().forEach((element) async {
-    isRinging = await Alarm.isRinging(element.id);
+    if (await Alarm.isRinging(element.id)) {
+      isRinging = true;
+      id = element.id;
+    }
   });
+
+  if (isRinging) {
+    final alarmDatas = prefs.getString("alarmDatas");
+    if (alarmDatas != null) {
+      final decoded = jsonDecode(alarmDatas);
+      for (dynamic alarmData in decoded) {
+        final data = AlarmData.fromJson(alarmData);
+        if (data.alarmSettings.id == id) {
+          type = data.alarmData['alarm'];
+        }
+      }
+    }
+  }
 
   print(isRinging);
 
@@ -229,10 +361,12 @@ void main() async {
     ],
     child: MyApp(
       initialRoute: isRinging
-          ? "/wake_alarm_page"
+          ? type == 'WAKE'
+              ? "/wake_alarm_page"
+              : "/sleep_alarm_page"
           : accessToken != null && refreshToken != null && expiredAt != null
               ? "/home"
-              : cameraStatus.isGranted && bluetoothStatus.isGranted
+              : cameraStatus.isGranted && bluetoothStatus.isGranted && notificationStatus.isGranted
                   ? "/login"
                   : "/permission",
     ),
@@ -306,20 +440,92 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     print('알람설정중');
     streamSubscription ??= Alarm.ringStream.stream.listen((alarmSettings) => navigateToRingScreen(alarmSettings));
     FirebaseMessaging.onMessage.listen((message) async {
-      var now = DateTime.now();
-      final alarmSettings = AlarmSettings(
-          id: 42,
-          dateTime: now,
-          assetAudioPath: 'assets/alarm-clock-going-off.mp3',
-          loopAudio: true,
-          fadeDuration: 5,
-          vibrate: true,
-          notificationTitle: 'This time to sleep',
-          notificationBody: '지금 잘시간이에요! 수면음원을 재생합니다!',
-          enableNotificationOnKill: true,
-          stopOnNotificationOpen: false);
+      await Firebase.initializeApp();
+      await setupFlutterNotifications();
+      print('Handling front message: ${message.messageId}');
+      VolumeController().setVolume(1);
+      var now = DateTime.now().add(const Duration(seconds: 5));
 
-      await Alarm.set(alarmSettings: alarmSettings);
+      print(now);
+      print(message.data);
+
+      if (message.data['body'] == null) {
+        final pref = await SharedPreferences.getInstance();
+        await pref.setBool("isPadOff", true);
+        return;
+      }
+
+      final decodeBody = jsonDecode(message.data['body'].toString());
+      print(decodeBody);
+
+      if (decodeBody['type'] == 'STOP') {
+        await Alarm.stop(int.parse(decodeBody['alarmId'].toString()));
+
+        for (var snooze in decodeBody['snoozes']) {
+          await Alarm.stop(int.parse(decodeBody['alarmId'].toString()) + int.parse(snooze.toString()));
+        }
+      } else {
+        if (decodeBody['type'] == 'WAKE') {
+          final music = musicList.firstWhere((element) => element['title'] == decodeBody['musicTitle']);
+
+          final alarmSettings = AlarmSettings(
+            id: int.parse(decodeBody['alarmId'].toString()),
+            dateTime: now,
+            assetAudioPath: music['musicAssets'] ?? 'assets/alarm-clock-going-off.mp3',
+            loopAudio: true,
+            fadeDuration: 5,
+            vibrate: false,
+            notificationTitle: 'This time to wake',
+            notificationBody: '지금 일어날 시간이에요! 기상 알림을 재생합니다!',
+            enableNotificationOnKill: true,
+            stopOnNotificationOpen: false,
+          );
+
+          await Alarm.set(alarmSettings: alarmSettings);
+          for (var i = 0; i < decodeBody['snoozes'].length; i++) {
+            final alarmSettings = AlarmSettings(
+              id: int.parse(decodeBody['alarmId'].toString()) + int.parse(decodeBody['snoozes'][i].toString()),
+              dateTime: now.add(Duration(minutes: decodeBody['snoozes'][i] + 1 + i)),
+              assetAudioPath: music['musicAssets'] ?? 'assets/alarm-clock-going-off.mp3',
+              loopAudio: true,
+              fadeDuration: 5,
+              vibrate: false,
+              notificationTitle: 'This time to wake',
+              notificationBody: '지금 일어날 시간이에요! 기상 알림을 재생합니다!',
+              enableNotificationOnKill: true,
+              stopOnNotificationOpen: false,
+            );
+            await Alarm.set(alarmSettings: alarmSettings);
+          }
+          if (decodeBody['type'] == 'SLEEP') {
+            await navigatorKey.currentState!.pushNamed("/sleep_alarm_page", arguments: alarmSettings);
+          } else {
+            await navigatorKey.currentState!.pushNamed("/wake_alarm_page", arguments: alarmSettings);
+          }
+        } else {
+          final music = musicList.firstWhere((element) => element['title'] == decodeBody['musicTitle']);
+
+          final alarmSettings = AlarmSettings(
+            id: int.parse(decodeBody['alarmId'].toString()),
+            dateTime: now,
+            assetAudioPath: music['musicAssets'] ?? 'assets/alarm-clock-going-off.mp3',
+            loopAudio: true,
+            fadeDuration: 5,
+            vibrate: false,
+            notificationTitle: 'This time to sleep',
+            notificationBody: '지금 잘시간이에요! 수면음원을 재생합니다!',
+            enableNotificationOnKill: true,
+            stopOnNotificationOpen: false,
+          );
+
+          await Alarm.set(alarmSettings: alarmSettings);
+          if (decodeBody['type'] == 'SLEEP') {
+            await navigatorKey.currentState!.pushNamed("/sleep_alarm_page", arguments: alarmSettings);
+          } else {
+            await navigatorKey.currentState!.pushNamed("/wake_alarm_page", arguments: alarmSettings);
+          }
+        }
+      }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
@@ -333,7 +539,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
-      title: 'Flutter Demo',
+      title: 'DrBerryApp',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -342,7 +548,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/login':
-            return MaterialPageRoute(builder: (context) => const SplashPage());
+            return MaterialPageRoute(builder: (context) => const SplashPage(type: null));
           case '/home':
             return MaterialPageRoute(builder: (context) => const MainPage());
           case '/permission':
@@ -360,7 +566,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ),
             );
         }
-        return MaterialPageRoute(builder: (context) => const SplashPage());
+        return MaterialPageRoute(
+          builder: (context) => const SplashPage(
+            type: null,
+          ),
+        );
       },
       // routes: {
       //   "/login": (context) => const SplashPage(),

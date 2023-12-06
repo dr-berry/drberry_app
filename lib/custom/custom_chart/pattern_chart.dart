@@ -31,13 +31,19 @@ class PatternChart extends CustomPainter {
     if (serverData.isNotEmpty && labels.isNotEmpty) {
       if (sleepPatternNeedDataNum.isNotEmpty) {
         List<SleepPatternGraphData> list = List.from(serverData);
+        for (var i in sleepPatternNeedDataNum) {
+          print(i.cnt);
+          print(i.hours);
+        }
 
         for (var i = 0; i < sleepPatternNeedDataNum[0].cnt; i++) {
           list.insert(0, SleepPatternGraphData(sleepPattern: 0, measurementAt: ""));
         }
 
-        for (var i = 0; i < sleepPatternNeedDataNum[1].cnt; i++) {
-          list.insert(list.length - 1, SleepPatternGraphData(sleepPattern: 0, measurementAt: ""));
+        if (sleepPatternNeedDataNum.length > 1) {
+          for (var i = 0; i < sleepPatternNeedDataNum[1].cnt; i++) {
+            list.insert(list.length - 1, SleepPatternGraphData(sleepPattern: 0, measurementAt: ""));
+          }
         }
 
         // print(list.sublist(54, 60).length);

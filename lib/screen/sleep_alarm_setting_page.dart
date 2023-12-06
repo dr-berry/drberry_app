@@ -1,14 +1,18 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:alarm/alarm.dart';
 import 'package:drberry_app/color/color.dart';
+import 'package:drberry_app/main.dart';
 import 'package:drberry_app/screen/music_bar.dart';
 import 'package:drberry_app/screen/sleep_alarm_make_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
+import 'package:drberry_app/server/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sliding_box/flutter_sliding_box.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SleepAlarmSettingPage extends StatefulWidget {
@@ -19,21 +23,16 @@ class SleepAlarmSettingPage extends StatefulWidget {
 }
 
 class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
-  Future<List<AlarmData>>? datas;
+  Future<List<dynamic>>? datas;
   final BoxController _controller = BoxController();
+  final Server _server = Server();
 
-  Future<List<AlarmData>> getDatas() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    List<AlarmData> result = [];
-    final sleepDatasStr = pref.getString("sleepDatas");
-
-    if (sleepDatasStr != null && sleepDatasStr != '[]') {
-      final savedsleepDatas = jsonDecode(sleepDatasStr) as List<dynamic>;
-      print(savedsleepDatas[0].runtimeType);
-      for (var i = 0; i < savedsleepDatas.length; i++) {
-        result.add(AlarmData.fromJson(savedsleepDatas[i]));
-      }
-    }
+  Future<List<dynamic>> getDatas() async {
+    final response = await _server.getAlarms("SLEEP").then((res) {
+      return res.data;
+    }).catchError((err) {
+      return [];
+    });
 
     // result.add(AlarmData(
     //   alarmData: {
@@ -52,7 +51,7 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
     //   ),
     // ));
 
-    return result;
+    return response;
   }
 
   String getKoreanWeekday(int weekday) {
@@ -76,10 +75,38 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
     }
   }
 
-  List<Widget> getAlarmWidgets(double deviceWidth, List<AlarmData> list) {
+  List<Widget> getAlarmWidgets(double deviceWidth, List<dynamic> list) {
+    print(list);
     List<Widget> result = [];
 
     for (var i = 0; i < list.length; i++) {
+      print(list[i]);
+      Map<String, dynamic> music;
+      int alarmType;
+      String time;
+      List<String> weekday;
+      print(list[i]['musicTitle']);
+      try {
+        music = musicList.firstWhere((element) {
+          print(element['title']);
+          print(list[i]['musicTitle']);
+          return element['title'] == list[i]['musicTitle'];
+        });
+      } catch (e) {
+        print(e);
+      }
+      music = musicList.firstWhere((element) => element['title'] == list[i]['musicTitle']);
+      // music = {};
+      print(music);
+      alarmType = 0;
+      final start = DateTime.fromMillisecondsSinceEpoch(int.parse(list[i]['startDate'].toString()), isUtc: true);
+      final end = DateTime.fromMillisecondsSinceEpoch(int.parse(list[i]['endDate'].toString()), isUtc: true);
+      final dateFormat = DateFormat("HH:mm");
+      time = '${dateFormat.format(start)} ~ ${dateFormat.format(end)}';
+      weekday = (list[i]['weekdays'] as List<dynamic>)
+          .map((res) => getKoreanWeekday(int.parse(res["alarmWeekday"].toString())))
+          .toList();
+
       result.add(
         Container(
           width: deviceWidth,
@@ -90,30 +117,10 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
             trailingActions: [
               SwipeAction(
                 onTap: (value) async {
-                  SharedPreferences pref = await SharedPreferences.getInstance();
-                  final jsonStr = pref.getString('sleepDatas');
-                  List<AlarmData> sleepDatas = [];
-
-                  await Alarm.stop(list[i].alarmSettings.id);
-
-                  if (jsonStr != null) {
-                    final parsedJson = jsonDecode(jsonStr);
-                    for (var i = 0; i < parsedJson.length; i++) {
-                      sleepDatas.add(AlarmData.fromJson(parsedJson[i]));
-                    }
-                  }
-
-                  sleepDatas.removeWhere(
-                    (element) => list[i].alarmSettings.id == element.alarmSettings.id,
-                  );
-
-                  final sleepDatasJson = sleepDatas.map((e) => e.toJson()).toList();
-                  final removeStr = jsonEncode(sleepDatasJson);
-                  await pref.setString("sleepDatas", removeStr);
-
-                  value(true);
-                  setState(() {
-                    datas = getDatas();
+                  await _server.deleteAlarm(int.parse(list[i]['alarmId'].toString())).then((res) {
+                    setState(() {
+                      datas = getDatas();
+                    });
                   });
                 },
                 widthSpace: 92,
@@ -130,83 +137,177 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
             child: Material(
               color: const Color(0xFFF9F9F9),
               child: InkWell(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  color: const Color(0xFFF9F9F9),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 126,
-                        height: 126,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: CustomColors.blue,
-                          image: DecorationImage(
-                            image: AssetImage(list[i].alarmData['musicInfo']['imageAssets']),
-                            fit: BoxFit.cover,
-                            alignment: Alignment.centerRight,
-                          ),
+                onTap: () {
+                  if (list[i] is AlarmData) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MakeSleepAlarmPage(
+                          alarmData: list[i],
                         ),
                       ),
-                      const SizedBox(width: 10),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MakeSleepAlarmPage(
+                          alarmData: list[i],
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      Stack(
+                        children: [
+                          Container(
+                            width: 126,
+                            height: 126,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: CustomColors.systemGrey6,
+                              image: DecorationImage(
+                                image: AssetImage(music['imageAssets']),
+                                fit: BoxFit.cover,
+                                alignment: Alignment.centerRight,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 13,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromRGBO(255, 255, 255, 0.5),
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                      child: Text(
+                                        music['title'],
+                                        style: const TextStyle(
+                                          fontFamily: "SF-Pro",
+                                          color: CustomColors.secondaryBlack,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              list[i].alarmData['time'],
-                              style: const TextStyle(
-                                fontFamily: "Pretendard",
-                                fontSize: 17,
-                                color: CustomColors.secondaryBlack,
-                                fontWeight: FontWeight.w700,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                alarmType == 0
+                                    ? Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(5),
+                                          color: CustomColors.lightGreen,
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                          child: Text(
+                                            'AI 알림',
+                                            style: TextStyle(
+                                              fontFamily: "Pretendard",
+                                              fontSize: 11,
+                                              color: CustomColors.lightGreen2,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(5),
+                                          color: CustomColors.lightBlue,
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                          child: Text(
+                                            '일반알림',
+                                            style: TextStyle(
+                                              fontFamily: "Pretendard",
+                                              fontSize: 11,
+                                              color: CustomColors.blue,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  time,
+                                  style: const TextStyle(
+                                    fontFamily: "Pretendard",
+                                    fontSize: 17,
+                                    color: CustomColors.secondaryBlack,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                )
+                              ],
                             ),
-                            const SizedBox(height: 7),
                             Container(
                               width: (deviceWidth - 40) / 2,
                               height: 1,
                               color: const Color(0xFFE5E5EA),
                             ),
-                            const SizedBox(height: 9),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/calendar_small.svg',
-                                  color: CustomColors.lightGreen2,
-                                ),
-                                const SizedBox(width: 7),
-                                const Text(
-                                  '반복 주기',
-                                  style: TextStyle(
-                                    fontFamily: "Pretendard",
-                                    fontSize: 15,
-                                    color: Color(0xFF8E8E93),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SvgPicture.asset('assets/calendar_small.svg'),
+                                      const SizedBox(width: 7),
+                                      const Text(
+                                        '반복 주기',
+                                        style: TextStyle(
+                                          fontFamily: "Pretendard",
+                                          fontSize: 15,
+                                          color: Color(0xFF8E8E93),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 7),
+                                      Text(
+                                        weekday.join(','),
+                                        style: const TextStyle(
+                                          fontFamily: "Pretendard",
+                                          fontSize: 15,
+                                          color: CustomColors.secondaryBlack,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(width: 7),
-                                Text(
-                                  (list[i].alarmData['weekOfNum'].map((element) => getKoreanWeekday(element)))
-                                              .toList()
-                                              .length >
-                                          6
-                                      ? '월 ~ 일'
-                                      : (list[i].alarmData['weekOfNum'].map((element) => getKoreanWeekday(element)))
-                                          .join(','),
-                                  style: const TextStyle(
-                                    fontFamily: "Pretendard",
-                                    fontSize: 15,
-                                    overflow: TextOverflow.clip,
-                                    color: CustomColors.secondaryBlack,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
-                              ],
-                            ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       )
