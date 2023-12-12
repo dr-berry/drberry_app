@@ -10,6 +10,7 @@ import 'package:drberry_app/proto/wifi_config.pb.dart';
 import 'package:drberry_app/proto/wifi_constants.pb.dart';
 import 'package:drberry_app/proto/wifi_scan.pb.dart';
 import 'package:drberry_app/screen/main_page_widget.dart';
+import 'package:drberry_app/screen/phone_authentication_page.dart';
 import 'package:drberry_app/screen/sign_up_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -677,72 +678,79 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
                     onTap: () async {
                       if (isStartProvisioning) {
                         if (isFinishWifiLink) {
-                          server.checkSignUp(widget.code).then((value) async {
-                            if (bool.parse(value.data)) {
-                              final token = await FirebaseMessaging.instance.getToken();
-                              await server.login(widget.code, token ?? "none_device_token").then((res) async {
-                                if (res.statusCode == 201) {
-                                  final tokenResponse = TokenResponse.fromJson(res.data);
-                                  print(
-                                      "a : ${tokenResponse.accessToken}, r : ${tokenResponse.refreshToken}, e : ${tokenResponse.expiredAt}");
-                                  await storage.write(key: "accessToken", value: tokenResponse.accessToken);
-                                  await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
-                                  await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
+                          // server.checkSignUp(widget.code).then((value) async {
+                          //   if (bool.parse(value.data)) {
+                          //     final token = await FirebaseMessaging.instance.getToken();
+                          //     await server.login(widget.code, token ?? "none_device_token").then((res) async {
+                          //       if (res.statusCode == 201) {
+                          //         final tokenResponse = TokenResponse.fromJson(res.data);
+                          //         print(
+                          //             "a : ${tokenResponse.accessToken}, r : ${tokenResponse.refreshToken}, e : ${tokenResponse.expiredAt}");
+                          //         await storage.write(key: "accessToken", value: tokenResponse.accessToken);
+                          //         await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
+                          //         await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
 
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const MainPage()),
-                                    (route) => false,
-                                  );
-                                }
-                              }).catchError(
-                                (err) => print(err),
-                              );
-                            } else {
-                              server.setConnectDeviceWifi(widget.code).then((value) {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignUpPage(
-                                            deviceCode: widget.code,
-                                          )),
-                                  (route) => false,
-                                );
-                              }).catchError((err) {
-                                print(err);
-                                showPlatformDialog(
-                                  context: context,
-                                  builder: (context) => BasicDialogAlert(
-                                    title: const Text(
-                                      '일시적 서버 오류',
-                                      style: TextStyle(fontFamily: "Pretendard"),
-                                    ),
-                                    content: const Text(
-                                      '서버 문제로 디바이스 가입이 실패했습니다. 다시 시도해주세요.',
-                                      style: TextStyle(fontFamily: "Pretnedard"),
-                                    ),
-                                    actions: [
-                                      BasicDialogAction(
-                                        title: const Text(
-                                          '확인',
-                                          style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            color: CustomColors.blue,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                );
-                              });
-                            }
-                          }).catchError((err) {
-                            print(err);
-                          });
+                          //         // ignore: use_build_context_synchronously
+                          //         Navigator.pushAndRemoveUntil(
+                          //           context,
+                          //           MaterialPageRoute(builder: (context) => const MainPage()),
+                          //           (route) => false,
+                          //         );
+                          //       }
+                          //     }).catchError(
+                          //       (err) => print(err),
+                          //     );
+                          //   } else {
+                          //     server.setConnectDeviceWifi(widget.code).then((value) {
+                          //       Navigator.pushAndRemoveUntil(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) => SignUpPage(
+                          //                   deviceCode: widget.code,
+                          //                 )),
+                          //         (route) => false,
+                          //       );
+                          //     }).catchError((err) {
+                          //       print(err);
+                          //       showPlatformDialog(
+                          //         context: context,
+                          //         builder: (context) => BasicDialogAlert(
+                          //           title: const Text(
+                          //             '일시적 서버 오류',
+                          //             style: TextStyle(fontFamily: "Pretendard"),
+                          //           ),
+                          //           content: const Text(
+                          //             '서버 문제로 디바이스 가입이 실패했습니다. 다시 시도해주세요.',
+                          //             style: TextStyle(fontFamily: "Pretnedard"),
+                          //           ),
+                          //           actions: [
+                          //             BasicDialogAction(
+                          //               title: const Text(
+                          //                 '확인',
+                          //                 style: TextStyle(
+                          //                   fontFamily: "Pretendard",
+                          //                   color: CustomColors.blue,
+                          //                 ),
+                          //               ),
+                          //               onPressed: () {
+                          //                 Navigator.pop(context);
+                          //               },
+                          //             )
+                          //           ],
+                          //         ),
+                          //       );
+                          //     });
+                          //   }
+                          // }).catchError((err) {
+                          //   print(err);
+                          // });
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PhoneAuthenticatoinPage(code: widget.code),
+                            ),
+                          );
                         } else {
                           showPlatformDialog(
                             context: context,

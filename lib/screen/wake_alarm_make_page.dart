@@ -15,10 +15,8 @@ import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,9 +32,9 @@ class WakeAlarmMakePage extends StatefulWidget {
 
 class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
   TimeOfDay? _selectTime;
-  final List<int> _selectCircleDate = [];
+  List<int> _selectCircleDate = [];
   final List<int> _savedCircleDate = [];
-  final List<int> _selectSnoozeData = [];
+  List<int> _selectSnoozeData = [];
   final List<int> _savedSnoozeDate = [];
   int _musicIndex = -1;
   final ValueNotifier<bool> _circleDate = ValueNotifier(false);
@@ -63,6 +61,42 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
   }
 
   List<Map<String, String>> musicList = [
+    {
+      "imageAssets": "assets/fire.png",
+      "musicAssets": "assets/crackling fireplace.mp3",
+      "blur": "LEFX0DE20M^j03XS\$*ni0g\$%~BIV",
+      "title": "Crackling Fireplace",
+    },
+    {
+      "imageAssets": "assets/rain.png",
+      "musicAssets": "assets/gentle rain.mp3",
+      "title": "Gentle Rain",
+    },
+    {
+      "imageAssets": "assets/melody.png",
+      "musicAssets": "assets/meditation melody.mp3",
+      "title": "Meditation Melody",
+    },
+    {
+      "imageAssets": "assets/pink.png",
+      "musicAssets": "assets/pink noise.mp3",
+      "title": "Pink Noise",
+    },
+    {
+      "imageAssets": "assets/ocean.png",
+      "musicAssets": "assets/ocean waves.mp3",
+      "title": "Ocean Waves",
+    },
+    {
+      "imageAssets": "assets/thunder.png",
+      "musicAssets": "assets/thunder rain.mp3",
+      "title": "Thunder Rain",
+    },
+    {
+      "imageAssets": "assets/white.jpg",
+      "musicAssets": "assets/white noise.mp3",
+      "title": "White Noise",
+    },
     {
       "imageAssets": "assets/digital.jpg",
       "musicAssets": "assets/alarm-clock-going-off.mp3",
@@ -143,6 +177,25 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
 
   @override
   void initState() {
+    if (widget.aiAlarmData != null) {
+      print(widget.alarmData);
+      final start =
+          DateTime.fromMillisecondsSinceEpoch(int.parse(widget.aiAlarmData['startDate'].toString()), isUtc: true);
+      final end = DateTime.fromMillisecondsSinceEpoch(int.parse(widget.aiAlarmData['endDate'].toString()), isUtc: true);
+      _selectStartTime = TimeOfDay(hour: start.hour, minute: start.minute);
+      _selectEndTime = TimeOfDay(hour: end.hour, minute: end.minute);
+      _circleDate.value = widget.aiAlarmData['weekdays'].isNotEmpty;
+      _selectCircleDate = (widget.aiAlarmData['weekdays'] as List<dynamic>)
+          .map((e) => int.parse(e['alarmWeekday'].toString()))
+          .toList();
+      _segmentController.value = 0;
+      _musicIndex = musicList.indexWhere((element) => element['title'] == widget.aiAlarmData['musicTitle'].toString());
+
+      _selectSnoozeData =
+          (widget.aiAlarmData['snoozes'] as List<dynamic>).map((e) => int.parse(e['snoozeMinute'].toString())).toList();
+      _snooseDate.value = widget.aiAlarmData['snoozes'].isNotEmpty;
+    }
+
     super.initState();
     setAlarmData();
 
@@ -491,7 +544,10 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                       DateTime(
                         now.year,
                         now.month,
-                        now.day,
+                        (_selectStartTime!.hour * 60) + _selectStartTime!.minute >
+                                _selectEndTime!.hour * 60 + _selectEndTime!.minute
+                            ? now.day + 1
+                            : now.day,
                         _selectEndTime!.hour,
                         _selectEndTime!.minute,
                       ),

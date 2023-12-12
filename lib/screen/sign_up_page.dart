@@ -18,8 +18,13 @@ import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   final String deviceCode;
+  final String phoneNumber;
 
-  const SignUpPage({super.key, required this.deviceCode});
+  const SignUpPage({
+    super.key,
+    required this.deviceCode,
+    required this.phoneNumber,
+  });
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -179,8 +184,18 @@ class _SignUpPageState extends State<SignUpPage> {
                               provider.birth.isNotEmpty) {
                             final pushAlarm = await Permission.notification.isGranted;
                             await server
-                                .signUp(provider.name, widget.deviceCode, provider.gender, provider.tall,
-                                    provider.weight, provider.birth, "deviceTokenTest", pushAlarm, pushAlarm)
+                                .signUpV2(
+                              provider.name,
+                              widget.deviceCode,
+                              provider.gender,
+                              provider.tall,
+                              provider.weight,
+                              provider.birth,
+                              "deviceTokenTest",
+                              pushAlarm,
+                              pushAlarm,
+                              widget.phoneNumber,
+                            )
                                 .then((res) async {
                               if (res.statusCode == 201) {
                                 final tokenResponse = TokenResponse.fromJson(res.data);
@@ -200,7 +215,11 @@ class _SignUpPageState extends State<SignUpPage> {
 
                                 // ignore: use_build_context_synchronously
                                 Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => const SuccessSignupPage()));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SuccessSignupPage(),
+                                  ),
+                                );
                               }
                             }).catchError((err) {
                               print(err.toString());
@@ -244,7 +263,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               fontSize: 17,
                               color: Color(0xFFaeaeb2)),
                         ),
-                      )),
+                      ),
+                    ),
             )
           ]),
         )));

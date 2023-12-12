@@ -144,18 +144,30 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
                       MaterialPageRoute(
                         builder: (context) => MakeSleepAlarmPage(
                           alarmData: list[i],
+                          refresh: () async {},
                         ),
                       ),
-                    );
+                    ).then((value) {
+                      setState(() {
+                        datas = getDatas();
+                      });
+                    });
                   } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => MakeSleepAlarmPage(
                           alarmData: list[i],
+                          refresh: () async {
+                            await getDatas();
+                          },
                         ),
                       ),
-                    );
+                    ).then((value) {
+                      setState(() {
+                        datas = getDatas();
+                      });
+                    });
                   }
                 },
                 child: Container(
@@ -392,7 +404,11 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
                           final isChange = await Navigator.push<bool>(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MakeSleepAlarmPage(),
+                              builder: (context) => MakeSleepAlarmPage(
+                                refresh: () async {
+                                  await getDatas();
+                                },
+                              ),
                             ),
                           );
 

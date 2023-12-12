@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sliding_box/flutter_sliding_box.dart';
-import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -161,6 +160,29 @@ class _MusicBarState extends State<MusicBar> with SingleTickerProviderStateMixin
                 children: [
                   Column(
                     children: [
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                            child: IconButton(
+                              onPressed: () {
+                                // widget.controller.hideBox();
+                                widget.controller.closeBox();
+                              },
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down_outlined,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 18),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
                       SizedBox(
                         height: 250,
                         child: Padding(
@@ -263,7 +285,7 @@ class _MusicBarState extends State<MusicBar> with SingleTickerProviderStateMixin
                     ],
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top: 110),
+                    margin: const EdgeInsets.only(top: 174),
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -363,6 +385,7 @@ class _MusicBarState extends State<MusicBar> with SingleTickerProviderStateMixin
                   }
                 } else {
                   // widget.controller.setPosition(1);
+                  widget.controller.showBox();
                   _animationController?.forward();
                 }
               } else {
@@ -372,6 +395,7 @@ class _MusicBarState extends State<MusicBar> with SingleTickerProviderStateMixin
             },
             onTap: () {
               _animationController?.forward();
+              widget.controller.showBox();
             },
             child: Container(
               height: 73,

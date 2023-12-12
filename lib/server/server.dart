@@ -54,7 +54,26 @@ class Server {
   }
 
   Future<Response> checkSignUp(String deviceCode) async {
-    return await noneDio.get("/auth/check_signup", options: Options(headers: {"X-Device-Code": deviceCode}));
+    return await noneDio.get(
+      "/auth/check_signup",
+      options: Options(
+        headers: {
+          "X-Device-Code": deviceCode,
+        },
+      ),
+    );
+  }
+
+  Future<Response> checkSignUpWithPhone(String deviceCode, String phoneNumber) async {
+    return await noneDio.get(
+      "/auth/check_signup_v2",
+      options: Options(
+        headers: {
+          "X-Phone-Number": phoneNumber,
+          "X-Device-Code": deviceCode,
+        },
+      ),
+    );
   }
 
   Future<Response> login(String deviceCode, String deviceToken) async {
@@ -82,6 +101,25 @@ class Server {
         "deviceCode": deviceCode,
         "isAppPush": isAppPush,
         "isAlarmPush": isAlarmPush
+      },
+      options: Options(headers: {"X-Device-Token": deviceCode}),
+    );
+  }
+
+  Future<Response> signUpV2(String name, String deviceCode, String gender, int tall, int weight, String birth,
+      String deviceToken, bool isAppPush, bool isAlarmPush, String phoneNumber) async {
+    return await noneDio.post(
+      "/auth/signup_v2",
+      data: {
+        "name": name,
+        "gender": gender,
+        "tall": tall,
+        "weight": weight,
+        "birth": birth,
+        "deviceCode": deviceCode,
+        "isAppPush": isAppPush,
+        "isAlarmPush": isAlarmPush,
+        "phoneNumber": phoneNumber,
       },
       options: Options(headers: {"X-Device-Token": deviceCode}),
     );
@@ -361,7 +399,7 @@ class Server {
 
   Future<Response> deleteAccount() async {
     return await noneDio.delete(
-      '/user/delete/account',
+      '/auth/delete/account',
       options: Options(
         headers: {
           'Authorization': "Bearer ${await getAccessToken()}",

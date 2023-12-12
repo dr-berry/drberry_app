@@ -13,8 +13,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_sliding_box/flutter_sliding_box.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({
@@ -111,6 +111,21 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               return;
             }
             print(value);
+
+            print("=========");
+            print(_controller.getPosition);
+            print("=========");
+            if (value == 2 || value == 3) {
+              context.read<GlobalPageProvider>().setIsMusicbar(false);
+              _controller.hideBox();
+            } else {
+              context.read<GlobalPageProvider>().setIsMusicbar(true);
+              _controller.setPosition(0);
+              if (!_controller.isBoxVisible) {
+                _controller.showBox();
+              }
+            }
+
             context.read<MainPageProvider>().setIndex(value);
             controller.jumpToPage(value);
           },
@@ -251,12 +266,28 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       floatingActionButton: context.watch<HomePageProvider>().sleepState
           ? Container(
               margin: const EdgeInsets.only(bottom: 70),
+              width: 124,
               child: FloatingActionButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
                 backgroundColor: CustomColors.lightGreen2,
-                child: const Icon(
-                  CupertinoIcons.recordingtape,
-                  size: 30,
-                  color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset("assets/power.svg"),
+                    const SizedBox(
+                      width: 3,
+                    ),
+                    const Text(
+                      "수면종료",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
+                    )
+                  ],
                 ),
                 onPressed: () async {
                   if (isLoadingStart) {

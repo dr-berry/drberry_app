@@ -2,6 +2,7 @@ import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/screen/ble_n_wifi_link_page.dart';
 import 'package:drberry_app/screen/main_page_widget.dart';
+import 'package:drberry_app/screen/phone_authentication_page.dart';
 import 'package:drberry_app/screen/sign_up_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -200,7 +201,7 @@ class _WriteCodeSheetState extends State<WriteCodeSheet> {
                     return;
                   }
 
-                  if (widget.type == 'reconnect') {
+                  if (widget.type == "reconnect") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -211,37 +212,22 @@ class _WriteCodeSheetState extends State<WriteCodeSheet> {
                     );
                     return;
                   }
-                  print(_code);
                   await server.checkSignUp(_code).then((value) async {
                     print(value.data);
                     print(bool.parse(value.data));
                     if (bool.parse(value.data)) {
-                      final token = await FirebaseMessaging.instance.getToken();
-                      print("deviceToken : $token");
-                      await server.login(_code, token ?? "none_device_token").then((res) async {
-                        if (res.statusCode == 201) {
-                          final tokenResponse = TokenResponse.fromJson(res.data);
-                          print(
-                              "a : ${tokenResponse.accessToken}, r : ${tokenResponse.refreshToken}, e : ${tokenResponse.expiredAt}");
-                          await storage.write(key: "accessToken", value: tokenResponse.accessToken);
-                          await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
-                          await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
-
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MainPage()),
-                            (route) => false,
-                          );
-                        }
-                      }).catchError((err) => print(err));
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PhoneAuthenticatoinPage(code: _code),
+                        ),
+                        (route) => false,
+                      );
                     } else {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BleNWifiLinkPage(
-                            code: _code,
-                          ),
+                          builder: (context) => BleNWifiLinkPage(code: _code),
                         ),
                         (route) => false,
                       );

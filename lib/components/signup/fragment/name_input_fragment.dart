@@ -66,40 +66,41 @@ class _NameInputFragmentState extends State<NameInputFragment> {
         ),
         Center(
           child: Container(
-              width: deviceWidth - 32,
-              margin: const EdgeInsets.only(top: 4),
-              child: TextField(
-                controller: controller,
-                onChanged: (value) {
-                  final provider = context.read<SignUpProvider>();
-                  provider.setName(value);
-                  if (value.isNotEmpty) {
-                    provider.setDisabled(true);
-                  } else {
-                    provider.setDisabled(false);
-                  }
-                },
-                cursorColor: Colors.black,
-                cursorHeight: 17,
-                style: const TextStyle(
-                    fontFamily: "Pretendard", fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black),
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    hintText: "홍길동",
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                    hintStyle: TextStyle(
-                        fontFamily: "Pretendard", fontWeight: FontWeight.w500, fontSize: 17, color: Color(0xFFAEAEB2))),
-              )),
+            width: deviceWidth - 32,
+            margin: const EdgeInsets.only(top: 4),
+            child: TextField(
+              controller: controller,
+              onChanged: (value) {
+                final provider = context.read<SignUpProvider>();
+                provider.setName(value);
+                if (value.isNotEmpty) {
+                  provider.setDisabled(true);
+                } else {
+                  provider.setDisabled(false);
+                }
+              },
+              cursorColor: Colors.black,
+              cursorHeight: 17,
+              style: const TextStyle(
+                  fontFamily: "Pretendard", fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black),
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  hintText: "홍길동",
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  hintStyle: TextStyle(
+                      fontFamily: "Pretendard", fontWeight: FontWeight.w500, fontSize: 17, color: Color(0xFFAEAEB2))),
+            ),
+          ),
         )
       ],
     );

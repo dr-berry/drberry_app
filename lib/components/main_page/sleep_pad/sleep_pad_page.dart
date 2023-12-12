@@ -366,45 +366,55 @@ class _SleepPadPageState extends State<SleepPadPage> {
                       useSafeArea: true,
                       context: context,
                       builder: (context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: deviceWidth,
-                              height: 80.h,
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                                color: CustomColors.systemWhite,
-                              ),
-                              child: Center(
-                                child: SizedBox(
-                                  width: deviceWidth,
-                                  height: 60.h,
-                                  child: Material(
-                                    color: CustomColors.systemWhite,
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const SplashPage(
-                                              type: "reconnect",
+                        return Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: deviceWidth,
+                                height: 80.h,
+                                margin: const EdgeInsets.only(bottom: 20),
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                  color: CustomColors.systemWhite,
+                                ),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: deviceWidth,
+                                    height: 60.h,
+                                    child: Material(
+                                      color: CustomColors.systemWhite,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => const SplashPage(
+                                                type: "reconnect",
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                        alignment: Alignment.center,
-                                        width: deviceWidth,
-                                        child: const Text(
-                                          "네트워크 연결",
-                                          style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black,
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                          alignment: Alignment.center,
+                                          width: deviceWidth,
+                                          child: const Text(
+                                            "네트워크 연결",
+                                            style: TextStyle(
+                                              fontFamily: "Pretendard",
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -412,41 +422,8 @@ class _SleepPadPageState extends State<SleepPadPage> {
                                   ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              width: deviceWidth,
-                              height: 80.h,
-                              margin: const EdgeInsets.only(bottom: 20),
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                                color: CustomColors.systemWhite,
-                              ),
-                              child: Center(
-                                child: SizedBox(
-                                  width: deviceWidth,
-                                  height: 60.h,
-                                  child: Material(
-                                      color: CustomColors.systemWhite,
-                                      child: InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                            padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                            alignment: Alignment.center,
-                                            width: deviceWidth,
-                                            child: const Text(
-                                              "기기변경",
-                                              style: TextStyle(
-                                                  fontFamily: "Pretendard",
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Color(0xFFFC2E2E)),
-                                            )),
-                                      )),
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         );
                       },
                     );

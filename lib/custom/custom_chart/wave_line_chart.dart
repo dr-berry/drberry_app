@@ -127,13 +127,20 @@ class WaveLineChart extends CustomPainter {
         startX += p;
       }
 
-      if (int.parse(labels[labels.length - 2].number) < 4) {
-        var diffEnd = 4 - int.parse(labels[labels.length - 2].number);
-        for (var i = 0; i < diffEnd; i++) {
-          datas.insert(
-              datas.length, HeartRateGraph(heartRate: datas[datas.length - 1].heartRate, mesurementAt: "00:00"));
+      if (labels.length > 2) {
+        if (int.parse(labels[labels.length - 2].number) < 4) {
+          var diffEnd = 4 - int.parse(labels[labels.length - 2].number);
+          for (var i = 0; i < diffEnd; i++) {
+            datas.insert(
+                datas.length, HeartRateGraph(heartRate: datas[datas.length - 1].heartRate, mesurementAt: "00:00"));
+          }
+          labels[labels.length - 2].number = "4";
         }
-        labels[labels.length - 2].number = "4";
+      }
+      print(labels);
+      for (var label in labels) {
+        print(label.hour);
+        print(label.number);
       }
 
       if (int.parse(labels[0].number) < 4) {

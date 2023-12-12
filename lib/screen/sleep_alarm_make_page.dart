@@ -23,8 +23,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ignore: must_be_immutable
 class MakeSleepAlarmPage extends StatefulWidget {
   dynamic alarmData;
+  final Function() refresh;
 
-  MakeSleepAlarmPage({super.key, this.alarmData});
+  MakeSleepAlarmPage({
+    super.key,
+    required this.refresh,
+    this.alarmData,
+  });
 
   @override
   State<MakeSleepAlarmPage> createState() => _MakeSleepAlarmPageState();
@@ -33,7 +38,7 @@ class MakeSleepAlarmPage extends StatefulWidget {
 class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
   TimeOfDay? _selectStartTime;
   TimeOfDay? _selectEndTime;
-  final List<int> _selectCircleDate = [];
+  List<int> _selectCircleDate = [];
   final List<int> _savedCircleDate = [];
   final List<int> _selectSnoozeData = [];
   final List<int> _savedSnoozeDate = [];
@@ -92,6 +97,19 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
 
   @override
   void initState() {
+    if (widget.alarmData != null) {
+      print(widget.alarmData);
+      final start =
+          DateTime.fromMillisecondsSinceEpoch(int.parse(widget.alarmData['startDate'].toString()), isUtc: true);
+      final end = DateTime.fromMillisecondsSinceEpoch(int.parse(widget.alarmData['endDate'].toString()), isUtc: true);
+      _selectStartTime = TimeOfDay(hour: start.hour, minute: start.minute);
+      _selectEndTime = TimeOfDay(hour: end.hour, minute: end.minute);
+      _circleDate.value = widget.alarmData['weekdays'].isNotEmpty;
+      _selectCircleDate =
+          (widget.alarmData['weekdays'] as List<dynamic>).map((e) => int.parse(e['alarmWeekday'].toString())).toList();
+      _musicIndex = musicList.indexWhere((element) => element['title'] == widget.alarmData['musicTitle'].toString());
+    }
+
     super.initState();
 
     _snooseDate.addListener(() {
@@ -227,7 +245,10 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                   DateTime(
                     now.year,
                     now.month,
-                    now.day,
+                    (_selectStartTime!.hour * 60) + _selectStartTime!.minute >
+                            _selectEndTime!.hour * 60 + _selectEndTime!.minute
+                        ? now.day + 1
+                        : now.day,
                     _selectEndTime!.hour,
                     _selectEndTime!.minute,
                   ),
@@ -254,7 +275,10 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                       DateTime(
                         now.year,
                         now.month,
-                        now.day,
+                        (_selectStartTime!.hour * 60) + _selectStartTime!.minute >
+                                _selectEndTime!.hour * 60 + _selectEndTime!.minute
+                            ? now.day + 1
+                            : now.day,
                         _selectEndTime!.hour,
                         _selectEndTime!.minute,
                       ),
@@ -289,6 +313,8 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                     _selectCircleDate,
                   );
                 }
+
+                await widget.refresh();
 
                 Future.delayed(Duration.zero, () {
                   Navigator.pop(context, true);
@@ -452,6 +478,10 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                                           if (idx != null && idx != index) {
                                             try {
                                               await playBackgroundAudio(musicList[index]['musicAssets']!);
+                                              context.read<GlobalPageProvider>().setIsMusicbar(true);
+                                              if (_controller.isBoxVisible) {
+                                                _controller.showBox();
+                                              }
                                             } catch (e) {
                                               await soundPlayer.openAudioSession();
                                               await playBackgroundAudio(musicList[index]['musicAssets']!);
@@ -688,45 +718,45 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                                         );
                                         print(time);
 
-                                        if (_selectStartTime != null && time != null) {
-                                          int start = _selectStartTime!.hour * 60 + _selectStartTime!.minute;
-                                          int end = time.hour * 60 + time.minute;
+                                        // if (_selectStartTime != null && time != null) {
+                                        //   int start = _selectStartTime!.hour * 60 + _selectStartTime!.minute;
+                                        //   int end = time.hour * 60 + time.minute;
 
-                                          if (start > end) {
-                                            Future.delayed(Duration.zero, () {
-                                              showPlatformDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return BasicDialogAlert(
-                                                    title: const Text(
-                                                      '시간 설정 실패',
-                                                      style: TextStyle(fontFamily: "Pretendard"),
-                                                    ),
-                                                    content: const Text(
-                                                      '끝 시간이 처음보다 나중으로 설정해주세요.',
-                                                      style: TextStyle(fontFamily: "Pretnedard"),
-                                                    ),
-                                                    actions: [
-                                                      BasicDialogAction(
-                                                        title: const Text(
-                                                          '확인',
-                                                          style: TextStyle(
-                                                            fontFamily: "Pretendard",
-                                                            color: CustomColors.blue,
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.pop(context);
-                                                        },
-                                                      )
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            });
-                                            return;
-                                          }
-                                        }
+                                        //   if (start > end) {
+                                        //     Future.delayed(Duration.zero, () {
+                                        //       showPlatformDialog(
+                                        //         context: context,
+                                        //         builder: (context) {
+                                        //           return BasicDialogAlert(
+                                        //             title: const Text(
+                                        //               '시간 설정 실패',
+                                        //               style: TextStyle(fontFamily: "Pretendard"),
+                                        //             ),
+                                        //             content: const Text(
+                                        //               '끝 시간이 처음보다 나중으로 설정해주세요.',
+                                        //               style: TextStyle(fontFamily: "Pretnedard"),
+                                        //             ),
+                                        //             actions: [
+                                        //               BasicDialogAction(
+                                        //                 title: const Text(
+                                        //                   '확인',
+                                        //                   style: TextStyle(
+                                        //                     fontFamily: "Pretendard",
+                                        //                     color: CustomColors.blue,
+                                        //                   ),
+                                        //                 ),
+                                        //                 onPressed: () {
+                                        //                   Navigator.pop(context);
+                                        //                 },
+                                        //               )
+                                        //             ],
+                                        //           );
+                                        //         },
+                                        //       );
+                                        //     });
+                                        //     return;
+                                        //   }
+                                        // }
 
                                         if (time != null) {
                                           setState(() {

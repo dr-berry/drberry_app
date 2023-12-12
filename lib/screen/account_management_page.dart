@@ -366,7 +366,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
                                     context: context,
                                     builder: (context) => BasicDialogAlert(
                                       title: const Text(
-                                        "로그인 실패",
+                                        "계정삭제 실패",
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontFamily: "Pretendard",
@@ -374,7 +374,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
                                             color: CustomColors.systemBlack),
                                       ),
                                       content: Text(
-                                        "계정삭제에 실패했습니다. Error: [${err.toString()}]",
+                                        "계정삭제에 실패했습니다. Error: [$err]",
                                         style: const TextStyle(
                                           fontFamily: "Pretendard",
                                         ),

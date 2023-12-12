@@ -61,9 +61,9 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
               ),
             ),
             Container(
-                padding: const EdgeInsets.fromLTRB(0, 0, 7, 0),
-                child: RepaintBoundary(
-                    child: CustomPaint(
+              padding: const EdgeInsets.fromLTRB(0, 0, 7, 0),
+              child: RepaintBoundary(
+                child: CustomPaint(
                   painter: WaveLineChart(
                       size: Size(deviceWidth - 32 - (12 + 19), 180),
                       datas: context.watch<HomePageProvider>().mainPageBiometricData != null &&
@@ -78,8 +78,13 @@ class _HeartRateWidgetState extends State<HeartRateWidget> {
                               context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                           ? context.read<HomePageProvider>().mainPageBiometricData!.heartRateGraphX!
                           : []),
-                  size: Size(deviceWidth - 32 - (12 + 19), 180),
-                ))),
+                  size: Size(
+                    deviceWidth - 32 - (12 + 19),
+                    180,
+                  ),
+                ),
+              ),
+            ),
             Container(
               margin: const EdgeInsets.fromLTRB(0, 28, 0, 16),
               width: deviceWidth - 66,

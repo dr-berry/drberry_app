@@ -10,28 +10,29 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
-		9B0CE0CC2A70C57500C72C1B /* crackling fireplace.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0CB2A70C57500C72C1B /* crackling fireplace.aiff */; };
-		9B0CE0CE2A70C86F00C72C1B /* alarm_clock_going_off.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0CD2A70C86F00C72C1B /* alarm_clock_going_off.aiff */; };
-		9B0CE0D02A70EFFB00C72C1B /* gentle rain.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0CF2A70EFFB00C72C1B /* gentle rain.mp3 */; };
-		9B0CE0D22A7114C200C72C1B /* white noise.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0D12A7114C200C72C1B /* white noise.mp3 */; };
-		9B0CE0D42A7114ED00C72C1B /* meditation melody.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0D32A7114ED00C72C1B /* meditation melody.mp3 */; };
 		9B0CE0D62A71154500C72C1B /* alarm-clock-going-off.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0D52A71154500C72C1B /* alarm-clock-going-off.mp3 */; };
-		9B0CE0D82A71155100C72C1B /* ocean waves.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0D72A71155100C72C1B /* ocean waves.mp3 */; };
-		9B0CE0DA2A71156300C72C1B /* thunder rain.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0D92A71156300C72C1B /* thunder rain.mp3 */; };
-		9B0CE0DC2A71156B00C72C1B /* pink noise.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DB2A71156B00C72C1B /* pink noise.mp3 */; };
 		9B0CE0E52A7BC13D00C72C1B /* psycho-siren.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DD2A7BC13C00C72C1B /* psycho-siren.mp3 */; };
 		9B0CE0E62A7BC13D00C72C1B /* chiptune.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DE2A7BC13C00C72C1B /* chiptune.mp3 */; };
 		9B0CE0E72A7BC13D00C72C1B /* cyber-alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0DF2A7BC13C00C72C1B /* cyber-alarm.mp3 */; };
 		9B0CE0E82A7BC13D00C72C1B /* ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E02A7BC13C00C72C1B /* ringtone.mp3 */; };
-		9B0CE0E92A7BC13D00C72C1B /* beep.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E12A7BC13C00C72C1B /* beep.mp3 */; };
 		9B0CE0EA2A7BC13D00C72C1B /* oversimplefied.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */; };
-		9B0CE0EB2A7BC13D00C72C1B /* old_alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */; };
 		9B0CE0EC2A7BC13D00C72C1B /* car.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B0CE0E42A7BC13D00C72C1B /* car.mp3 */; };
 		9B20FCCE2B0B0FCC00A3436E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		9B20FCCF2B0B0FCC00A3436E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		9B20FCD02B0B0FCC00A3436E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		9B20FCD42B0B147100A3436E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B20FC582B0B0A2700A3436E /* GoogleService-Info.plist */; };
 		9B20FCD52B0B147700A3436E /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		9B72E1852B23038E005D7BBC /* ocean waves.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E17E2B23038D005D7BBC /* ocean waves.mp3 */; };
+		9B72E1862B23038E005D7BBC /* crackling fireplace.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E17F2B23038D005D7BBC /* crackling fireplace.mp3 */; };
+		9B72E1872B23038E005D7BBC /* meditation melody.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1802B23038D005D7BBC /* meditation melody.mp3 */; };
+		9B72E1882B23038E005D7BBC /* pink noise.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1812B23038E005D7BBC /* pink noise.mp3 */; };
+		9B72E1892B23038E005D7BBC /* thunder rain.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1822B23038E005D7BBC /* thunder rain.mp3 */; };
+		9B72E18A2B23038E005D7BBC /* gentle rain.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1832B23038E005D7BBC /* gentle rain.mp3 */; };
+		9B72E18B2B23038E005D7BBC /* white noise.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1842B23038E005D7BBC /* white noise.mp3 */; };
+		9B72E19A2B2303B3005D7BBC /* Berry good sleep.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1902B2303B2005D7BBC /* Berry good sleep.png */; };
+		9B72E19C2B2303B3005D7BBC /* old_alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1922B2303B2005D7BBC /* old_alarm.mp3 */; };
+		9B72E19D2B2303B3005D7BBC /* beep.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1932B2303B3005D7BBC /* beep.mp3 */; };
+		9B72E19F2B2303B3005D7BBC /* old_clock.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9B72E1952B2303B3005D7BBC /* old_clock.jpg */; };
 		A4069FE6C098EAA06B06A9AB /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12D097E6BEDB508715182FA8 /* Pods_Runner.framework */; };
 		EBFC74F90715AFD1E5CC9F40 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C4D95104E9D4C1F6739C588 /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
@@ -79,10 +80,8 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9B0CE0CB2A70C57500C72C1B /* crackling fireplace.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = "crackling fireplace.aiff"; path = "../../../../../Downloads/crackling fireplace.aiff"; sourceTree = "<group>"; };
 		9B0CE0CD2A70C86F00C72C1B /* alarm_clock_going_off.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = alarm_clock_going_off.aiff; path = ../../../../../Downloads/alarm_clock_going_off.aiff; sourceTree = "<group>"; };
 		9B0CE0CF2A70EFFB00C72C1B /* gentle rain.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "gentle rain.mp3"; path = "../../../../../Downloads/gentle rain.mp3"; sourceTree = "<group>"; };
-		9B0CE0D12A7114C200C72C1B /* white noise.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "white noise.mp3"; path = "../../../../../Downloads/white noise.mp3"; sourceTree = "<group>"; };
 		9B0CE0D32A7114ED00C72C1B /* meditation melody.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "meditation melody.mp3"; path = "../../../../../Downloads/meditation melody.mp3"; sourceTree = "<group>"; };
 		9B0CE0D52A71154500C72C1B /* alarm-clock-going-off.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "alarm-clock-going-off.mp3"; path = "../../../../../Downloads/alarm-clock-going-off.mp3"; sourceTree = "<group>"; };
 		9B0CE0D72A71155100C72C1B /* ocean waves.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "ocean waves.mp3"; path = "../../../../../Downloads/ocean waves.mp3"; sourceTree = "<group>"; };
@@ -92,12 +91,21 @@
 		9B0CE0DE2A7BC13C00C72C1B /* chiptune.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = chiptune.mp3; sourceTree = "<group>"; };
 		9B0CE0DF2A7BC13C00C72C1B /* cyber-alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "cyber-alarm.mp3"; sourceTree = "<group>"; };
 		9B0CE0E02A7BC13C00C72C1B /* ringtone.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ringtone.mp3; sourceTree = "<group>"; };
-		9B0CE0E12A7BC13C00C72C1B /* beep.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = beep.mp3; sourceTree = "<group>"; };
 		9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = oversimplefied.mp3; sourceTree = "<group>"; };
-		9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = old_alarm.mp3; sourceTree = "<group>"; };
 		9B0CE0E42A7BC13D00C72C1B /* car.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = car.mp3; sourceTree = "<group>"; };
 		9B0EB17A2A6A038F00609A7D /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		9B20FC582B0B0A2700A3436E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9B72E17E2B23038D005D7BBC /* ocean waves.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "ocean waves.mp3"; path = "../../assets/ocean waves.mp3"; sourceTree = "<group>"; };
+		9B72E17F2B23038D005D7BBC /* crackling fireplace.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "crackling fireplace.mp3"; path = "../../assets/crackling fireplace.mp3"; sourceTree = "<group>"; };
+		9B72E1802B23038D005D7BBC /* meditation melody.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "meditation melody.mp3"; path = "../../assets/meditation melody.mp3"; sourceTree = "<group>"; };
+		9B72E1812B23038E005D7BBC /* pink noise.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "pink noise.mp3"; path = "../../assets/pink noise.mp3"; sourceTree = "<group>"; };
+		9B72E1822B23038E005D7BBC /* thunder rain.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "thunder rain.mp3"; path = "../../assets/thunder rain.mp3"; sourceTree = "<group>"; };
+		9B72E1832B23038E005D7BBC /* gentle rain.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "gentle rain.mp3"; path = "../../assets/gentle rain.mp3"; sourceTree = "<group>"; };
+		9B72E1842B23038E005D7BBC /* white noise.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "white noise.mp3"; path = "../../assets/white noise.mp3"; sourceTree = "<group>"; };
+		9B72E1902B2303B2005D7BBC /* Berry good sleep.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Berry good sleep.png"; path = "../../assets/Berry good sleep.png"; sourceTree = "<group>"; };
+		9B72E1922B2303B2005D7BBC /* old_alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = old_alarm.mp3; path = ../../assets/old_alarm.mp3; sourceTree = "<group>"; };
+		9B72E1932B2303B3005D7BBC /* beep.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = beep.mp3; path = ../../assets/beep.mp3; sourceTree = "<group>"; };
+		9B72E1952B2303B3005D7BBC /* old_clock.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = old_clock.jpg; path = ../../assets/old_clock.jpg; sourceTree = "<group>"; };
 		9CD5A4BB0877D7CED40C775C /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		AED4419A5816166B0E8E90F6 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		DA6A082922C3D58A36392465 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
@@ -176,21 +184,28 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
-				9B0CE0E12A7BC13C00C72C1B /* beep.mp3 */,
+				9B72E1932B2303B3005D7BBC /* beep.mp3 */,
+				9B72E1902B2303B2005D7BBC /* Berry good sleep.png */,
 				9B0CE0E42A7BC13D00C72C1B /* car.mp3 */,
 				9B0CE0DE2A7BC13C00C72C1B /* chiptune.mp3 */,
+				9B72E17F2B23038D005D7BBC /* crackling fireplace.mp3 */,
+				9B72E1922B2303B2005D7BBC /* old_alarm.mp3 */,
+				9B72E1952B2303B3005D7BBC /* old_clock.jpg */,
+				9B72E1832B23038E005D7BBC /* gentle rain.mp3 */,
+				9B72E1802B23038D005D7BBC /* meditation melody.mp3 */,
+				9B72E17E2B23038D005D7BBC /* ocean waves.mp3 */,
+				9B72E1812B23038E005D7BBC /* pink noise.mp3 */,
+				9B72E1822B23038E005D7BBC /* thunder rain.mp3 */,
+				9B72E1842B23038E005D7BBC /* white noise.mp3 */,
 				9B20FC582B0B0A2700A3436E /* GoogleService-Info.plist */,
 				9B0CE0DF2A7BC13C00C72C1B /* cyber-alarm.mp3 */,
-				9B0CE0E32A7BC13D00C72C1B /* old_alarm.mp3 */,
 				9B0CE0E22A7BC13C00C72C1B /* oversimplefied.mp3 */,
 				9B0CE0DD2A7BC13C00C72C1B /* psycho-siren.mp3 */,
 				9B0CE0E02A7BC13C00C72C1B /* ringtone.mp3 */,
 				9B0CE0CF2A70EFFB00C72C1B /* gentle rain.mp3 */,
 				9B0CE0CD2A70C86F00C72C1B /* alarm_clock_going_off.aiff */,
 				9B0CE0D52A71154500C72C1B /* alarm-clock-going-off.mp3 */,
-				9B0CE0CB2A70C57500C72C1B /* crackling fireplace.aiff */,
 				9B0CE0D32A7114ED00C72C1B /* meditation melody.mp3 */,
-				9B0CE0D12A7114C200C72C1B /* white noise.mp3 */,
 				9B0CE0DB2A71156B00C72C1B /* pink noise.mp3 */,
 				9B0CE0D92A71156300C72C1B /* thunder rain.mp3 */,
 				9B0CE0D72A71155100C72C1B /* ocean waves.mp3 */,
@@ -317,26 +332,27 @@
 			files = (
 				9B20FCD52B0B147700A3436E /* AppFrameworkInfo.plist in Resources */,
 				9B20FCD42B0B147100A3436E /* GoogleService-Info.plist in Resources */,
+				9B72E1892B23038E005D7BBC /* thunder rain.mp3 in Resources */,
 				9B20FCCE2B0B0FCC00A3436E /* Main.storyboard in Resources */,
+				9B72E19F2B2303B3005D7BBC /* old_clock.jpg in Resources */,
 				9B20FCCF2B0B0FCC00A3436E /* Assets.xcassets in Resources */,
 				9B20FCD02B0B0FCC00A3436E /* LaunchScreen.storyboard in Resources */,
 				9B0CE0E52A7BC13D00C72C1B /* psycho-siren.mp3 in Resources */,
+				9B72E18B2B23038E005D7BBC /* white noise.mp3 in Resources */,
+				9B72E1882B23038E005D7BBC /* pink noise.mp3 in Resources */,
 				9B0CE0E62A7BC13D00C72C1B /* chiptune.mp3 in Resources */,
 				9B0CE0E72A7BC13D00C72C1B /* cyber-alarm.mp3 in Resources */,
 				9B0CE0E82A7BC13D00C72C1B /* ringtone.mp3 in Resources */,
-				9B0CE0E92A7BC13D00C72C1B /* beep.mp3 in Resources */,
 				9B0CE0EA2A7BC13D00C72C1B /* oversimplefied.mp3 in Resources */,
-				9B0CE0EB2A7BC13D00C72C1B /* old_alarm.mp3 in Resources */,
+				9B72E18A2B23038E005D7BBC /* gentle rain.mp3 in Resources */,
 				9B0CE0EC2A7BC13D00C72C1B /* car.mp3 in Resources */,
-				9B0CE0D22A7114C200C72C1B /* white noise.mp3 in Resources */,
-				9B0CE0DA2A71156300C72C1B /* thunder rain.mp3 in Resources */,
-				9B0CE0D82A71155100C72C1B /* ocean waves.mp3 in Resources */,
-				9B0CE0CE2A70C86F00C72C1B /* alarm_clock_going_off.aiff in Resources */,
+				9B72E19A2B2303B3005D7BBC /* Berry good sleep.png in Resources */,
+				9B72E1852B23038E005D7BBC /* ocean waves.mp3 in Resources */,
+				9B72E1872B23038E005D7BBC /* meditation melody.mp3 in Resources */,
+				9B72E19D2B2303B3005D7BBC /* beep.mp3 in Resources */,
 				9B0CE0D62A71154500C72C1B /* alarm-clock-going-off.mp3 in Resources */,
-				9B0CE0D02A70EFFB00C72C1B /* gentle rain.mp3 in Resources */,
-				9B0CE0CC2A70C57500C72C1B /* crackling fireplace.aiff in Resources */,
-				9B0CE0DC2A71156B00C72C1B /* pink noise.mp3 in Resources */,
-				9B0CE0D42A7114ED00C72C1B /* meditation melody.mp3 in Resources */,
+				9B72E19C2B2303B3005D7BBC /* old_alarm.mp3 in Resources */,
+				9B72E1862B23038E005D7BBC /* crackling fireplace.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

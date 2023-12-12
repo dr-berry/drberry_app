@@ -238,13 +238,17 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                           alarmData: list[i],
                         ),
                       ),
-                    );
-
-                    if (isChange != null && isChange) {
+                    ).then((value) {
                       setState(() {
                         datas = getDatas();
                       });
-                    }
+                    });
+
+                    // if (isChange != null && isChange) {
+                    //   setState(() {
+                    //     datas = getDatas();
+                    //   });
+                    // }
                   } else {
                     var isChange = await Navigator.push(
                       context,
@@ -253,13 +257,17 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                           aiAlarmData: list[i],
                         ),
                       ),
-                    );
-
-                    if (isChange != null && isChange) {
+                    ).then((value) {
                       setState(() {
                         datas = getDatas();
                       });
-                    }
+                    });
+
+                    // if (isChange != null && isChange) {
+                    //   setState(() {
+                    //     datas = getDatas();
+                    //   });
+                    // }
                   }
                 },
                 child: Container(

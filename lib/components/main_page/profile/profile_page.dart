@@ -6,6 +6,7 @@ import 'package:drberry_app/screen/account_management_page.dart';
 import 'package:drberry_app/screen/app_setting_page.dart';
 import 'package:drberry_app/screen/sleep_data_page.dart';
 import 'package:drberry_app/server/server.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -529,6 +530,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       print(err);
                       await storage.deleteAll();
                       // ignore: use_build_context_synchronously
+                      await FirebaseAuth.instance.signOut();
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(

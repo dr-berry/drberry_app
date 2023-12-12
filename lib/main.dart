@@ -8,6 +8,7 @@ import 'package:drberry_app/screen/sleep_alarm_page.dart';
 import 'package:drberry_app/screen/splash_page.dart';
 import 'package:drberry_app/screen/weke_alarm_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,42 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:volume_controller/volume_controller.dart';
 
 List<Map<String, String>> wakeMusicList = [
+  {
+    "imageAssets": "assets/fire.png",
+    "musicAssets": "assets/crackling fireplace.mp3",
+    "blur": "LEFX0DE20M^j03XS\$*ni0g\$%~BIV",
+    "title": "Crackling Fireplace",
+  },
+  {
+    "imageAssets": "assets/rain.png",
+    "musicAssets": "assets/gentle rain.mp3",
+    "title": "Gentle Rain",
+  },
+  {
+    "imageAssets": "assets/melody.png",
+    "musicAssets": "assets/meditation melody.mp3",
+    "title": "Meditation Melody",
+  },
+  {
+    "imageAssets": "assets/pink.png",
+    "musicAssets": "assets/pink noise.mp3",
+    "title": "Pink Noise",
+  },
+  {
+    "imageAssets": "assets/ocean.png",
+    "musicAssets": "assets/ocean waves.mp3",
+    "title": "Ocean Waves",
+  },
+  {
+    "imageAssets": "assets/thunder.png",
+    "musicAssets": "assets/thunder rain.mp3",
+    "title": "Thunder Rain",
+  },
+  {
+    "imageAssets": "assets/white.jpg",
+    "musicAssets": "assets/white noise.mp3",
+    "title": "White Noise",
+  },
   {
     "imageAssets": "assets/digital.jpg",
     "musicAssets": "assets/alarm-clock-going-off.mp3",
@@ -298,11 +335,27 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await clearSecureStorageOnReinstall();
   await Alarm.init(showDebugLogs: true);
-  await Alarm.setNotificationOnAppKillContent("앱을 끄면 수면 음원 재생이 안되요! ㅠㅠ", "수면/기상 음원을 듣고싶다면 앱을 켜주세요!");
+  await Alarm.setNotificationOnAppKillContent("앱을 끄면 수면 음원 재생이 안되요!", "수면/기상 음원을 듣고싶다면 앱을 켜주세요!");
   final prefs = await SharedPreferences.getInstance();
   await Firebase.initializeApp();
   // await setupFlutterNotifications();
   // await audioPlayer.openAudioSession();
+
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    if (user == null) {
+      print('User is currently signed out!');
+    } else {
+      print('User is signed in!');
+    }
+  });
+
+  FirebaseAuth.instance.idTokenChanges().listen((User? user) {
+    if (user == null) {
+      print('User is currently signed out!');
+    } else {
+      print('User is signed in!');
+    }
+  });
 
   const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
