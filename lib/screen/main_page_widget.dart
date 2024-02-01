@@ -1,4 +1,5 @@
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:dio/dio.dart';
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/main_page/calendar/calendar_page.dart';
 import 'package:drberry_app/components/main_page/home/home_page.dart';
@@ -26,12 +27,14 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+  ScrollController _scrollcontroller = ScrollController();
   final controller = PageController(initialPage: 0);
   Color background = const Color(0xFFF9F9F9);
   final BoxController _controller = BoxController();
   final bool _sleepState = false;
   Server server = Server();
   bool isPadOff = false;
+  double _index = 0;
 
   void getSleepState() async {
     final sleepState = await server.getSleepState();
@@ -44,6 +47,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     getSleepState();
+    controller.addListener(() {
+      setState(() {
+        _index = controller.offset;
+      });
+      print("offset");
+      print(controller.page);
+      print("offset");
+    });
     super.initState();
   }
 
@@ -115,7 +126,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             print("=========");
             print(_controller.getPosition);
             print("=========");
-            if (value == 2 || value == 3) {
+            if (value == 2 || value == 3 || value == 1 || value == 0) {
               context.read<GlobalPageProvider>().setIsMusicbar(false);
               _controller.hideBox();
             } else {
@@ -124,6 +135,20 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               if (!_controller.isBoxVisible) {
                 _controller.showBox();
               }
+            }
+
+            if (value != 0 && context.read<MainPageProvider>().pageIndx == 0) {
+              _scrollcontroller.dispose();
+            } else {
+              _scrollcontroller = ScrollController();
+            }
+
+            if (value == 0 && context.read<MainPageProvider>().pageIndx == 0) {
+              _scrollcontroller.animateTo(
+                0,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeIn,
+              );
             }
 
             context.read<MainPageProvider>().setIndex(value);
@@ -178,7 +203,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   context.read<MainPageProvider>().setIndex(value);
                 },
                 children: [
-                  const HomePage(),
+                  HomePage(
+                    controller: _scrollcontroller,
+                  ),
                   CalendarPage(
                     deviceWidth: MediaQuery.of(context).size.width,
                   ),
@@ -202,11 +229,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                       CircularCountDownTimer(
                         width: 60,
                         height: 60,
-                        duration: 40,
+                        duration: 5,
                         fillColor: CustomColors.systemGrey3,
                         ringColor: CustomColors.lightGreen2,
                         onComplete: () {
                           print("끝!");
+                          getSleepState();
                           setState(() {
                             isLoadingStart = false;
                           });
@@ -263,9 +291,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           ],
         ),
       ),
-      floatingActionButton: context.watch<HomePageProvider>().sleepState
-          ? Container(
-              margin: const EdgeInsets.only(bottom: 70),
+      floatingActionButton: _index == 0
+          ? SizedBox(
+              // margin: const EdgeInsets.only(bottom: 70),
               width: 124,
               child: FloatingActionButton(
                 shape: RoundedRectangleBorder(
@@ -279,14 +307,23 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                     const SizedBox(
                       width: 3,
                     ),
-                    const Text(
-                      "수면종료",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                      ),
-                    )
+                    context.watch<HomePageProvider>().sleepState
+                        ? const Text(
+                            "수면종료",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "수면시작",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                            ),
+                          )
                   ],
                 ),
                 onPressed: () async {
@@ -313,6 +350,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                 ),
                               ),
                               onPressed: () async {
+                                getSleepState();
                                 Navigator.pop(context);
                               },
                             ),
@@ -365,117 +403,236 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                     return;
                   }
 
-                  Future.delayed(Duration.zero, () {
-                    showPlatformDialog(
-                      context: context,
-                      builder: (context) => BasicDialogAlert(
-                        title: const Text(
-                          '수면을 종료하시겠습니까?',
-                          style: TextStyle(fontFamily: "Pretendard"),
-                        ),
-                        content: const Text(
-                          '수면이 종료되고 수면 패턴을 저장합니다.',
-                          style: TextStyle(fontFamily: "Pretnedard"),
-                        ),
-                        actions: [
-                          BasicDialogAction(
-                            title: const Text(
-                              '확인',
-                              style: TextStyle(
-                                fontFamily: "Pretendard",
-                                color: CustomColors.blue,
-                              ),
-                            ),
-                            onPressed: () async {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              Navigator.pop(context);
-                              await server.endSleep().then((value) {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                showPlatformDialog(
-                                  context: context,
-                                  builder: (context) => BasicDialogAlert(
-                                    title: const Text(
-                                      "수면 종료",
-                                      style: TextStyle(fontFamily: "Pretendard"),
-                                    ),
-                                    content: const Text(
-                                      "수면이 종료되었습니다",
-                                      style: TextStyle(fontFamily: "Pretnedard"),
-                                    ),
-                                    actions: [
-                                      BasicDialogAction(
-                                        title: const Text(
-                                          '확인',
-                                          style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            color: CustomColors.blue,
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          setState(() {
-                                            isLoading = false;
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).catchError((err) {
-                                print(err);
-                                showPlatformDialog(
-                                  context: context,
-                                  builder: (context) => BasicDialogAlert(
-                                    title: const Text(
-                                      '데이터 저장 실패..',
-                                      style: TextStyle(fontFamily: "Pretendard"),
-                                    ),
-                                    content: Text(
-                                      err.toString(),
-                                      style: const TextStyle(fontFamily: "Pretnedard"),
-                                    ),
-                                    actions: [
-                                      BasicDialogAction(
-                                        title: const Text(
-                                          '확인',
-                                          style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            color: CustomColors.blue,
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          setState(() {
-                                            isLoading = false;
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              });
-                            },
+                  // if (!context.read<HomePageProvider>().sleepState && state['state'] != 'padOn') {
+                  //   Future.delayed(Duration.zero, () {
+                  //     showPlatformDialog(
+                  //       context: context,
+                  //       builder: (context) => BasicDialogAlert(
+                  //         title: const Text(
+                  //           '수면 시작 실패',
+                  //           style: TextStyle(fontFamily: "Pretendard"),
+                  //         ),
+                  //         content: const Text(
+                  //           '수면을 시작하려면 닥터베리 패드에 누워 On Pad 상태에서만 가능합니다. 패드에 누워 수면을 시작해주세요!',
+                  //           style: TextStyle(fontFamily: "Pretnedard"),
+                  //         ),
+                  //         actions: [
+                  //           BasicDialogAction(
+                  //             title: const Text(
+                  //               '확인',
+                  //               style: TextStyle(
+                  //                 fontFamily: "Pretendard",
+                  //                 color: CustomColors.blue,
+                  //               ),
+                  //             ),
+                  //             onPressed: () async {
+                  //               Navigator.pop(context);
+                  //             },
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     );
+                  //   });
+                  //   return;
+                  // }
+
+                  if (context.read<HomePageProvider>().sleepState) {
+                    Future.delayed(Duration.zero, () {
+                      showPlatformDialog(
+                        context: context,
+                        builder: (context) => BasicDialogAlert(
+                          title: const Text(
+                            '수면을 종료하시겠습니까?',
+                            style: TextStyle(fontFamily: "Pretendard"),
                           ),
-                          BasicDialogAction(
-                            title: const Text(
-                              '취소',
-                              style: TextStyle(
-                                fontFamily: "Pretendard",
-                                color: CustomColors.red,
+                          content: const Text(
+                            '수면이 종료되고 수면 패턴을 저장합니다.',
+                            style: TextStyle(fontFamily: "Pretnedard"),
+                          ),
+                          actions: [
+                            BasicDialogAction(
+                              title: const Text(
+                                '확인',
+                                style: TextStyle(
+                                  fontFamily: "Pretendard",
+                                  color: CustomColors.blue,
+                                ),
                               ),
+                              onPressed: () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                Navigator.pop(context);
+                                await server.endSleep().then((value) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  showPlatformDialog(
+                                    context: context,
+                                    builder: (context) => BasicDialogAlert(
+                                      title: const Text(
+                                        "수면 종료",
+                                        style: TextStyle(fontFamily: "Pretendard"),
+                                      ),
+                                      content: const Text(
+                                        "수면이 종료되었습니다",
+                                        style: TextStyle(fontFamily: "Pretnedard"),
+                                      ),
+                                      actions: [
+                                        BasicDialogAction(
+                                          title: const Text(
+                                            '확인',
+                                            style: TextStyle(
+                                              fontFamily: "Pretendard",
+                                              color: CustomColors.blue,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            setState(() {
+                                              isLoading = false;
+                                            });
+                                            getSleepState();
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).catchError((err) {
+                                  print(err);
+                                  if (err is DioException) {
+                                    if (err.response?.statusCode == 400) {
+                                      showPlatformDialog(
+                                        context: context,
+                                        builder: (context) => BasicDialogAlert(
+                                          title: const Text(
+                                            '저장 실패',
+                                            style: TextStyle(fontFamily: "Pretendard"),
+                                          ),
+                                          content: const Text(
+                                            '수면 데이터가 너무 적어 저장하지 못했습니다.',
+                                            style: TextStyle(fontFamily: "Pretnedard"),
+                                          ),
+                                          actions: [
+                                            BasicDialogAction(
+                                              title: const Text(
+                                                '확인',
+                                                style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  color: CustomColors.blue,
+                                                ),
+                                              ),
+                                              onPressed: () async {
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+                                                getSleepState();
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                  }
+                                  showPlatformDialog(
+                                    context: context,
+                                    builder: (context) => BasicDialogAlert(
+                                      title: const Text(
+                                        '데이터 저장 실패..',
+                                        style: TextStyle(fontFamily: "Pretendard"),
+                                      ),
+                                      content: Text(
+                                        err.toString(),
+                                        style: const TextStyle(fontFamily: "Pretnedard"),
+                                      ),
+                                      actions: [
+                                        BasicDialogAction(
+                                          title: const Text(
+                                            '확인',
+                                            style: TextStyle(
+                                              fontFamily: "Pretendard",
+                                              color: CustomColors.blue,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            getSleepState();
+                                            setState(() {
+                                              isLoadingStart = false;
+                                            });
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                });
+                              },
                             ),
-                            onPressed: () async {
-                              Navigator.pop(context);
-                            },
-                          )
-                        ],
-                      ),
-                    );
-                  });
+                            BasicDialogAction(
+                              title: const Text(
+                                '취소',
+                                style: TextStyle(
+                                  fontFamily: "Pretendard",
+                                  color: CustomColors.red,
+                                ),
+                              ),
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    });
+                  } else {
+                    Future.delayed(Duration.zero, () {
+                      showPlatformDialog(
+                        context: context,
+                        builder: (context) => BasicDialogAlert(
+                          title: const Text(
+                            '수면을 시작하시겠습니까?',
+                            style: TextStyle(fontFamily: "Pretendard"),
+                          ),
+                          content: const Text(
+                            '수면이 시작됩니다.',
+                            style: TextStyle(fontFamily: "Pretnedard"),
+                          ),
+                          actions: [
+                            BasicDialogAction(
+                              title: const Text(
+                                '확인',
+                                style: TextStyle(
+                                  fontFamily: "Pretendard",
+                                  color: CustomColors.blue,
+                                ),
+                              ),
+                              onPressed: () async {
+                                setState(() {
+                                  isLoadingStart = true;
+                                });
+                                Navigator.pop(context);
+                                await server.startSleep();
+                              },
+                            ),
+                            BasicDialogAction(
+                              title: const Text(
+                                '취소',
+                                style: TextStyle(
+                                  fontFamily: "Pretendard",
+                                  color: CustomColors.red,
+                                ),
+                              ),
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    });
+                  }
                 },
               ),
             )

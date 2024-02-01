@@ -1,12 +1,7 @@
 import 'package:drberry_app/color/color.dart';
-import 'package:drberry_app/data/Data.dart';
 import 'package:drberry_app/screen/ble_n_wifi_link_page.dart';
-import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:drberry_app/screen/phone_authentication_page.dart';
-import 'package:drberry_app/screen/sign_up_page.dart';
 import 'package:drberry_app/server/server.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -207,6 +202,7 @@ class _WriteCodeSheetState extends State<WriteCodeSheet> {
                       MaterialPageRoute(
                         builder: (context) => BleNWifiLinkPage(
                           code: _code,
+                          type: widget.type,
                         ),
                       ),
                     );
@@ -227,7 +223,10 @@ class _WriteCodeSheetState extends State<WriteCodeSheet> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BleNWifiLinkPage(code: _code),
+                          builder: (context) => BleNWifiLinkPage(
+                            code: _code,
+                            type: widget.type,
+                          ),
                         ),
                         (route) => false,
                       );

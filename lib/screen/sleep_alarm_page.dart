@@ -31,6 +31,7 @@ class _SleepAlarmPageState extends State<SleepAlarmPage> {
   Server server = Server();
   DateTime? startDate;
   DateTime? endDate;
+  String musicTitle = "";
 
   Future<File> getAssetFile(String assetPath) async {
     // Load the asset as a byte array.
@@ -67,15 +68,26 @@ class _SleepAlarmPageState extends State<SleepAlarmPage> {
   bool _pause = true;
 
   setAlarmData() async {
-    final response = await server.getSleepAlarm(widget.alarmSettings!.id);
-    setState(() {
-      startDate = DateTime.fromMillisecondsSinceEpoch(int.parse(response.data['startDate'].toString()), isUtc: true);
-      endDate = DateTime.fromMillisecondsSinceEpoch(int.parse(response.data['endDate'].toString()), isUtc: true);
+    print(widget.alarmSettings?.id);
+    await server.getSleepAlarm(int.parse(widget.alarmSettings!.id.toString())).then((response) {
+      print(response.data);
+      setState(() {
+        startDate = DateTime.fromMillisecondsSinceEpoch(int.parse(response.data['startDate'].toString()), isUtc: true);
+        endDate = DateTime.fromMillisecondsSinceEpoch(int.parse(response.data['endDate'].toString()), isUtc: true);
+        musicTitle = response.data['musicTitle'];
+      });
+    }).catchError((err) {
+      print(err);
     });
+    print("-000--0-0-0-0-0-00-");
+    print(startDate);
+    print(endDate);
+    print("-000--0-0-0-0-0-00-");
   }
 
   @override
   void initState() {
+    setAlarmData();
     super.initState();
     _controller = VideoPlayerController.asset('assets/sleep_background.mp4')
       ..initialize().then(
@@ -171,10 +183,10 @@ class _SleepAlarmPageState extends State<SleepAlarmPage> {
                               color: CustomColors.systemWhite.withOpacity(0.6),
                             ),
                             height: 32,
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                '오전 06:30 - 오전 7:30',
-                                style: TextStyle(
+                                '${startDate != null && startDate!.hour < 12 ? "오전" : "오후"} ${DateFormat('HH:mm').format(startDate!)} - ${endDate != null && endDate!.hour < 12 ? "오전" : "오후"} ${DateFormat('HH:mm').format(endDate!)}',
+                                style: const TextStyle(
                                   fontFamily: "Pretendard",
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -212,7 +224,7 @@ class _SleepAlarmPageState extends State<SleepAlarmPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "${startDate!.hour < 12 ? '오전' : '오후'} ${startDate!.hour}:${startDate!.minute} ~ ${endDate!.hour < 12 ? '오전' : '오후'} ${endDate!.hour}:${endDate!.minute}",
+                                musicTitle,
                                 style: const TextStyle(
                                   fontFamily: "Pretendard",
                                   fontSize: 20,

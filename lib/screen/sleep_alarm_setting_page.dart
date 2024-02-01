@@ -8,6 +8,7 @@ import 'package:drberry_app/screen/music_bar.dart';
 import 'package:drberry_app/screen/sleep_alarm_make_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:drberry_app/server/server.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sliding_box/flutter_sliding_box.dart';
 import 'package:flutter_svg/svg.dart';
@@ -84,7 +85,7 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
       Map<String, dynamic> music;
       int alarmType;
       String time;
-      List<String> weekday;
+      List<String> weekday = [];
       print(list[i]['musicTitle']);
       try {
         music = musicList.firstWhere((element) {
@@ -103,234 +104,258 @@ class _SleepAlarmSettingPageState extends State<SleepAlarmSettingPage> {
       final end = DateTime.fromMillisecondsSinceEpoch(int.parse(list[i]['endDate'].toString()), isUtc: true);
       final dateFormat = DateFormat("HH:mm");
       time = '${dateFormat.format(start)} ~ ${dateFormat.format(end)}';
-      weekday = (list[i]['weekdays'] as List<dynamic>)
-          .map((res) => getKoreanWeekday(int.parse(res["alarmWeekday"].toString())))
-          .toList();
+      final numberWeekday =
+          (list[i]['weekdays'] as List<dynamic>).map((res) => int.parse(res["alarmWeekday"].toString())).toList();
 
-      result.add(
-        Container(
-          width: deviceWidth,
-          height: 174,
-          padding: const EdgeInsets.symmetric(vertical: 24),
-          child: SwipeActionCell(
-            key: ObjectKey(list[i]),
-            trailingActions: [
-              SwipeAction(
-                onTap: (value) async {
-                  await _server.deleteAlarm(int.parse(list[i]['alarmId'].toString())).then((res) {
-                    setState(() {
-                      datas = getDatas();
+      numberWeekday.sort();
+      weekday = numberWeekday.map((res) => getKoreanWeekday(res)).toList();
+
+      result.add(Stack(
+        children: [
+          Container(
+            width: deviceWidth,
+            height: 174,
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: SwipeActionCell(
+              key: ObjectKey(list[i]),
+              trailingActions: [
+                SwipeAction(
+                  onTap: (value) async {
+                    await _server.deleteAlarm(int.parse(list[i]['alarmId'].toString())).then((res) {
+                      setState(() {
+                        datas = getDatas();
+                      });
                     });
-                  });
-                },
-                widthSpace: 92,
-                title: '삭제',
-                icon: SvgPicture.asset('assets/trash.svg'),
-                style: const TextStyle(
-                  fontFamily: 'NotoSansKR',
-                  fontWeight: FontWeight.normal,
-                  fontSize: 18,
-                  color: Colors.white,
+                  },
+                  widthSpace: 92,
+                  title: '삭제',
+                  icon: SvgPicture.asset('assets/trash.svg'),
+                  style: const TextStyle(
+                    fontFamily: 'NotoSansKR',
+                    fontWeight: FontWeight.normal,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            ],
-            child: Material(
-              color: const Color(0xFFF9F9F9),
-              child: InkWell(
-                onTap: () {
-                  if (list[i] is AlarmData) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MakeSleepAlarmPage(
-                          alarmData: list[i],
-                          refresh: () async {},
+              ],
+              child: Material(
+                color: const Color(0xFFF9F9F9),
+                child: InkWell(
+                  onTap: () {
+                    if (list[i] is AlarmData) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MakeSleepAlarmPage(
+                            alarmData: list[i],
+                            refresh: () async {},
+                          ),
                         ),
-                      ),
-                    ).then((value) {
-                      setState(() {
-                        datas = getDatas();
+                      ).then((value) {
+                        setState(() {
+                          datas = getDatas();
+                        });
                       });
-                    });
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MakeSleepAlarmPage(
-                          alarmData: list[i],
-                          refresh: () async {
-                            await getDatas();
-                          },
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MakeSleepAlarmPage(
+                            alarmData: list[i],
+                            refresh: () async {
+                              await getDatas();
+                            },
+                          ),
                         ),
-                      ),
-                    ).then((value) {
-                      setState(() {
-                        datas = getDatas();
+                      ).then((value) {
+                        setState(() {
+                          datas = getDatas();
+                        });
                       });
-                    });
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            width: 126,
-                            height: 126,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: CustomColors.systemGrey6,
-                              image: DecorationImage(
-                                image: AssetImage(music['imageAssets']),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.centerRight,
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              width: 126,
+                              height: 126,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: CustomColors.systemGrey6,
+                                image: DecorationImage(
+                                  image: AssetImage(music['imageAssets']),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.centerRight,
+                                ),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            bottom: 13,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: const BoxDecoration(
-                                      color: Color.fromRGBO(255, 255, 255, 0.5),
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                      child: Text(
-                                        music['title'],
-                                        style: const TextStyle(
-                                          fontFamily: "SF-Pro",
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                alarmType == 0
-                                    ? Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(5),
-                                          color: CustomColors.lightGreen,
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                                          child: Text(
-                                            'AI 알림',
-                                            style: TextStyle(
-                                              fontFamily: "Pretendard",
-                                              fontSize: 11,
-                                              color: CustomColors.lightGreen2,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(5),
-                                          color: CustomColors.lightBlue,
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                                          child: Text(
-                                            '일반알림',
-                                            style: TextStyle(
-                                              fontFamily: "Pretendard",
-                                              fontSize: 11,
-                                              color: CustomColors.blue,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  time,
-                                  style: const TextStyle(
-                                    fontFamily: "Pretendard",
-                                    fontSize: 17,
-                                    color: CustomColors.secondaryBlack,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                )
-                              ],
-                            ),
-                            Container(
-                              width: (deviceWidth - 40) / 2,
-                              height: 1,
-                              color: const Color(0xFFE5E5EA),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            Positioned(
+                              bottom: 13,
+                              left: 0,
+                              right: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SvgPicture.asset('assets/calendar_small.svg'),
-                                      const SizedBox(width: 7),
-                                      const Text(
-                                        '반복 주기',
-                                        style: TextStyle(
-                                          fontFamily: "Pretendard",
-                                          fontSize: 15,
-                                          color: Color(0xFF8E8E93),
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: const BoxDecoration(
+                                        color: Color.fromRGBO(255, 255, 255, 0.5),
+                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      ),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                        child: Text(
+                                          music['title'],
+                                          style: const TextStyle(
+                                            fontFamily: "SF-Pro",
+                                            color: CustomColors.secondaryBlack,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(width: 7),
-                                      Text(
-                                        weekday.join(','),
-                                        style: const TextStyle(
-                                          fontFamily: "Pretendard",
-                                          fontSize: 15,
-                                          color: CustomColors.secondaryBlack,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ],
                               ),
-                            )
+                            ),
                           ],
                         ),
-                      )
-                    ],
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            color: CustomColors.lightGreen,
+                                          ),
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                            child: Text(
+                                              'AI 수면 테라피',
+                                              style: TextStyle(
+                                                fontFamily: "Pretendard",
+                                                fontSize: 11,
+                                                color: CustomColors.lightGreen2,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          time,
+                                          style: const TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontSize: 17,
+                                            color: CustomColors.secondaryBlack,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Container(
+                                      width: (deviceWidth - 40) / 2,
+                                      height: 1,
+                                      color: const Color(0xFFE5E5EA),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              SvgPicture.asset('assets/calendar_small.svg'),
+                                              const SizedBox(width: 7),
+                                              const Text(
+                                                '반복 주기',
+                                                style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontSize: 15,
+                                                  color: Color(0xFF8E8E93),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 7),
+                                              Text(
+                                                weekday.join(','),
+                                                style: const TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontSize: 15,
+                                                  color: CustomColors.secondaryBlack,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: CupertinoSwitch(
+                                  value: list[i]['isActive'],
+                                  onChanged: (value) async {
+                                    print("=====");
+                                    print(list[i]['alarmId']);
+                                    print('=====');
+                                    await _server.updateAlarmActive(int.parse(list[i]['alarmId'].toString())).then(
+                                      (res) {
+                                        print("===========");
+                                        print(list[i]['isActive'].runtimeType);
+                                        print(value);
+                                        print(bool.parse(value.toString()));
+                                        print("===========");
+
+                                        for (var idx = 0; idx < list.length; idx++) {
+                                          if (i == idx) {
+                                            setState(() {
+                                              list[idx]['isActive'] = bool.parse(value.toString());
+                                            });
+                                          } else {
+                                            setState(() {
+                                              list[idx]['isActive'] = false;
+                                            });
+                                          }
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        ],
+      ));
     }
 
     return result;

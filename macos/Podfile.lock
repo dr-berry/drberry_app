@@ -3,11 +3,19 @@ PODS:
     - FlutterMacOS
   - device_info_plus (0.0.1):
     - FlutterMacOS
+  - Firebase/Auth (10.18.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 10.18.0)
   - Firebase/CoreOnly (10.18.0):
     - FirebaseCore (= 10.18.0)
   - Firebase/Messaging (10.18.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 10.18.0)
+  - firebase_auth (4.15.0):
+    - Firebase/Auth (~> 10.18.0)
+    - Firebase/CoreOnly (~> 10.18.0)
+    - firebase_core
+    - FlutterMacOS
   - firebase_core (2.24.0):
     - Firebase/CoreOnly (~> 10.18.0)
     - FlutterMacOS
@@ -16,6 +24,14 @@ PODS:
     - Firebase/Messaging (~> 10.18.0)
     - firebase_core
     - FlutterMacOS
+  - FirebaseAppCheckInterop (10.18.0)
+  - FirebaseAuth (10.18.0):
+    - FirebaseAppCheckInterop (~> 10.17)
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GTMSessionFetcher/Core (< 4.0, >= 2.1)
+    - RecaptchaInterop (~> 100.0)
   - FirebaseCore (10.18.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.12)
@@ -64,6 +80,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.12.0):
     - GoogleUtilities/Logger
+  - GTMSessionFetcher/Core (3.2.0)
   - just_audio (0.0.1):
     - FlutterMacOS
   - nanopb (2.30909.1):
@@ -86,6 +103,7 @@ PODS:
 DEPENDENCIES:
   - audio_session (from `Flutter/ephemeral/.symlinks/plugins/audio_session/macos`)
   - device_info_plus (from `Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos`)
+  - firebase_auth (from `Flutter/ephemeral/.symlinks/plugins/firebase_auth/macos`)
   - firebase_core (from `Flutter/ephemeral/.symlinks/plugins/firebase_core/macos`)
   - firebase_messaging (from `Flutter/ephemeral/.symlinks/plugins/firebase_messaging/macos`)
   - flutter_blue_plus (from `Flutter/ephemeral/.symlinks/plugins/flutter_blue_plus/macos`)
@@ -101,12 +119,15 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Firebase
+    - FirebaseAppCheckInterop
+    - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreInternal
     - FirebaseInstallations
     - FirebaseMessaging
     - GoogleDataTransport
     - GoogleUtilities
+    - GTMSessionFetcher
     - nanopb
     - PromisesObjC
 
@@ -115,6 +136,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/audio_session/macos
   device_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos
+  firebase_auth:
+    :path: Flutter/ephemeral/.symlinks/plugins/firebase_auth/macos
   firebase_core:
     :path: Flutter/ephemeral/.symlinks/plugins/firebase_core/macos
   firebase_messaging:
@@ -142,8 +165,11 @@ SPEC CHECKSUMS:
   audio_session: dea1f41890dbf1718f04a56f1d6150fd50039b72
   device_info_plus: 5401765fde0b8d062a2f8eb65510fb17e77cf07f
   Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
+  firebase_auth: a403926db1dd7734c02f354e03b5d8b70b7dcc7d
   firebase_core: 8852b730fc6843e99c390e97fde4318d58218fa0
   firebase_messaging: 5076e2561f280ded068e6125cd93e0e7f4311835
+  FirebaseAppCheckInterop: 3cd914842ba46f4304050874cd284de82f154ffd
+  FirebaseAuth: 12314b438fa76048540c8fb86d6cfc9e08595176
   FirebaseCore: 2322423314d92f946219c8791674d2f3345b598f
   FirebaseCoreInternal: 8eb002e564b533bdcf1ba011f33f2b5c10e2ed4a
   FirebaseInstallations: e842042ec6ac1fd2e37d7706363ebe7f662afea4
@@ -154,6 +180,7 @@ SPEC CHECKSUMS:
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   GoogleDataTransport: 57c22343ab29bc686febbf7cbb13bad167c2d8fe
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
+  GTMSessionFetcher: 41b9ef0b4c08a6db4b7eb51a21ae5183ec99a2c8
   just_audio: 9b67ca7b97c61cfc9784ea23cd8cc55eb226d489
   nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   package_info: 6eba2fd8d3371dda2d85c8db6fe97488f24b74b2

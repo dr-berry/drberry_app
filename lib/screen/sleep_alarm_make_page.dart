@@ -567,7 +567,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                                 : Container(),
                             _selectStartTime != null && _selectEndTime != null
                                 ? Text(
-                                    '${_selectStartTime!.hour < 10 ? '0${_selectStartTime!.hour}' : _selectStartTime!.hour}:${_selectStartTime!.minute < 10 ? '0${_selectStartTime!.minute}' : _selectStartTime!.minute} - ${_selectEndTime!.hour < 10 ? '0${_selectEndTime!.hour}' : _selectEndTime!.hour}:${_selectEndTime!.minute < 10 ? '0${_selectEndTime!.minute}' : _selectEndTime!.minute} 해당 수면 시간에 앱에서 알람이 울립니다.',
+                                    '${_selectStartTime!.hour < 10 ? '0${_selectStartTime!.hour}' : _selectStartTime!.hour}:${_selectStartTime!.minute < 10 ? '0${_selectStartTime!.minute}' : _selectStartTime!.minute} - ${_selectEndTime!.hour < 10 ? '0${_selectEndTime!.hour}' : _selectEndTime!.hour}:${_selectEndTime!.minute < 10 ? '0${_selectEndTime!.minute}' : _selectEndTime!.minute} 해당 수면 시간에 앱에서 수면 테라피가 울립니다.',
                                     style: const TextStyle(
                                       fontFamily: "Pretendard",
                                       fontSize: 15,
@@ -702,7 +702,7 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
                                       onTap: () async {
                                         final time = await showTimePicker(
                                           context: context,
-                                          initialTime: _selectStartTime != null ? _selectStartTime! : TimeOfDay.now(),
+                                          initialTime: _selectEndTime != null ? _selectEndTime! : TimeOfDay.now(),
                                           initialEntryMode: TimePickerEntryMode.input,
                                           builder: (context, child) {
                                             return Theme(

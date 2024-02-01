@@ -27,14 +27,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../data/Data.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final ScrollController? controller;
+
+  const HomePage({super.key, required this.controller});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final ScrollController _controller = ScrollController();
+  // final ScrollController widget.controller? = ScrollController();
   final controller = BoardDateTimeController();
   OverlayEntry? overlayEntry;
   final GlobalKey<CategorityWidgetState> _snoringKey = GlobalKey<CategorityWidgetState>();
@@ -90,12 +92,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    widget.controller?.dispose();
     super.dispose();
   }
 
   void _scrollListener() {
-    if (_controller.position.userScrollDirection != ScrollDirection.idle) {
+    if (widget.controller?.position.userScrollDirection != ScrollDirection.idle) {
       _snoringKey.currentState?.removeAllEntries();
     }
   }
@@ -105,7 +107,7 @@ class _HomePageState extends State<HomePage> {
     getPadOff();
     getSleepState();
     super.initState();
-    _controller.addListener(_scrollListener);
+    widget.controller?.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       server.getMainPage(context.read<HomePageProvider>().serverDate, -1).then((res) {
         print(context.read<HomePageProvider>().serverDate);
@@ -126,7 +128,8 @@ class _HomePageState extends State<HomePage> {
         BoxDecoration(color: CustomColors.systemWhite, borderRadius: BorderRadius.circular(15));
 
     return SingleChildScrollView(
-      controller: _controller,
+      controller: widget.controller,
+      physics: const AlwaysScrollableScrollPhysics(),
       child: Column(
         children: [
           MainPageHeader(

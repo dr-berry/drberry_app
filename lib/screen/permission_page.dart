@@ -186,9 +186,9 @@ class _PermissionPageState extends State<PermissionPage> {
                               fontSize: 13,
                               color: CustomColors.systemBlack,
                             ),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),

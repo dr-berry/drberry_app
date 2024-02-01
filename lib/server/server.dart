@@ -410,7 +410,18 @@ class Server {
 
   Future<Response> getSleepAlarm(int alarmId) async {
     return await noneDio.get(
-      '/alarm/$alarmId',
+      '/alarm/information/$alarmId',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> updateAlarmActive(int alarmId) async {
+    return await noneDio.put(
+      '/alarm/active/$alarmId',
       options: Options(
         headers: {
           'Authorization': "Bearer ${await getAccessToken()}",

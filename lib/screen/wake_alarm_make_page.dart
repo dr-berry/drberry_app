@@ -194,6 +194,9 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
       _selectSnoozeData =
           (widget.aiAlarmData['snoozes'] as List<dynamic>).map((e) => int.parse(e['snoozeMinute'].toString())).toList();
       _snooseDate.value = widget.aiAlarmData['snoozes'].isNotEmpty;
+      _segmentController.addListener(() {
+        _segmentController.value = 0;
+      });
     }
 
     super.initState();
@@ -255,6 +258,9 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
         _selectTime = TimeOfDay(
             hour: widget.alarmData!.alarmSettings.dateTime.hour,
             minute: widget.alarmData!.alarmSettings.dateTime.minute);
+      });
+      _segmentController.addListener(() {
+        _segmentController.value = 1;
       });
     }
   }
@@ -432,7 +438,8 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                 var id = widget.alarmData != null
                     ? widget.alarmData!.alarmSettings.id
                     : int.parse(
-                        "${alarmTime.hour}${alarmTime.month}${alarmTime.day}${alarmTime.hour}${alarmTime.minute}");
+                        "${alarmTime.hour}${alarmTime.month}${alarmTime.day}${alarmTime.hour}${alarmTime.minute}",
+                      );
 
                 alarmSettings = AlarmSettings(
                   id: id,
@@ -479,6 +486,7 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                     "alarmType": "일반알림",
                     "snoozeIds": snoozeIds,
                     "musicInfo": musicList[_musicIndex],
+                    "isActive": true,
                     "time":
                         '${alarmTime.hour < 10 ? '0${alarmTime.hour}' : alarmTime.hour}:${alarmTime.minute < 10 ? '0${alarmTime.minute}' : alarmTime.minute}',
                   },
@@ -761,7 +769,12 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                               color: CustomColors.secondaryBlack,
                             ),
                             animationDuration: const Duration(milliseconds: 250),
-                            itemPadding: const EdgeInsets.only(left: 30, right: 30, top: 7, bottom: 7),
+                            itemPadding: const EdgeInsets.only(
+                              left: 30,
+                              right: 30,
+                              top: 7,
+                              bottom: 7,
+                            ),
                             shadow: const [
                               BoxShadow(
                                 blurRadius: 8,
@@ -932,8 +945,7 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                                           onTap: () async {
                                             final time = await showTimePicker(
                                               context: context,
-                                              initialTime:
-                                                  _selectStartTime != null ? _selectStartTime! : TimeOfDay.now(),
+                                              initialTime: _selectEndTime != null ? _selectEndTime! : TimeOfDay.now(),
                                               initialEntryMode: TimePickerEntryMode.input,
                                               builder: (context, child) {
                                                 return Theme(
@@ -1401,7 +1413,7 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                                 color: Colors.transparent,
                               ),
                               child: const Text(
-                                '수면 테라피 삭제',
+                                '기상 알람 삭제',
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontFamily: "Pretendard",

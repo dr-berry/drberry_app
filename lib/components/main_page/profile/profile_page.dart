@@ -363,16 +363,6 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             const SizedBox(height: 44),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: const Text("메뉴 ",
-                  style: TextStyle(
-                    fontFamily: "Pretendard",
-                    fontWeight: FontWeight.w700,
-                    color: CustomColors.secondaryBlack,
-                    fontSize: 20,
-                  )),
-            ),
             const SizedBox(height: 12),
             Material(
               borderRadius: BorderRadius.circular(10),
@@ -509,45 +499,83 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 24),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 2),
                       foregroundColor: CustomColors.systemGrey2),
                   onPressed: () async {
-                    await server.signOut().then((value) async {
-                      await storage.deleteAll();
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MyApp(initialRoute: '/login'),
+                    showPlatformDialog(
+                      context: context,
+                      builder: (context) => BasicDialogAlert(
+                        title: const Text(
+                          '로그아웃 안내',
+                          style: TextStyle(fontFamily: "Pretendard"),
                         ),
-                        (route) => false,
-                      );
-                    }).catchError((err) async {
-                      print(err);
-                      await storage.deleteAll();
-                      // ignore: use_build_context_synchronously
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MyApp(initialRoute: '/login'),
+                        content: const Text(
+                          '정말 로그아웃 하시겠습니까? 로그아웃시 QR 스캔 페이지로 이동합니다.',
+                          style: TextStyle(fontFamily: "Pretnedard"),
                         ),
-                        (route) => false,
-                      );
-                      // await storage.deleteAll();
-                      // // ignore: use_build_context_synchronously
-                      // Navigator.pushAndRemoveUntil(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const MyApp(initialRoute: '/login'),
-                      //   ),
-                      //   (route) => false,
-                      // );
-                    });
+                        actions: [
+                          BasicDialogAction(
+                            title: const Text(
+                              '확인',
+                              style: TextStyle(
+                                fontFamily: "Pretendard",
+                                color: CustomColors.blue,
+                              ),
+                            ),
+                            onPressed: () async {
+                              await server.signOut().then((value) async {
+                                await storage.deleteAll();
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const MyApp(initialRoute: '/login'),
+                                  ),
+                                  (route) => false,
+                                );
+                              }).catchError((err) async {
+                                print(err);
+                                await storage.deleteAll();
+                                // ignore: use_build_context_synchronously
+                                await FirebaseAuth.instance.signOut();
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const MyApp(initialRoute: '/login'),
+                                  ),
+                                  (route) => false,
+                                );
+                                // await storage.deleteAll();
+                                // // ignore: use_build_context_synchronously
+                                // Navigator.pushAndRemoveUntil(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => const MyApp(initialRoute: '/login'),
+                                //   ),
+                                //   (route) => false,
+                                // );
+                              });
+                            },
+                          ),
+                          BasicDialogAction(
+                            title: const Text(
+                              '취소',
+                              style: TextStyle(
+                                fontFamily: "Pretendard",
+                                color: CustomColors.red,
+                              ),
+                            ),
+                            onPressed: () async {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   child: Container(
                     decoration: const BoxDecoration(

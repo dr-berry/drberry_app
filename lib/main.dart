@@ -10,9 +10,11 @@ import 'package:drberry_app/screen/weke_alarm_page.dart';
 import 'package:drberry_app/screen/wkae_alarm_setting_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -152,7 +154,9 @@ List<Map<String, String>> musicList = [
     "title": "White Noise",
   },
 ];
-FlutterSoundPlayer soundPlayer = FlutterSoundPlayer(logLevel: Level.nothing);
+FlutterSoundPlayer soundPlayer = FlutterSoundPlayer(
+  logLevel: Level.nothing,
+);
 
 clearSecureStorageOnReinstall() async {
   String key = 'hasRunBefore';
@@ -598,6 +602,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         useMaterial3: true,
       ),
       initialRoute: widget.initialRoute,
+      localizationsDelegates: const [
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale("ko", "KR"),
+        Locale("eu", "ES"),
+      ],
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/login':

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/splash/write_code_sheet.dart';
-import 'package:drberry_app/data/data.dart';
 import 'package:drberry_app/screen/ble_n_wifi_link_page.dart';
 import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:drberry_app/screen/phone_authentication_page.dart';
@@ -45,6 +44,7 @@ class _SplashPageState extends State<SplashPage> {
         MaterialPageRoute(
           builder: (context) => BleNWifiLinkPage(
             code: deviceName,
+            type: widget.type,
           ),
         ),
       );
@@ -53,19 +53,22 @@ class _SplashPageState extends State<SplashPage> {
     await server.checkSignUp(deviceName).then((value) async {
       print(value.data);
       print(bool.parse(value.data));
-      if (bool.parse(value.data)) {
-        Navigator.push(
+      if (bool.parse(value.data) && widget.type != 'reconnect') {
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => PhoneAuthenticatoinPage(code: deviceName),
           ),
-          // (route) => false,
+          (route) => false,
         );
       } else {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => BleNWifiLinkPage(code: deviceName),
+            builder: (context) => BleNWifiLinkPage(
+              code: deviceName,
+              type: widget.type,
+            ),
           ),
           (route) => false,
         );
@@ -254,7 +257,11 @@ class _SplashPageState extends State<SplashPage> {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MainPage()),
+                      (route) => false,
+                    );
                   },
                 ),
               )

@@ -44,57 +44,50 @@ class _SleepDataPageState extends State<SleepDataPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '수면데이터',
-                style: TextStyle(
-                  fontFamily: "Pretendard",
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
               const SizedBox(height: 12),
               Material(
-                  color: CustomColors.systemWhite,
-                  child: InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return const SleepDataBottomSheet();
-                        },
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(15),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(
-                          color: const Color(0xFFE5E5EA),
-                          width: 1,
-                        ),
-                      ),
-                      height: 68,
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 17, right: 25),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '전체 수면 리포트 내보내기',
-                            style: TextStyle(
-                              fontFamily: "Pretendard",
-                              fontSize: 17,
-                              color: CustomColors.systemBlack,
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                          )
-                        ],
+                color: CustomColors.systemWhite,
+                child: InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return const SleepDataBottomSheet();
+                      },
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(15),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: const Color(0xFFE5E5EA),
+                        width: 1,
                       ),
                     ),
-                  ))
+                    height: 68,
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 17, right: 25),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '전체 수면 리포트 내보내기',
+                          style: TextStyle(
+                            fontFamily: "Pretendard",
+                            fontSize: 17,
+                            color: CustomColors.systemBlack,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/data/data.dart';
 import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:drberry_app/screen/sign_up_page.dart';
+import 'package:drberry_app/screen/splash_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -48,7 +49,7 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
   }
 
   checkSignUp() async {
-    server.checkSignUpWithPhone(widget.code, "+82${controller.text}").then((value) async {
+    server.checkSignUpWithPhone(widget.code, "+82${controller.text.substring(1)}").then((value) async {
       print(value.data);
       if (bool.parse(value.data)) {
         final token = await FirebaseMessaging.instance.getToken();
@@ -80,7 +81,7 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
             MaterialPageRoute(
               builder: (context) => SignUpPage(
                 deviceCode: widget.code,
-                phoneNumber: "+82${controller.text}",
+                phoneNumber: "+82${controller.text.substring(1)}",
               ),
             ),
             (route) => false,
@@ -136,7 +137,15 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
                 CupertinoIcons.back,
               ),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SplashPage(
+                      type: "",
+                    ),
+                  ),
+                  (route) => false,
+                );
               },
             ),
           ),
@@ -165,11 +174,11 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
                         controller: controller,
                         onChanged: (value) async {
                           print(value);
-                          if (controller.text.length == 10) {
+                          if (controller.text.length == 11) {
                             setState(() {
                               _isLoading = true;
                             });
-                            final phoneNumber = "+82${controller.text}";
+                            final phoneNumber = "+82${controller.text.substring(1)}";
 
                             final auth = FirebaseAuth.instance;
 
@@ -247,7 +256,7 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
                         enabled: !_codeSent,
                         cursorColor: Colors.black,
                         cursorHeight: 17,
-                        maxLength: 10,
+                        maxLength: 11,
                         keyboardType: TextInputType.number,
                         style: const TextStyle(
                           fontFamily: "Pretendard",
@@ -273,7 +282,7 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(width: 1, color: Color(0xFFe5e5ea)),
                               borderRadius: BorderRadius.all(Radius.circular(5))),
-                          hintText: "예) 1012341234",
+                          hintText: "예) 01012341234",
                           filled: true,
                           fillColor: Colors.white,
                           contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -353,7 +362,7 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
                                   });
                                   _codeFocus.unfocus();
 
-                                  final phoneNumber = "+82${controller.text}";
+                                  final phoneNumber = "+82${controller.text.substring(1)}";
 
                                   await auth.verifyPhoneNumber(
                                     timeout: const Duration(minutes: 3),

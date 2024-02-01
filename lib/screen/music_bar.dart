@@ -52,13 +52,23 @@ class _MusicBarState extends State<MusicBar> with SingleTickerProviderStateMixin
     return File(filePath);
   }
 
+  Future<void> play(File file) async {
+    await soundPlayer.startPlayer(
+      fromURI: file.path,
+      whenFinished: () => play(file),
+    );
+  }
+
   Future<void> playBackgroundAudio(String path) async {
     // print("실행은 함 ㅇㅇ");
     await soundPlayer.openAudioSession();
     print('실행함 ㅇㅅㅇ');
     final file = await getAssetFile(path);
 
-    await soundPlayer.startPlayer(fromURI: file.path);
+    await soundPlayer.startPlayer(
+      fromURI: file.path,
+      whenFinished: () => play(file),
+    );
   }
 
   void stopBackgroundAudio() async {
@@ -398,102 +408,123 @@ class _MusicBarState extends State<MusicBar> with SingleTickerProviderStateMixin
               widget.controller.showBox();
             },
             child: Container(
-              height: 73,
+              height: 90,
               decoration: const BoxDecoration(
                 color: Color(0xFFEDEDED),
+                // color: Colors.amber,
               ),
-              child: SizedBox.expand(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: Colors.transparent,
-                              image: DecorationImage(
-                                image: AssetImage(musicList[watchProv.musicIdx]['imageAssets']!),
-                                fit: BoxFit.cover,
+              child: Column(
+                children: [
+                  Container(
+                    height: 10,
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 4,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: CustomColors.systemGrey2,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: Colors.transparent,
+                                image: DecorationImage(
+                                  image: AssetImage(musicList[watchProv.musicIdx]['imageAssets']!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              width: 48,
+                              height: 48,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              musicList[watchProv.musicIdx]['title']!,
+                              style: const TextStyle(
+                                fontFamily: "SF-Pro",
+                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
                               ),
                             ),
-                            width: 48,
-                            height: 48,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            musicList[watchProv.musicIdx]['title']!,
-                            style: const TextStyle(
-                              fontFamily: "SF-Pro",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              if (soundPlayer.isPlaying || soundPlayer.isOpen()) {
-                                readProv.setIsPlay(false);
-                                stopBackgroundAudio();
-                              } else {
-                                readProv.setIsPlay(true);
-                                try {
-                                  await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
-                                } catch (e) {
-                                  await soundPlayer.openAudioSession();
-                                  await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
-                                }
-                              }
-                            },
-                            icon: Icon(
-                              !watchProv.isPlay ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause_fill,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              SharedPreferences pref = await SharedPreferences.getInstance();
-                              if (watchProv.musicIdx == musicList.length - 1) {
-                                pref.setInt('lastMusicIdx', 0);
-                                readProv.setMusicIdx(0);
-                                if (soundPlayer.isPlaying) {
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                if (soundPlayer.isPlaying || soundPlayer.isOpen()) {
+                                  readProv.setIsPlay(false);
                                   stopBackgroundAudio();
+                                } else {
+                                  readProv.setIsPlay(true);
+                                  try {
+                                    await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
+                                  } catch (e) {
+                                    await soundPlayer.openAudioSession();
+                                    await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
+                                  }
                                 }
-                                await soundPlayer.openAudioSession();
-                                try {
-                                  await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
-                                } catch (e) {
-                                  await soundPlayer.openAudioSession();
-                                  await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
-                                }
-                              } else {
-                                pref.setInt('lastMusicIdx', watchProv.musicIdx + 1);
-                                readProv.setMusicIdx(watchProv.musicIdx + 1);
-                                if (soundPlayer.isPlaying) {
-                                  stopBackgroundAudio();
-                                }
-                                try {
-                                  await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
-                                } catch (e) {
-                                  await soundPlayer.openAudioSession();
-                                  await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
-                                }
-                              }
-                            },
-                            icon: const Icon(
-                              CupertinoIcons.forward_fill,
+                              },
+                              icon: Icon(
+                                !watchProv.isPlay ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause_fill,
+                              ),
                             ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+                            IconButton(
+                              onPressed: () async {
+                                SharedPreferences pref = await SharedPreferences.getInstance();
+                                if (watchProv.musicIdx == musicList.length - 1) {
+                                  pref.setInt('lastMusicIdx', 0);
+                                  readProv.setMusicIdx(0);
+                                  if (soundPlayer.isPlaying) {
+                                    stopBackgroundAudio();
+                                  }
+                                  await soundPlayer.openAudioSession();
+                                  try {
+                                    await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
+                                  } catch (e) {
+                                    await soundPlayer.openAudioSession();
+                                    await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
+                                  }
+                                } else {
+                                  pref.setInt('lastMusicIdx', watchProv.musicIdx + 1);
+                                  readProv.setMusicIdx(watchProv.musicIdx + 1);
+                                  if (soundPlayer.isPlaying) {
+                                    stopBackgroundAudio();
+                                  }
+                                  try {
+                                    await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
+                                  } catch (e) {
+                                    await soundPlayer.openAudioSession();
+                                    await playBackgroundAudio(musicList[watchProv.musicIdx]['musicAssets']!);
+                                  }
+                                }
+                              },
+                              icon: const Icon(
+                                CupertinoIcons.forward_fill,
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
           ),

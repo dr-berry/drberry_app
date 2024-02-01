@@ -340,80 +340,127 @@ class _AccountManagePageState extends State<AccountManagePage> {
                                   ],
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Material(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          showPlatformDialog(
+                                            context: context,
+                                            builder: (context) => BasicDialogAlert(
+                                              title: const Text(
+                                                "계정을 삭제하시겠습니까?",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontFamily: "Pretendard",
+                                                    fontWeight: FontWeight.w600,
+                                                    color: CustomColors.systemBlack),
+                                              ),
+                                              content: const Text(
+                                                "계정을 삭제하면 다시 복구할 수 없습니다.",
+                                                style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                ),
+                                              ),
+                                              actions: [
+                                                BasicDialogAction(
+                                                  title: const Text(
+                                                    "완료",
+                                                    style: TextStyle(
+                                                      fontFamily: "Pretendard",
+                                                      color: CustomColors.lightGreen2,
+                                                    ),
+                                                  ),
+                                                  onPressed: () async {
+                                                    await server.deleteAccount().then((res) {
+                                                      Navigator.pushAndRemoveUntil(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) => const SplashPage(type: "")),
+                                                        (route) => true,
+                                                      );
+                                                    }).catchError((err) {
+                                                      showPlatformDialog(
+                                                        context: context,
+                                                        builder: (context) => BasicDialogAlert(
+                                                          title: const Text(
+                                                            "계정삭제 실패",
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontFamily: "Pretendard",
+                                                                fontWeight: FontWeight.w600,
+                                                                color: CustomColors.systemBlack),
+                                                          ),
+                                                          content: Text(
+                                                            "계정삭제에 실패했습니다. Error: [$err]",
+                                                            style: const TextStyle(
+                                                              fontFamily: "Pretendard",
+                                                            ),
+                                                          ),
+                                                          actions: [
+                                                            BasicDialogAction(
+                                                              title: const Text(
+                                                                "완료",
+                                                                style: TextStyle(
+                                                                  fontFamily: "Pretendard",
+                                                                  color: CustomColors.lightGreen2,
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.pop(context);
+                                                              },
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    });
+                                                  },
+                                                ),
+                                                BasicDialogAction(
+                                                  title: const Text(
+                                                    "취소",
+                                                    style: TextStyle(
+                                                      fontFamily: "Pretendard",
+                                                      color: CustomColors.red,
+                                                    ),
+                                                  ),
+                                                  onPressed: () async {
+                                                    Navigator.pop(context);
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: Color(0xFFFF4319),
+                                              ),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            "계정삭제",
+                                            style: TextStyle(
+                                              color: Color(0xFFFF4319),
+                                              fontSize: 16,
+                                              fontFamily: "Pretendard",
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ],
                           );
                         }
                       },
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 91,
-                    left: 16,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Material(
-                          child: InkWell(
-                              onTap: () async {
-                                await server.deleteAccount().then((res) {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const SplashPage(type: "")),
-                                    (route) => true,
-                                  );
-                                }).catchError((err) {
-                                  showPlatformDialog(
-                                    context: context,
-                                    builder: (context) => BasicDialogAlert(
-                                      title: const Text(
-                                        "계정삭제 실패",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w600,
-                                            color: CustomColors.systemBlack),
-                                      ),
-                                      content: Text(
-                                        "계정삭제에 실패했습니다. Error: [$err]",
-                                        style: const TextStyle(
-                                          fontFamily: "Pretendard",
-                                        ),
-                                      ),
-                                      actions: [
-                                        BasicDialogAction(
-                                          title: const Text(
-                                            "완료",
-                                            style: TextStyle(
-                                              fontFamily: "Pretendard",
-                                              color: CustomColors.lightGreen2,
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                });
-                              },
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                  color: Color(0xFFFF4319),
-                                ))),
-                                child: const Text(
-                                  "계정삭제",
-                                  style: TextStyle(
-                                    color: Color(0xFFFF4319),
-                                    fontSize: 16,
-                                    fontFamily: "Pretendard",
-                                  ),
-                                ),
-                              )),
-                        )
-                      ],
                     ),
                   ),
                   Positioned(

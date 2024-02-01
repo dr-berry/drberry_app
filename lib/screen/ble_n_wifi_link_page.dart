@@ -3,17 +3,13 @@ import 'dart:convert';
 
 import 'package:drberry_app/color/color.dart';
 import 'package:drberry_app/components/wifi_list/wifi_list_item.dart';
-import 'package:drberry_app/data/data.dart';
 import 'package:drberry_app/proto/constants.pb.dart';
 import 'package:drberry_app/proto/sec0.pb.dart';
 import 'package:drberry_app/proto/wifi_config.pb.dart';
-import 'package:drberry_app/proto/wifi_constants.pb.dart';
+import 'package:drberry_app/proto/wifi_constants.pbenum.dart';
 import 'package:drberry_app/proto/wifi_scan.pb.dart';
-import 'package:drberry_app/screen/main_page_widget.dart';
 import 'package:drberry_app/screen/phone_authentication_page.dart';
-import 'package:drberry_app/screen/sign_up_page.dart';
 import 'package:drberry_app/server/server.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -22,8 +18,13 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BleNWifiLinkPage extends StatefulWidget {
   final String code;
+  final String? type;
 
-  const BleNWifiLinkPage({super.key, required this.code});
+  const BleNWifiLinkPage({
+    super.key,
+    required this.code,
+    required this.type,
+  });
 
   @override
   State<BleNWifiLinkPage> createState() => _BleNWifiLinkPageState();
@@ -470,7 +471,9 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
       if (respGetStatus != null && respGetStatus.isNotEmpty) {
         final respGetStatusPayload = WiFiConfigPayload.fromBuffer(respGetStatus);
 
-        print("wifi get status { connected: ${respGetStatusPayload.respGetStatus.connected} }");
+        WifiStationState.Connected;
+
+        print("wifi get status : ${respGetStatusPayload.respGetStatus.staState}");
       }
     }
     espDevice?.disconnect();
@@ -528,7 +531,6 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
 
   @override
   Widget build(BuildContext context) {
-    final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -583,16 +585,19 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
                         onPressed: () {
                           setState(() {
                             espDevice = null;
-                            isStartProvisioning = true;
+                            isTurnOn = true;
                             isBleLinking = true;
+                            isBleError = false;
                             isWifiLinking = true;
-                            isBleError = true;
                             isWifiError = false;
+                            isFoundDevice = false;
+                            isStartProvisioning = false;
+                            isFinishWifiLink = false;
                             services.clear();
                             wifis.clear();
                             services.clear();
                           });
-                          startProvisioning();
+                          // startProvisioning();
                         },
                         icon: const Icon(Icons.refresh_rounded),
                       )
@@ -622,16 +627,19 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
                                       onPressed: () {
                                         setState(() {
                                           espDevice = null;
-                                          isStartProvisioning = true;
+                                          isTurnOn = true;
                                           isBleLinking = true;
+                                          isBleError = false;
                                           isWifiLinking = true;
-                                          isBleError = true;
                                           isWifiError = false;
+                                          isFoundDevice = false;
+                                          isStartProvisioning = false;
+                                          isFinishWifiLink = false;
                                           services.clear();
                                           wifis.clear();
                                           services.clear();
                                         });
-                                        startProvisioning();
+                                        // startProvisioning();
                                       },
                                       icon: const Icon(Icons.refresh_rounded),
                                     ),
@@ -665,102 +673,125 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
                     : Container(),
               ],
             ),
-            Positioned(
-              bottom: 0,
-              left: 20,
-              right: 20,
-              child: SafeArea(
-                child: Material(
-                  color: CustomColors.lightGreen2,
-                  borderRadius: BorderRadius.circular(13),
-                  child: InkWell(
+            if (!isStartProvisioning || isFinishWifiLink)
+              Positioned(
+                bottom: 0,
+                left: 20,
+                right: 20,
+                child: SafeArea(
+                  child: Material(
+                    color: CustomColors.lightGreen2,
                     borderRadius: BorderRadius.circular(13),
-                    onTap: () async {
-                      if (isStartProvisioning) {
-                        if (isFinishWifiLink) {
-                          // server.checkSignUp(widget.code).then((value) async {
-                          //   if (bool.parse(value.data)) {
-                          //     final token = await FirebaseMessaging.instance.getToken();
-                          //     await server.login(widget.code, token ?? "none_device_token").then((res) async {
-                          //       if (res.statusCode == 201) {
-                          //         final tokenResponse = TokenResponse.fromJson(res.data);
-                          //         print(
-                          //             "a : ${tokenResponse.accessToken}, r : ${tokenResponse.refreshToken}, e : ${tokenResponse.expiredAt}");
-                          //         await storage.write(key: "accessToken", value: tokenResponse.accessToken);
-                          //         await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
-                          //         await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(13),
+                      onTap: () async {
+                        if (isStartProvisioning) {
+                          if (isFinishWifiLink) {
+                            showPlatformDialog(
+                              context: context,
+                              builder: (context) => BasicDialogAlert(
+                                title: const Text(
+                                  '와이파이 연결 확인',
+                                  style: TextStyle(fontFamily: "Pretendard"),
+                                ),
+                                content: const Text(
+                                  '디바이스에 초록불이 들어와 있는지 확인해주세요. 만약 보라색 혹은 붉은색 불이 들어와 있다면 디바이스의 버튼을 3초간 누른뒤 다시 연결을 시도해주세요.',
+                                  style: TextStyle(fontFamily: "Pretnedard"),
+                                ),
+                                actions: [
+                                  BasicDialogAction(
+                                    title: const Text(
+                                      '연결이 완료됨',
+                                      style: TextStyle(
+                                        fontFamily: "Pretendard",
+                                        color: CustomColors.blue,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
 
-                          //         // ignore: use_build_context_synchronously
-                          //         Navigator.pushAndRemoveUntil(
-                          //           context,
-                          //           MaterialPageRoute(builder: (context) => const MainPage()),
-                          //           (route) => false,
-                          //         );
-                          //       }
-                          //     }).catchError(
-                          //       (err) => print(err),
-                          //     );
-                          //   } else {
-                          //     server.setConnectDeviceWifi(widget.code).then((value) {
-                          //       Navigator.pushAndRemoveUntil(
-                          //         context,
-                          //         MaterialPageRoute(
-                          //             builder: (context) => SignUpPage(
-                          //                   deviceCode: widget.code,
-                          //                 )),
-                          //         (route) => false,
-                          //       );
-                          //     }).catchError((err) {
-                          //       print(err);
-                          //       showPlatformDialog(
-                          //         context: context,
-                          //         builder: (context) => BasicDialogAlert(
-                          //           title: const Text(
-                          //             '일시적 서버 오류',
-                          //             style: TextStyle(fontFamily: "Pretendard"),
-                          //           ),
-                          //           content: const Text(
-                          //             '서버 문제로 디바이스 가입이 실패했습니다. 다시 시도해주세요.',
-                          //             style: TextStyle(fontFamily: "Pretnedard"),
-                          //           ),
-                          //           actions: [
-                          //             BasicDialogAction(
-                          //               title: const Text(
-                          //                 '확인',
-                          //                 style: TextStyle(
-                          //                   fontFamily: "Pretendard",
-                          //                   color: CustomColors.blue,
-                          //                 ),
-                          //               ),
-                          //               onPressed: () {
-                          //                 Navigator.pop(context);
-                          //               },
-                          //             )
-                          //           ],
-                          //         ),
-                          //       );
-                          //     });
-                          //   }
-                          // }).catchError((err) {
-                          //   print(err);
-                          // });
+                                      if (widget.type == 'reconnect') {
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => PhoneAuthenticatoinPage(code: widget.code),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  BasicDialogAction(
+                                    title: const Text(
+                                      '다시 연결',
+                                      style: TextStyle(
+                                        fontFamily: "Pretendard",
+                                        color: CustomColors.red,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PhoneAuthenticatoinPage(code: widget.code),
-                            ),
-                          );
+                                      setState(() {
+                                        espDevice = null;
+                                        isTurnOn = true;
+                                        isBleLinking = true;
+                                        isBleError = false;
+                                        isWifiLinking = true;
+                                        isWifiError = false;
+                                        isFoundDevice = false;
+                                        isStartProvisioning = false;
+                                        isFinishWifiLink = false;
+                                        services.clear();
+                                        wifis.clear();
+                                        services.clear();
+                                      });
+                                    },
+                                  )
+                                ],
+                              ),
+                            );
+                          } else {
+                            showPlatformDialog(
+                              context: context,
+                              builder: (context) => BasicDialogAlert(
+                                title: const Text(
+                                  '와이파이를 연결해주세요.',
+                                  style: TextStyle(fontFamily: "Pretendard"),
+                                ),
+                                content: const Text(
+                                  '디바이스에 와이파이가 연결되어있지 않습니다. 와이파이를 선택후 연결해주세요.',
+                                  style: TextStyle(fontFamily: "Pretnedard"),
+                                ),
+                                actions: [
+                                  BasicDialogAction(
+                                    title: const Text(
+                                      '확인',
+                                      style: TextStyle(
+                                        fontFamily: "Pretendard",
+                                        color: CustomColors.blue,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              ),
+                            );
+                          }
                         } else {
                           showPlatformDialog(
                             context: context,
                             builder: (context) => BasicDialogAlert(
                               title: const Text(
-                                '와이파이를 연결해주세요.',
+                                '디바이스 연결 확인',
                                 style: TextStyle(fontFamily: "Pretendard"),
                               ),
                               content: const Text(
-                                '디바이스에 와이파이가 연결되어있지 않습니다. 와이파이를 선택후 연결해주세요.',
+                                '디바이스에 파란불이 들어와 있지 않다면 디바이스의 바닥 버튼을 3초간 눌러 초기화를 진행해주세요.',
                                 style: TextStyle(fontFamily: "Pretnedard"),
                               ),
                               actions: [
@@ -773,47 +804,46 @@ class _BleNWifiLinkPageState extends State<BleNWifiLinkPage> {
                                     ),
                                   ),
                                   onPressed: () {
+                                    setState(() {
+                                      isStartProvisioning = true;
+                                      isBleLinking = true;
+                                      isWifiLinking = true;
+                                      isBleError = true;
+                                      isWifiError = false;
+                                      services.clear();
+                                      wifis.clear();
+                                      services.clear();
+                                    });
+                                    startProvisioning();
+
                                     Navigator.pop(context);
                                   },
-                                )
+                                ),
                               ],
                             ),
                           );
                         }
-                      } else {
-                        setState(() {
-                          isStartProvisioning = true;
-                          isBleLinking = true;
-                          isWifiLinking = true;
-                          isBleError = true;
-                          isWifiError = false;
-                          services.clear();
-                          wifis.clear();
-                          services.clear();
-                        });
-                        startProvisioning();
-                      }
-                    },
-                    child: Container(
-                      height: 60,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(13),
-                      ),
-                      child: const Text(
-                        '확인',
-                        style: TextStyle(
-                          fontFamily: "Pretendard",
-                          fontSize: 17,
-                          color: CustomColors.systemWhite,
-                          fontWeight: FontWeight.w500,
+                      },
+                      child: Container(
+                        height: 60,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                        child: const Text(
+                          '확인',
+                          style: TextStyle(
+                            fontFamily: "Pretendard",
+                            fontSize: 17,
+                            color: CustomColors.systemWhite,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            )
+              )
           ],
         ),
       ),
