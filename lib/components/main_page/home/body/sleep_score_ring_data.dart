@@ -29,22 +29,16 @@ class _SleepScoreRingDataState extends State<SleepScoreRingData> {
             const Center(
               child: Text(
                 '슬립 스코어링',
-                style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 17),
+                style: TextStyle(fontFamily: 'Pretendard', fontWeight: FontWeight.w500, fontSize: 17),
               ),
             ),
             Center(
                 child: Container(
               margin: const EdgeInsets.fromLTRB(0, 33, 0, 27),
               child: const Text(
-                '슬립 스코어는 수면 패턴, 기상품질, 심박수, 코골이, 뒤척임 이 5가지 요인 별 점수를 측정하고 자체적인 배점 알고리즘을 통해 산출합니다. 각 세부 요인별 점수를 터치하면 관련된 정보들을 확인할 수 있습니다.',
+                '슬립 스코어는 수면 패턴, 기상품질, 심박수, 코골이, 뒤척임 이 5가지 요인 별 점수를 측정하고 자체적인 배점 알고리즘을 통해 산출합니다.',
                 style: TextStyle(
-                    color: Color(0xFF8E8E93),
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15),
+                    color: Color(0xFF8E8E93), fontFamily: 'Pretendard', fontWeight: FontWeight.w400, fontSize: 15),
               ),
             )),
             Container(
@@ -57,23 +51,13 @@ class _SleepScoreRingDataState extends State<SleepScoreRingData> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text('슬립 스코어',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400)),
+                          style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)),
                       const SizedBox(height: 19),
                       RepaintBoundary(
                         child: CustomPaint(
                             painter: CircularChart(
-                              percentage: context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? double.parse(
                                       "${context.watch<HomePageProvider>().mainPageBiometricData!.sleepScoreRing!.sleepScore}")
                                   : 0,
@@ -90,23 +74,13 @@ class _SleepScoreRingDataState extends State<SleepScoreRingData> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text('수면 패턴',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400)),
+                          style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)),
                       const SizedBox(height: 19),
                       RepaintBoundary(
                         child: CustomPaint(
                             painter: CircularChart(
-                              percentage: context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? double.parse(
                                       "${context.watch<HomePageProvider>().mainPageBiometricData!.sleepScoreRing!.sleepPatternScore}")
                                   : 0,
@@ -123,23 +97,13 @@ class _SleepScoreRingDataState extends State<SleepScoreRingData> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text('기상 품질',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400)),
+                          style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)),
                       const SizedBox(height: 19),
                       RepaintBoundary(
                         child: CustomPaint(
                             painter: CircularChart(
-                              percentage: context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? double.parse(
                                       "${context.watch<HomePageProvider>().mainPageBiometricData!.sleepScoreRing!.wakeupQualityScore}")
                                   : 0,
@@ -164,23 +128,13 @@ class _SleepScoreRingDataState extends State<SleepScoreRingData> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text('심박수',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400)),
+                          style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)),
                       const SizedBox(height: 19),
                       RepaintBoundary(
                         child: CustomPaint(
                             painter: CircularChart(
-                              percentage: context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? double.parse(
                                       "${context.watch<HomePageProvider>().mainPageBiometricData!.sleepScoreRing!.heartScore}")
                                   : 0,
@@ -197,23 +151,13 @@ class _SleepScoreRingDataState extends State<SleepScoreRingData> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text('뒤척임',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400)),
+                          style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)),
                       const SizedBox(height: 19),
                       RepaintBoundary(
                         child: CustomPaint(
                             painter: CircularChart(
-                              percentage: context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? double.parse(
                                       "${context.watch<HomePageProvider>().mainPageBiometricData!.sleepScoreRing!.tossNTurnScore}")
                                   : 0,
@@ -230,23 +174,13 @@ class _SleepScoreRingDataState extends State<SleepScoreRingData> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text('코골이',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400)),
+                          style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)),
                       const SizedBox(height: 19),
                       RepaintBoundary(
                         child: CustomPaint(
                             painter: CircularChart(
-                              percentage: context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData !=
-                                          null &&
-                                      context
-                                              .watch<HomePageProvider>()
-                                              .mainPageBiometricData!
-                                              .userBiometricData !=
-                                          null
+                              percentage: context.watch<HomePageProvider>().mainPageBiometricData != null &&
+                                      context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
                                   ? double.parse(
                                       "${context.watch<HomePageProvider>().mainPageBiometricData!.sleepScoreRing!.nosingScore}")
                                   : 0,

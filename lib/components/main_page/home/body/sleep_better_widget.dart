@@ -89,7 +89,7 @@ class _SleepBetterWidgetState extends State<SleepBetterWidget> {
                 painter: BetterScoreChart(
                     score: context.watch<HomePageProvider>().mainPageBiometricData != null &&
                             context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null
-                        ? context.watch<HomePageProvider>().mainPageBiometricData!.sleepSuming!.thisScore
+                        ? context.watch<HomePageProvider>().mainPageBiometricData!.sleepSuming!.thisScore!
                         : 0,
                     maxScore: context.watch<HomePageProvider>().mainPageBiometricData != null &&
                             context.watch<HomePageProvider>().mainPageBiometricData!.userBiometricData != null

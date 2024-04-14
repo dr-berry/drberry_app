@@ -161,13 +161,23 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
     return File(filePath);
   }
 
+  Future<void> play(File file) async {
+    await soundPlayer.startPlayer(
+      fromURI: file.path,
+      whenFinished: () => play(file),
+    );
+  }
+
   Future<void> playBackgroundAudio(String path) async {
     // print("실행은 함 ㅇㅇ");
     await soundPlayer.openAudioSession();
     print('실행함 ㅇㅅㅇ');
     final file = await getAssetFile(path);
 
-    await soundPlayer.startPlayer(fromURI: file.path);
+    await soundPlayer.startPlayer(
+      fromURI: file.path,
+      whenFinished: () => play(file),
+    );
   }
 
   void stopBackgroundAudio() async {
@@ -255,19 +265,40 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
         );
 
         print(widget.alarmData!.alarmSettings.dateTime);
-        _selectTime = TimeOfDay(
-            hour: widget.alarmData!.alarmSettings.dateTime.hour,
-            minute: widget.alarmData!.alarmSettings.dateTime.minute);
+        if (int.parse(widget.alarmData!.alarmData['isAI'].toString()) == 0) {
+          var start = (widget.alarmData!.alarmData['start'].toString()).split(":");
+          var end = (widget.alarmData!.alarmData['end'].toString()).split(":");
+
+          _selectStartTime = TimeOfDay(hour: int.parse(start[0].toString()), minute: int.parse(start[1].toString()));
+          _selectEndTime = TimeOfDay(hour: int.parse(end[0].toString()), minute: int.parse(end[1].toString()));
+        } else {
+          _selectTime = TimeOfDay(
+              hour: widget.alarmData!.alarmSettings.dateTime.hour,
+              minute: widget.alarmData!.alarmSettings.dateTime.minute);
+        }
       });
+      _segmentController.value = int.parse(widget.alarmData!.alarmData['isAI'].toString());
       _segmentController.addListener(() {
-        _segmentController.value = 1;
+        _segmentController.value = int.parse(widget.alarmData!.alarmData['isAI'].toString());
       });
     }
   }
 
   DateTime setAlarm() {
     DateTime now = DateTime.now();
-    DateTime alarmTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
+    DateTime alarmTime;
+    if (_segmentController.value == 1) {
+      alarmTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
+    } else {
+      // alarmTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
+      var startTime = DateTime(now.year, now.month, now.day, _selectStartTime!.hour, _selectEndTime!.minute);
+      var endTime = DateTime(now.year, now.month, now.day, _selectEndTime!.hour, _selectEndTime!.minute);
+
+      var middleOfTimeDuration = endTime.difference(startTime);
+      startTime.add(middleOfTimeDuration ~/ 2);
+
+      alarmTime = startTime;
+    }
 
     if (_selectCircleDate.isEmpty) {
       if (alarmTime.isBefore(now)) {
@@ -347,6 +378,103 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
               foregroundColor: CustomColors.systemGrey2,
             ),
             onPressed: () async {
+              // if (_segmentController.value == 1) {
+              // } else {
+              //   print(_segmentController.value);
+              //   if (_selectStartTime == null || _selectEndTime == null || _musicIndex == -1) {
+              //     showPlatformDialog(
+              //       context: context,
+              //       builder: (context) {
+              //         return BasicDialogAlert(
+              //           title: const Text(
+              //             '알람 설정 실패',
+              //             style: TextStyle(fontFamily: "Pretendard"),
+              //           ),
+              //           content: const Text(
+              //             '시간과 음원을 설정해주세요.',
+              //             style: TextStyle(fontFamily: "Pretnedard"),
+              //           ),
+              //           actions: [
+              //             BasicDialogAction(
+              //               title: const Text(
+              //                 '확인',
+              //                 style: TextStyle(
+              //                   fontFamily: "Pretendard",
+              //                   color: CustomColors.blue,
+              //                 ),
+              //               ),
+              //               onPressed: () {
+              //                 Navigator.pop(context);
+              //               },
+              //             )
+              //           ],
+              //         );
+              //       },
+              //     );
+              //     return;
+              //   }
+
+              //   final now = DateTime.now();
+              //   if (widget.aiAlarmData == null) {
+              //     await _server.setAlarm(
+              //       "WAKE",
+              //       DateFormat("yyyy-MM-dd HH:mm:ss").format(
+              //         DateTime(
+              //           now.year,
+              //           now.month,
+              //           now.day,
+              //           _selectStartTime!.hour,
+              //           _selectStartTime!.minute,
+              //         ),
+              //       ),
+              //       DateFormat("yyyy-MM-dd HH:mm:ss").format(
+              //         DateTime(
+              //           now.year,
+              //           now.month,
+              //           (_selectStartTime!.hour * 60) + _selectStartTime!.minute >
+              //                   _selectEndTime!.hour * 60 + _selectEndTime!.minute
+              //               ? now.day + 1
+              //               : now.day,
+              //           _selectEndTime!.hour,
+              //           _selectEndTime!.minute,
+              //         ),
+              //       ),
+              //       musicList[_musicIndex]['title']!,
+              //       _selectSnoozeData,
+              //       _selectCircleDate,
+              //     );
+              //   } else {
+              //     await _server.updateAlarm(
+              //       int.parse(widget.aiAlarmData['alarmId'].toString()),
+              //       DateFormat("yyyy-MM-dd HH:mm:ss").format(
+              //         DateTime(
+              //           now.year,
+              //           now.month,
+              //           now.day,
+              //           _selectStartTime!.hour,
+              //           _selectStartTime!.minute,
+              //         ),
+              //       ),
+              //       DateFormat("yyyy-MM-dd HH:mm:ss").format(
+              //         DateTime(
+              //           now.year,
+              //           now.month,
+              //           now.day,
+              //           _selectEndTime!.hour,
+              //           _selectEndTime!.minute,
+              //         ),
+              //       ),
+              //       musicList[_musicIndex]['title']!,
+              //       _selectSnoozeData,
+              //       _selectCircleDate,
+              //     );
+              //   }
+
+              //   Future.delayed(Duration.zero, () {
+              //     Navigator.pop(context, true);
+              //   });
+              // }
+
               if (_segmentController.value == 1) {
                 if (_selectTime == null || _musicIndex == -1) {
                   showPlatformDialog(
@@ -380,128 +508,7 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                   );
                   return;
                 }
-
-                if (widget.alarmData != null) {
-                  SharedPreferences pref = await SharedPreferences.getInstance();
-                  final jsonStr = pref.getString('alarmDatas');
-                  List<AlarmData> alarmDatas = [];
-                  print(widget.alarmData?.alarmData);
-
-                  // await Alarm.stop(widget.alarmData!.alarmSettings.id);
-
-                  // widget.alarmData!.alarmData['snoozeIds'].forEach((e) async {
-                  //   await Alarm.stop(e);
-                  //   print(e);
-                  // });
-
-                  if (jsonStr != null) {
-                    final parsedJson = jsonDecode(jsonStr);
-                    for (var i = 0; i < parsedJson.length; i++) {
-                      alarmDatas.add(AlarmData.fromJson(parsedJson[i]));
-                    }
-                  }
-
-                  var alarms = alarmDatas.where(
-                    (element) => widget.alarmData!.alarmSettings.id != element.alarmSettings.id,
-                  );
-
-                  final alarmDatasJson = alarms.toList().map((e) => e.toJson()).toList();
-
-                  final removeStr = jsonEncode(alarmDatasJson);
-                  await pref.remove("alarmDatas");
-                  await pref.setString("alarmDatas", removeStr);
-                  print(alarms.toList());
-                  setState(() {
-                    _savedAlarmData = [];
-                    _savedAlarmData.addAll(jsonDecode(removeStr));
-                  });
-
-                  // Future.delayed(Duration.zero, () {
-                  //   Navigator.pop(context, true);
-                  // });
-                }
-
-                final alarms = Alarm.getAlarms();
-                var now = DateTime.now();
-                var selectTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
-
-                alarms.where((element) {
-                  return element.dateTime.hour == selectTime.hour && element.dateTime.minute == selectTime.minute;
-                }).forEach((e) async {
-                  await Alarm.stop(e.id);
-                });
-
-                List<int> snoozeIds = [];
-                AlarmSettings alarmSettings;
-
-                final alarmTime = setAlarm();
-                var id = widget.alarmData != null
-                    ? widget.alarmData!.alarmSettings.id
-                    : int.parse(
-                        "${alarmTime.hour}${alarmTime.month}${alarmTime.day}${alarmTime.hour}${alarmTime.minute}",
-                      );
-
-                alarmSettings = AlarmSettings(
-                  id: id,
-                  dateTime: alarmTime,
-                  assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                  loopAudio: true,
-                  fadeDuration: 5,
-                  vibrate: true,
-                  notificationTitle: 'This time to wake',
-                  notificationBody: '설정하신 알람입니다! 일어나세요!!',
-                  enableNotificationOnKill: true,
-                  stopOnNotificationOpen: false,
-                );
-                await Alarm.set(alarmSettings: alarmSettings);
-                print(alarmSettings);
-
-                for (var i = 0; i < _selectSnoozeData.length; i++) {
-                  var snoozeTime = alarmTime.add(Duration(minutes: _selectSnoozeData[i] + i + 1));
-
-                  final snoozeId = id + i + 1;
-
-                  final alarmSettings = AlarmSettings(
-                    id: snoozeId,
-                    dateTime: snoozeTime,
-                    assetAudioPath: musicList[_musicIndex]['musicAssets']!,
-                    loopAudio: false,
-                    fadeDuration: 5,
-                    vibrate: false,
-                    notificationTitle: 'This time to sleep',
-                    notificationBody: '설정하신 스누즈 알림입니다! 어서 일어나세요!',
-                    enableNotificationOnKill: true,
-                    stopOnNotificationOpen: false,
-                  );
-
-                  await Alarm.set(alarmSettings: alarmSettings);
-                  snoozeIds.add(snoozeId);
-                }
-
-                AlarmData alarmData = AlarmData(
-                  alarmData: {
-                    "alarm": 'WAKE',
-                    "snooze": _selectSnoozeData,
-                    "weekOfNum": _selectCircleDate,
-                    "alarmType": "일반알림",
-                    "snoozeIds": snoozeIds,
-                    "musicInfo": musicList[_musicIndex],
-                    "isActive": true,
-                    "time":
-                        '${alarmTime.hour < 10 ? '0${alarmTime.hour}' : alarmTime.hour}:${alarmTime.minute < 10 ? '0${alarmTime.minute}' : alarmTime.minute}',
-                  },
-                  alarmSettings: alarmSettings,
-                );
-
-                SharedPreferences pref = await SharedPreferences.getInstance();
-                _savedAlarmData.add(alarmData.toJson());
-                await pref.setString("alarmDatas", jsonEncode(_savedAlarmData));
-
-                Future.delayed(Duration.zero, () {
-                  Navigator.pop(context, true);
-                });
               } else {
-                print(_segmentController.value);
                 if (_selectStartTime == null || _selectEndTime == null || _musicIndex == -1) {
                   showPlatformDialog(
                     context: context,
@@ -534,67 +541,122 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                   );
                   return;
                 }
+              }
 
-                final now = DateTime.now();
-                if (widget.aiAlarmData == null) {
-                  await _server.setAlarm(
-                    "WAKE",
-                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                      DateTime(
-                        now.year,
-                        now.month,
-                        now.day,
-                        _selectStartTime!.hour,
-                        _selectStartTime!.minute,
-                      ),
-                    ),
-                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                      DateTime(
-                        now.year,
-                        now.month,
-                        (_selectStartTime!.hour * 60) + _selectStartTime!.minute >
-                                _selectEndTime!.hour * 60 + _selectEndTime!.minute
-                            ? now.day + 1
-                            : now.day,
-                        _selectEndTime!.hour,
-                        _selectEndTime!.minute,
-                      ),
-                    ),
-                    musicList[_musicIndex]['title']!,
-                    _selectSnoozeData,
-                    _selectCircleDate,
-                  );
-                } else {
-                  await _server.updateAlarm(
-                    int.parse(widget.aiAlarmData['alarmId'].toString()),
-                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                      DateTime(
-                        now.year,
-                        now.month,
-                        now.day,
-                        _selectStartTime!.hour,
-                        _selectStartTime!.minute,
-                      ),
-                    ),
-                    DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                      DateTime(
-                        now.year,
-                        now.month,
-                        now.day,
-                        _selectEndTime!.hour,
-                        _selectEndTime!.minute,
-                      ),
-                    ),
-                    musicList[_musicIndex]['title']!,
-                    _selectSnoozeData,
-                    _selectCircleDate,
-                  );
+              if (widget.alarmData != null) {
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                final jsonStr = pref.getString('alarmDatas');
+                List<AlarmData> alarmDatas = [];
+                print(widget.alarmData?.alarmData);
+
+                // await Alarm.stop(widget.alarmData!.alarmSettings.id);
+
+                // widget.alarmData!.alarmData['snoozeIds'].forEach((e) async {
+                //   await Alarm.stop(e);
+                //   print(e);
+                // });
+
+                if (jsonStr != null) {
+                  final parsedJson = jsonDecode(jsonStr);
+                  for (var i = 0; i < parsedJson.length; i++) {
+                    alarmDatas.add(AlarmData.fromJson(parsedJson[i]));
+                  }
                 }
 
-                Future.delayed(Duration.zero, () {
-                  Navigator.pop(context, true);
+                var alarms = alarmDatas.where(
+                  (element) => widget.alarmData!.alarmSettings.id != element.alarmSettings.id,
+                );
+
+                final alarmDatasJson = alarms.toList().map((e) => e.toJson()).toList();
+
+                final removeStr = jsonEncode(alarmDatasJson);
+                await pref.remove("alarmDatas");
+                await pref.setString("alarmDatas", removeStr);
+                print(alarms.toList());
+                setState(() {
+                  _savedAlarmData = [];
+                  _savedAlarmData.addAll(jsonDecode(removeStr));
                 });
+
+                // Future.delayed(Duration.zero, () {
+                //   Navigator.pop(context, true);
+                // });
               }
+
+              final alarms = Alarm.getAlarms();
+              var now = DateTime.now();
+              DateTime selectTime;
+              DateTime? startTime;
+              DateTime? endTime;
+
+              if (_segmentController.value == 1) {
+                selectTime = DateTime(now.year, now.month, now.day, _selectTime!.hour, _selectTime!.minute);
+              } else {
+                startTime = DateTime(now.year, now.month, now.day, _selectStartTime!.hour, _selectEndTime!.minute);
+                endTime = DateTime(now.year, now.month, now.day, _selectEndTime!.hour, _selectEndTime!.minute);
+
+                var middleOfTimeDuration = endTime.difference(startTime);
+                startTime.add(middleOfTimeDuration ~/ 2);
+
+                selectTime = startTime;
+              }
+
+              alarms.where((element) {
+                return element.dateTime.hour == selectTime.hour && element.dateTime.minute == selectTime.minute;
+              }).forEach((e) async {
+                await Alarm.stop(e.id);
+              });
+
+              List<int> snoozeIds = [];
+              AlarmSettings alarmSettings;
+
+              final alarmTime = setAlarm();
+              var id = widget.alarmData != null
+                  ? widget.alarmData!.alarmSettings.id
+                  : int.parse(
+                      "${alarmTime.hour}${alarmTime.month}${alarmTime.day}${alarmTime.hour}${alarmTime.minute}",
+                    );
+
+              alarmSettings = AlarmSettings(
+                id: id,
+                dateTime: alarmTime,
+                assetAudioPath: musicList[_musicIndex]['musicAssets']!,
+                loopAudio: true,
+                fadeDuration: 5,
+                vibrate: true,
+                notificationTitle: 'This time to wake',
+                notificationBody: '설정하신 알람입니다! 일어나세요!!',
+                enableNotificationOnKill: true,
+                stopOnNotificationOpen: false,
+              );
+              await Alarm.set(alarmSettings: alarmSettings);
+              print(alarmSettings);
+
+              AlarmData alarmData = AlarmData(
+                alarmData: {
+                  "alarm": 'WAKE',
+                  "snooze": _selectSnoozeData,
+                  "weekOfNum": _selectCircleDate,
+                  "alarmType": "일반알림",
+                  "snoozeIds": snoozeIds,
+                  "musicInfo": musicList[_musicIndex],
+                  "isActive": true,
+                  "isAI": _segmentController.value,
+                  "start": _segmentController.value == 0 ? DateFormat("HH:mm").format(startTime!) : null,
+                  "end": _segmentController.value == 0 ? DateFormat("HH:mm").format(endTime!) : null,
+                  "time":
+                      '${alarmTime.hour < 10 ? '0${alarmTime.hour}' : alarmTime.hour}:${alarmTime.minute < 10 ? '0${alarmTime.minute}' : alarmTime.minute}',
+                },
+                alarmSettings: alarmSettings,
+              );
+
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              _savedAlarmData.add(alarmData.toJson());
+              await pref.setString("alarmDatas", jsonEncode(_savedAlarmData));
+
+              Future.delayed(Duration.zero, () {
+                Navigator.pop(context, true);
+              });
             },
             child: const Text(
               '완료',
@@ -1265,102 +1327,102 @@ class _WakeAlarmMakePageState extends State<WakeAlarmMakePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Container(
-                  width: deviceWidth - 32,
-                  height: 169.429,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: CustomColors.systemWhite,
-                  ),
-                  padding: const EdgeInsets.only(
-                    top: 28,
-                    bottom: 28,
-                    left: 20,
-                    right: 20,
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/snooze.svg',
-                                width: 28,
-                                height: 28,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                '스누즈',
-                                style: TextStyle(
-                                  fontFamily: "Pretendard",
-                                  color: CustomColors.secondaryBlack,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                          AdvancedSwitch(
-                            controller: _snooseDate,
-                            activeColor: CustomColors.lightGreen2,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 42),
-                      SizedBox(
-                        width: deviceWidth - 64,
-                        height: (deviceWidth - 100) / 7,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ...[1, 2, 3, 4, 5, 7, 9].map(
-                              (e) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    if (_snooseDate.value) {
-                                      setState(() {
-                                        if (_selectSnoozeData.contains(e)) {
-                                          _selectSnoozeData.removeWhere((element) => element == e);
-                                        } else {
-                                          _selectSnoozeData.add(e);
-                                        }
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                    width: (deviceWidth - 100) / 7,
-                                    height: (deviceWidth - 100) / 7,
-                                    decoration: BoxDecoration(
-                                      color: _selectSnoozeData.contains(e)
-                                          ? CustomColors.lightGreen2
-                                          : const Color(0xFFF2F2F7),
-                                      borderRadius: BorderRadius.circular(((deviceWidth - 100) / 7) / 2),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '${e}m',
-                                        style: TextStyle(
-                                          fontFamily: "Pretendard",
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w500,
-                                          color: _selectSnoozeData.contains(e)
-                                              ? CustomColors.systemWhite
-                                              : CustomColors.systemBlack,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Container(
+                //   width: deviceWidth - 32,
+                //   height: 169.429,
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(10),
+                //     color: CustomColors.systemWhite,
+                //   ),
+                //   padding: const EdgeInsets.only(
+                //     top: 28,
+                //     bottom: 28,
+                //     left: 20,
+                //     right: 20,
+                //   ),
+                //   child: Column(
+                //     children: [
+                //       Row(
+                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //         children: [
+                //           Row(
+                //             children: [
+                //               SvgPicture.asset(
+                //                 'assets/snooze.svg',
+                //                 width: 28,
+                //                 height: 28,
+                //               ),
+                //               const SizedBox(width: 8),
+                //               const Text(
+                //                 '스누즈',
+                //                 style: TextStyle(
+                //                   fontFamily: "Pretendard",
+                //                   color: CustomColors.secondaryBlack,
+                //                   fontWeight: FontWeight.w700,
+                //                   fontSize: 20,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           AdvancedSwitch(
+                //             controller: _snooseDate,
+                //             activeColor: CustomColors.lightGreen2,
+                //           ),
+                //         ],
+                //       ),
+                //       const SizedBox(height: 42),
+                //       SizedBox(
+                //         width: deviceWidth - 64,
+                //         height: (deviceWidth - 100) / 7,
+                //         child: Row(
+                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //           children: [
+                //             ...[1, 2, 3, 4, 5, 7, 9].map(
+                //               (e) {
+                //                 return GestureDetector(
+                //                   onTap: () {
+                //                     if (_snooseDate.value) {
+                //                       setState(() {
+                //                         if (_selectSnoozeData.contains(e)) {
+                //                           _selectSnoozeData.removeWhere((element) => element == e);
+                //                         } else {
+                //                           _selectSnoozeData.add(e);
+                //                         }
+                //                       });
+                //                     }
+                //                   },
+                //                   child: Container(
+                //                     width: (deviceWidth - 100) / 7,
+                //                     height: (deviceWidth - 100) / 7,
+                //                     decoration: BoxDecoration(
+                //                       color: _selectSnoozeData.contains(e)
+                //                           ? CustomColors.lightGreen2
+                //                           : const Color(0xFFF2F2F7),
+                //                       borderRadius: BorderRadius.circular(((deviceWidth - 100) / 7) / 2),
+                //                     ),
+                //                     child: Center(
+                //                       child: Text(
+                //                         '${e}m',
+                //                         style: TextStyle(
+                //                           fontFamily: "Pretendard",
+                //                           fontSize: 17,
+                //                           fontWeight: FontWeight.w500,
+                //                           color: _selectSnoozeData.contains(e)
+                //                               ? CustomColors.systemWhite
+                //                               : CustomColors.systemBlack,
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 );
+                //               },
+                //             )
+                //           ],
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(height: 42),
                 widget.alarmData != null
                     ? Center(

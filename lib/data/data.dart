@@ -574,7 +574,7 @@ class NosingDetailData {
     return NosingDetailData(
         avgSnoring: json['avgSnoring'],
         date: json['date'],
-        maxSnoring: json['maxSnoring'],
+        maxSnoring: double.parse(json['maxSnoring'].toString()),
         score: json['score'],
         snoringPercent: dpJson['snoringPercent']);
   }

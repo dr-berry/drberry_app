@@ -5,14 +5,17 @@ import 'package:drberry_app/components/main_page/calendar/calendar_page.dart';
 import 'package:drberry_app/components/main_page/home/home_page.dart';
 import 'package:drberry_app/components/main_page/profile/profile_page.dart';
 import 'package:drberry_app/components/main_page/sleep_pad/sleep_pad_page.dart';
+import 'package:drberry_app/main.dart';
 import 'package:drberry_app/provider/global_provider.dart';
 import 'package:drberry_app/provider/home_page_provider.dart';
 import 'package:drberry_app/provider/main_page_provider.dart';
 import 'package:drberry_app/screen/music_bar.dart';
+import 'package:drberry_app/screen/sleep_alarm_page.dart';
 import 'package:drberry_app/server/server.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_sliding_box/flutter_sliding_box.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -303,9 +306,20 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset("assets/power.svg"),
+                    // SvgPicture.asset("assets/power.svg"),
+                    context.watch<HomePageProvider>().sleepState
+                        ? const Icon(
+                            CupertinoIcons.stop,
+                            color: Colors.white,
+                            size: 32,
+                          )
+                        : const Icon(
+                            CupertinoIcons.play,
+                            color: Colors.white,
+                            size: 32,
+                          ),
                     const SizedBox(
-                      width: 3,
+                      width: 5,
                     ),
                     context.watch<HomePageProvider>().sleepState
                         ? const Text(
@@ -370,7 +384,18 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                     return {"state": "disconnected"};
                   });
 
-                  if (state['state'] == "disconnected") {
+                  const storage = FlutterSecureStorage(
+                    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+                    iOptions: IOSOptions(
+                      accessibility: KeychainAccessibility.first_unlock,
+                    ),
+                  );
+
+                  final isTester = await storage.read(key: "isTester");
+
+                  print("isTester :::: $isTester");
+
+                  if (state['state'] == "disconnected" && isTester != 'true') {
                     Future.delayed(Duration.zero, () {
                       showPlatformDialog(
                         context: context,
@@ -462,42 +487,15 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                 setState(() {
                                   isLoading = true;
                                 });
+
+                                context.read<HomePageProvider>().setSleepState(false);
                                 Navigator.pop(context);
-                                await server.endSleep().then((value) {
+
+                                await server.endSleepWithDummy().then((value) {
                                   setState(() {
                                     isLoading = false;
                                   });
-                                  showPlatformDialog(
-                                    context: context,
-                                    builder: (context) => BasicDialogAlert(
-                                      title: const Text(
-                                        "수면 종료",
-                                        style: TextStyle(fontFamily: "Pretendard"),
-                                      ),
-                                      content: const Text(
-                                        "수면이 종료되었습니다",
-                                        style: TextStyle(fontFamily: "Pretnedard"),
-                                      ),
-                                      actions: [
-                                        BasicDialogAction(
-                                          title: const Text(
-                                            '확인',
-                                            style: TextStyle(
-                                              fontFamily: "Pretendard",
-                                              color: CustomColors.blue,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            setState(() {
-                                              isLoading = false;
-                                            });
-                                            getSleepState();
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                  getSleepState();
                                 }).catchError((err) {
                                   print(err);
                                   if (err is DioException) {
@@ -533,7 +531,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                           ],
                                         ),
                                       );
-                                      return;
                                     }
                                   }
                                   showPlatformDialog(
@@ -613,7 +610,107 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                                   isLoadingStart = true;
                                 });
                                 Navigator.pop(context);
-                                await server.startSleep();
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.white,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0),
+                                      ),
+                                    ),
+                                    builder: (context) {
+                                      return SafeArea(
+                                        child: Container(
+                                          height: MediaQuery.of(context).size.height / 3 * 2,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20.0),
+                                              topRight: Radius.circular(20),
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              const Text(
+                                                '수면 음원 선택',
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontFamily: "SF-Pro",
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Expanded(
+                                                child: ListView.builder(
+                                                  itemCount: musicList.length,
+                                                  itemBuilder: (context, index) {
+                                                    final item = musicList[index];
+
+                                                    return Material(
+                                                      color: Colors.transparent,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          context.read<HomePageProvider>().setSleepState(true);
+                                                          Navigator.pop(context);
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) => SleepAlarmPage(
+                                                                music: item,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: SizedBox(
+                                                          height: 50,
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                width: 35,
+                                                                height: 35,
+                                                                decoration: BoxDecoration(
+                                                                  image: DecorationImage(
+                                                                    image: Image.asset(item['imageAssets'].toString())
+                                                                        .image,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 15,
+                                                              ),
+                                                              Text(
+                                                                "${item['title']}",
+                                                                style: const TextStyle(
+                                                                  fontFamily: "SF-Pro",
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                await server.startSleep().then((value) {
+                                  setState(() {
+                                    isLoadingStart = false;
+                                  });
+                                });
                               },
                             ),
                             BasicDialogAction(

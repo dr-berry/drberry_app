@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:638803687654:android:af3c069367e2ece26ae327",
+        "mobilesdk_app_id": "1:638803687654:android:db0b938221e3be4d6ae327",
         "android_client_info": {
-          "package_name": "com.example.drberry_app"
+          "package_name": "dr.berry.drberry"
         }
       },
       "oauth_client": [

@@ -166,8 +166,12 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
       if (list[i] is AlarmData) {
         music = (list[i] as AlarmData).alarmData['musicInfo'];
         // print(music);
-        alarmType = 1;
-        time = list[i].alarmData['time'];
+        alarmType = int.parse(list[i].alarmData['isAI'].toString());
+        if (alarmType == 0) {
+          time = '${list[i].alarmData['start']} ~ ${list[i].alarmData['end']}';
+        } else {
+          time = list[i].alarmData['time'];
+        }
         weekday = (list[i].alarmData['weekOfNum'] as List<dynamic>).map((element) {
           return getKoreanWeekday(element);
         }).toList();
@@ -462,31 +466,31 @@ class _WakeAlarmSettingPageState extends State<WakeAlarmSettingPage> {
                                                 ),
                                               ],
                                             ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                SvgPicture.asset('assets/snooze.svg'),
-                                                const SizedBox(width: 7),
-                                                const Text(
-                                                  '스누즈',
-                                                  style: TextStyle(
-                                                    fontFamily: "Pretendard",
-                                                    fontSize: 15,
-                                                    color: Color(0xFF8E8E93),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 7),
-                                                Text(
-                                                  snooze.join(','),
-                                                  style: const TextStyle(
-                                                    fontFamily: "Pretendard",
-                                                    fontSize: 15,
-                                                    color: CustomColors.secondaryBlack,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                )
-                                              ],
-                                            )
+                                            // Row(
+                                            //   mainAxisAlignment: MainAxisAlignment.start,
+                                            //   children: [
+                                            //     SvgPicture.asset('assets/snooze.svg'),
+                                            //     const SizedBox(width: 7),
+                                            //     const Text(
+                                            //       '스누즈',
+                                            //       style: TextStyle(
+                                            //         fontFamily: "Pretendard",
+                                            //         fontSize: 15,
+                                            //         color: Color(0xFF8E8E93),
+                                            //       ),
+                                            //     ),
+                                            //     const SizedBox(width: 7),
+                                            //     Text(
+                                            //       snooze.join(','),
+                                            //       style: const TextStyle(
+                                            //         fontFamily: "Pretendard",
+                                            //         fontSize: 15,
+                                            //         color: CustomColors.secondaryBlack,
+                                            //         fontWeight: FontWeight.w600,
+                                            //       ),
+                                            //     )
+                                            //   ],
+                                            // )
                                           ],
                                         ),
                                       )

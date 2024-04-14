@@ -81,13 +81,23 @@ class _MakeSleepAlarmPageState extends State<MakeSleepAlarmPage> {
     return File(filePath);
   }
 
+  Future<void> play(File file) async {
+    await soundPlayer.startPlayer(
+      fromURI: file.path,
+      whenFinished: () => play(file),
+    );
+  }
+
   Future<void> playBackgroundAudio(String path) async {
     // print("실행은 함 ㅇㅇ");
     await soundPlayer.openAudioSession();
     print('실행함 ㅇㅅㅇ');
     final file = await getAssetFile(path);
 
-    await soundPlayer.startPlayer(fromURI: file.path);
+    await soundPlayer.startPlayer(
+      fromURI: file.path,
+      whenFinished: () => play(file),
+    );
   }
 
   void stopBackgroundAudio() async {

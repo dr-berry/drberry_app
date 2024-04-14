@@ -52,29 +52,36 @@ class _SuccessSignupPageState extends State<SuccessSignupPage> {
                 ),
               ),
               Positioned(
-                  bottom: 17,
-                  left: 22,
-                  right: 22,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: CustomColors.lightGreen,
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
-                        backgroundColor: CustomColors.lightGreen2,
-                        padding: const EdgeInsets.symmetric(vertical: 19)),
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MainPage(),
-                        ),
-                        (route) => false,
-                      );
-                    },
-                    child: const Text("홈으로",
-                        style: TextStyle(
-                            color: Colors.white, fontFamily: "Pretendard", fontSize: 17, fontWeight: FontWeight.w500)),
-                  ))
+                bottom: 17,
+                left: 22,
+                right: 22,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: CustomColors.lightGreen,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+                      backgroundColor: CustomColors.lightGreen2,
+                      padding: const EdgeInsets.symmetric(vertical: 19)),
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainPage(),
+                      ),
+                      (route) => false,
+                    );
+                  },
+                  child: const Text(
+                    "홈으로",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: "Pretendard",
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ));

@@ -50,6 +50,7 @@ class _SplashPageState extends State<SplashPage> {
       );
       return;
     }
+    print("device Name :: $deviceName");
     await server.checkSignUp(deviceName).then((value) async {
       print(value.data);
       print(bool.parse(value.data));

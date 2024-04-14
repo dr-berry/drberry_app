@@ -5,16 +5,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class Server {
   Dio dio = Dio(BaseOptions(
       // baseUrl: "http://localhost:3000",
-      // baseUrl: "http://192.168.0.5:3000",
+      // baseUrl: "http://172.30.1.78:3000",
       baseUrl: "http://api.greenberry.site:3000",
       connectTimeout: const Duration(milliseconds: 10000),
       receiveTimeout: const Duration(milliseconds: 10000)));
   Dio noneDio = Dio(BaseOptions(
       // baseUrl: "http://localhost:3000",
-      // baseUrl: "http://192.168.0.5:3000",
+      // baseUrl: "http://172.30.1.78:3000",
       baseUrl: "http://api.greenberry.site:3000",
-      connectTimeout: const Duration(milliseconds: 10000),
-      receiveTimeout: const Duration(milliseconds: 10000)));
+      connectTimeout: const Duration(milliseconds: 1000000),
+      receiveTimeout: const Duration(milliseconds: 1000000)));
 
   final storage = const FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
@@ -378,6 +378,17 @@ class Server {
   Future<Response> endSleep() async {
     return await noneDio.put(
       '/device/end_sleep',
+      options: Options(
+        headers: {
+          'Authorization': "Bearer ${await getAccessToken()}",
+        },
+      ),
+    );
+  }
+
+  Future<Response> endSleepWithDummy() async {
+    return await noneDio.put(
+      '/device/end_sleep_with_dummy',
       options: Options(
         headers: {
           'Authorization': "Bearer ${await getAccessToken()}",

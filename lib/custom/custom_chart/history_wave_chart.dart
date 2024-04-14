@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:drberry_app/color/color.dart';
@@ -19,27 +20,25 @@ class HistoryLineChart extends CustomPainter {
     required this.type,
   }) {
     // _picture = _captureGraph(size);
-  }
-
-  // Picture _captureGraph(Size size) {
-  //   final recorder = PictureRecorder();
-  //   final canvas = Canvas(recorder);
-
-  //   return recorder.endRecording();
-  // }
-
-  @override
-  void paint(Canvas canvas, Size size) {
     print("=====LABEL=====");
-    print(labels);
-    print(datas);
+    // print(jsonEncode(labels));
+    // print(jsonEncode(datas));
     print("=====LABEL=====");
 
-    for (var label in labels) {
-      print(label.date);
+    // for (var label in labels) {
+    //   print(label.date);
+    // }
+
+    print("=====label length=====");
+    print(7 - labels.length);
+    for (var e in labels) {
+      print(e.date);
     }
+    print("=====label length=====");
 
-    for (var i = 0; i < 7 - labels.length; i++) {
+    final addLabelLength = 7 - labels.length;
+
+    for (var i = 0; i < addLabelLength; i++) {
       datas.insert(0, HistoryGraph(avgScore: 0));
       print("===빨리끝내야해===");
       print(labels[0].date);
@@ -68,6 +67,18 @@ class HistoryLineChart extends CustomPainter {
       print(labels);
       print("응 추가");
     }
+  }
+
+  // Picture _captureGraph(Size size) {
+  //   final recorder = PictureRecorder();
+  //   final canvas = Canvas(recorder);
+
+  //   return recorder.endRecording();
+  // }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    print("그래프 그리기 시작");
 
     final paint = Paint()
       ..color = CustomColors.lightGreen2
@@ -202,6 +213,6 @@ class HistoryLineChart extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return false;
   }
 }

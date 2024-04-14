@@ -38,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock));
 
-  Future<ProfileTabData> getUserData() async {
+  Future<ProfileTabData>   getUserData() async {
     final result = server.getProfileTabData().then((value) => ProfileTabData.fromJson(value.data));
 
     return result;

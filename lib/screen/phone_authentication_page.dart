@@ -58,6 +58,8 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
             final tokenResponse = TokenResponse.fromJson(res.data);
             print(
                 "a : ${tokenResponse.accessToken}, r : ${tokenResponse.refreshToken}, e : ${tokenResponse.expiredAt}");
+
+            await storage.write(key: "isTester", value: (widget.code == 'SDMM_TESTD2').toString());
             await storage.write(key: "accessToken", value: tokenResponse.accessToken);
             await storage.write(key: "refreshToken", value: tokenResponse.refreshToken);
             await storage.write(key: "expiredAt", value: tokenResponse.expiredAt.toString());
@@ -182,8 +184,10 @@ class _PhoneAuthenticatoinPageState extends State<PhoneAuthenticatoinPage> {
 
                             final auth = FirebaseAuth.instance;
 
+                            print(phoneNumber);
+
                             await auth.verifyPhoneNumber(
-                              timeout: const Duration(minutes: 3),
+                              timeout: const Duration(minutes: 2),
                               phoneNumber: phoneNumber,
                               verificationCompleted: (PhoneAuthCredential credential) async {
                                 await auth.signInWithCredential(credential).then((_) {});
